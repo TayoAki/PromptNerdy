@@ -33,7 +33,7 @@ describe("runSelfhostPreflight", () => {
     [{}, ["TEAM_DOMAIN and POLICY_AUD", "AUTH_MODE is unset"]],
     [
       { AUTH_MODE: "hosted", BETTER_AUTH_SECRET: "x".repeat(40) },
-      ["BETTER_AUTH_URL", "GOOGLE_CLIENT_ID"],
+      ["BETTER_AUTH_URL"],
     ],
   ])("fails %o listing every missing variable", (env, mentions) => {
     const result = runSelfhostPreflight(env);

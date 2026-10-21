@@ -8,7 +8,10 @@ import { consumeInvitationSendBudget } from "@/server/auth/invitation-send-limit
 import { requireOrgPermission } from "@/server/auth/org-gate";
 import { transferOrganizationOwnership } from "@/server/auth/ownership-transfer";
 import { AuthRepository } from "@/server/auth/repositories/AuthRepository";
-import { sendHostedInvitationEmail } from "@/server/email/loops";
+import {
+  isInvitationEmailConfigured,
+  sendHostedInvitationEmail,
+} from "@/server/email/loops";
 import { AppError } from "@/server/lib/errors";
 import { requireAuthenticatedContext } from "@/serverFunctions/middleware";
 
@@ -141,6 +144,11 @@ export const sendTeamInvitation = createServerFn({ method: "POST" })
         throw error;
       });
 
+    const inviteUrl = `${getHostedBaseUrl()}/accept-invitation/${invitation.id}`;
+    if (!isInvitationEmailConfigured()) {
+      return { invitationId: invitation.id, inviteUrl, emailed: false };
+    }
+
     const [inviter, memberships] = await Promise.all([
       AuthRepository.getHostedUser(context.userId),
       AuthRepository.listMembershipsForUser(context.userId),
@@ -153,7 +161,7 @@ export const sendTeamInvitation = createServerFn({ method: "POST" })
     try {
       await sendHostedInvitationEmail({
         email: data.email,
-        inviteUrl: `${getHostedBaseUrl()}/accept-invitation/${invitation.id}`,
+        inviteUrl,
         organizationName,
         inviterName: inviter?.name?.trim() || context.userEmail,
         inviterEmail: context.userEmail,
@@ -165,7 +173,7 @@ export const sendTeamInvitation = createServerFn({ method: "POST" })
       throw new AppError("UPSTREAM_UNAVAILABLE");
     }
 
-    return { invitationId: invitation.id };
+    return { invitationId: invitation.id, inviteUrl, emailed: true };
   });
 
 const transferOwnershipSchema = z.object({ memberId: z.string().min(1) });

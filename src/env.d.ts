@@ -30,6 +30,13 @@ declare namespace Cloudflare {
 
     AUTH_MODE?: "cloudflare_access" | "local_noauth" | "hosted";
     BYPASS_EMAIL_VERIFICATION?: string;
+    // Hosted mode only. "false" turns off Autumn usage billing.
+    BILLING_ENABLED?: string;
+    // Hosted mode only. "false" hides the Google button on the auth pages.
+    GOOGLE_SIGN_IN_ENABLED?: string;
+    // Hosted mode with billing off: comma-separated emails that may create
+    // an account without an invitation.
+    SIGNUP_ALLOWED_EMAILS?: string;
     TEAM_DOMAIN?: string;
     POLICY_AUD?: string;
     POSTHOG_PUBLIC_KEY?: string;
@@ -96,6 +103,8 @@ interface ImportMetaEnv {
   readonly AUTH_MODE?: "cloudflare_access" | "local_noauth" | "hosted";
   readonly DATABASE_PROVIDER?: "d1" | "postgres";
   readonly BYPASS_EMAIL_VERIFICATION?: string;
+  readonly BILLING_ENABLED?: string;
+  readonly GOOGLE_SIGN_IN_ENABLED?: string;
   readonly POSTHOG_PUBLIC_KEY?: string;
   readonly POSTHOG_HOST?: string;
   readonly TURNSTILE_SITE_KEY?: string;

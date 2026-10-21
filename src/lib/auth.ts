@@ -5,6 +5,7 @@ import { captcha } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { isDisposableEmailDomain } from "@/server/auth/disposable-email";
+import { canCreateAccount } from "@/server/auth/signup-policy";
 import * as d1Schema from "@/db/d1/schema";
 import { d1Db } from "@/db/d1/client";
 import { pgDb } from "@/db/pg/client";
@@ -251,6 +252,12 @@ function createAuth() {
                 message: "Please sign up with a non-disposable email address.",
               });
             }
+            if (!(await canCreateAccount(user.email))) {
+              throw new APIError("FORBIDDEN", {
+                message:
+                  "PromptNerdy is invite-only. Ask your workspace admin for an invitation.",
+              });
+            }
             // Start new accounts with the analytics choice that applies to
             // this browser, so server-side analytics doesn't run for a
             // visitor who hasn't opted in where opt-in is required.
@@ -395,22 +402,17 @@ function getSocialProviders() {
     return {};
   }
 
-  return {
-    google: getGoogleSocialProviderConfig(),
-  };
+  const google = getGoogleSocialProviderConfig();
+  return google ? { google } : {};
 }
 
 function getGoogleSocialProviderConfig() {
   const googleClientId = env.GOOGLE_CLIENT_ID?.trim();
   const googleClientSecret = env.GOOGLE_CLIENT_SECRET?.trim();
 
-  if (!googleClientId) {
-    throw new Error("GOOGLE_CLIENT_ID is required in hosted mode");
-  }
-
-  if (!googleClientSecret) {
-    throw new Error("GOOGLE_CLIENT_SECRET is required in hosted mode");
-  }
+  // Google sign-in is optional: without both values hosted mode offers email
+  // and password only (set GOOGLE_SIGN_IN_ENABLED=false for the client build).
+  if (!googleClientId || !googleClientSecret) return null;
 
   return {
     clientId: googleClientId,
@@ -438,7 +440,6 @@ export function hasHostedAuthConfig() {
   try {
     getHostedBaseUrl();
     getHostedSecret();
-    getGoogleSocialProviderConfig();
     return (
       hasHostedTurnstileConfig(env) &&
       (Reflect.get(env, "BYPASS_EMAIL_VERIFICATION") === "true" ||

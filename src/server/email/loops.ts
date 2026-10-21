@@ -206,6 +206,14 @@ export async function sendHostedInvitationEmail({
   });
 }
 
+// Without these the inviter shares the invite link themselves.
+export function isInvitationEmailConfigured() {
+  return Boolean(
+    getOptionalEnv("LOOPS_API_KEY") &&
+    getOptionalEnv("LOOPS_TRANSACTIONAL_INVITATION_ID"),
+  );
+}
+
 export async function sendHostedPasswordResetEmail({
   email,
   resetUrl,

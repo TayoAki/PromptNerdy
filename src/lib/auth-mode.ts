@@ -42,6 +42,13 @@ export function isHostedClientAuthMode() {
   return isHostedAuthMode(import.meta.env.AUTH_MODE);
 }
 
+// Build-time switch with the same contract as AUTH_MODE: the client build and
+// the server runtime must agree. Defaults on, matching a hosted deployment
+// with Google OAuth configured; a hosted MVP without it sets "false".
+export function isGoogleSignInClientEnabled() {
+  return import.meta.env.GOOGLE_SIGN_IN_ENABLED !== "false";
+}
+
 export function isEmailVerificationBypassed() {
   // Local-dev escape hatch (BYPASS_EMAIL_VERIFICATION=true). The server skips
   // verification and never marks users emailVerified, so the client must treat
