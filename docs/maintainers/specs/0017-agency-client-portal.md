@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed; product decisions are recorded under Decisions. Builds on multi-user organizations (`specs/0011-multi-user-organizations.md`), which deferred per-project authorization inside an organization; this is that work, shaped for agencies.
+Phase 1 (foundation) is built; phases 2 and 3 are proposed. Product decisions are recorded under Decisions. Builds on multi-user organizations (`specs/0011-multi-user-organizations.md`), which deferred per-project authorization inside an organization; this is that work, shaped for agencies.
 
 ## What it does
 
@@ -34,9 +34,9 @@ A contact who belongs to two clients, or to two agencies, switches between them 
 
 ## How it works
 
-**Roles.** A new `client` role in `orgRoles` with no app statements: it cannot create or delete projects, manage integrations, touch billing, or invite anyone. Owners and admins gain `client: ["manage"]`. The existing rule that teammates join only as admins stays; `client` is the second invitable role, and only through the Clients page.
+**Roles.** A new `client` role in `orgRoles` with no statements at all: it cannot create or delete projects, manage integrations, touch billing, invite anyone, or manage teams. Owners and admins already hold the plugin's team permissions, which gate client management. The existing rule that teammates join only as admins stays; `client` is the second invitable role, and only through the Clients page. A role change can neither make nor unmake a client.
 
-**Clients are Better Auth teams.** The organization plugin's teams feature gives a team table, team membership, and invitations that carry a `teamId`. Accepting one makes the user a `client`-role member of the organization and a member of that team in one step. A client is a team, and a contact is a team member. Team endpoints are restricted to `client:manage` in access control, so a client cannot create teams or add themselves to another.
+**Clients are Better Auth teams.** The organization plugin's teams feature gives a team table, team membership, and invitations that carry a `teamId`. Accepting one makes the user a `client`-role member of the organization and a member of that team in one step. A client is a team, and a contact is a team member. Team endpoints check the plugin's team permissions, so a client cannot create teams or add themselves to another. Default teams are off: an organization starts with no clients. A staff invitation carries no team, and a client invitation names exactly one. Accepting a client invitation whose client was deleted is refused.
 
 **Data.**
 
@@ -59,7 +59,8 @@ Bare organization lookups stay only on internal Workflow and Durable Object path
 
 **Deny by default.** Client contacts must not reach the hundreds of existing server functions one audit at a time. `requireAuthenticatedContext` and `requireProjectContext` reject the `client` role outright. Portal server functions use their own `requirePortalContext`, which admits staff (for "View as client") and clients, and scopes every query to the caller's client teams. The same split applies elsewhere:
 
-- MCP OAuth consent and API-key creation refuse the `client` role.
+- Better Auth's organization endpoints answer org-wide reads (members, invitations, teams) to any member, so a `client`-role caller is refused every organization and API-key endpoint except an allowlist. The allowlist covers their own invitations, their own organizations and teams, switching, and leaving. Without this, one client's contacts could list another's.
+- MCP refuses the `client` role per request and per project, covering both OAuth tokens and API keys.
 - SAM refuses it at connect and on every turn.
 - The app's route guard sends a `client`-role session to `/portal` from every app route, and the portal guard sends staff without a client selected back to the app.
 
@@ -68,6 +69,7 @@ Bare organization lookups stay only on internal Workflow and Durable Object path
 **Membership lifecycle.**
 
 - Removing a contact removes their team membership and their organization membership. Access ends on their next request, as spec 0011 already guarantees for members.
+- With billing off, only addresses in `SIGNUP_ALLOWED_EMAILS` can found a workspace. An invited contact who signs up but hasn't accepted gets no workspace of their own, and with it no unmetered research. Until they accept, they're asked to open their invitation link.
 - Archiving a client hides it from the portal and the Clients page. Its projects return to agency-internal and their data is kept.
 - Deleting a client is a support action, like deleting an organization.
 
@@ -83,7 +85,7 @@ Bare organization lookups stay only on internal Workflow and Durable Object path
 ## Alternatives considered
 
 - **An organization per client, with agency staff as members of each.** This gives the strongest isolation, because existing organization scoping does all the work. It lost because the agency's single view across clients is the product: staff would switch organizations constantly, every hire would need N invitations, and billing would split per client unless organizations gained a parent.
-- **App-owned `clients` and `client_members` tables instead of teams.** This is explicit and fully under our control, but it re-implements invitation scoping, acceptance and removal that the plugin already does. It is the fallback if the spike shows team endpoints cannot be locked down to `client:manage`.
+- **App-owned `clients` and `client_members` tables instead of teams.** This is explicit and fully under our control, but it re-implements invitation scoping, acceptance and removal that the plugin already does. It stays the fallback if the plugin's team behavior ever stops fitting.
 - **Granting a client per project, with no client entity.** This is simpler for one-site clients, but a client with several sites and several contacts becomes an N×M grant list with no name to manage it by.
 - **Reusing the defined-but-unused `member` role.** `member` is meant for limited agency staff who still use the app. Clients need a different surface and deny-by-default, and folding the two together would leak app features into the portal.
 - **Public share links only.** Spec 0014 already lets an agency send a report link with no login. That covers one-off sends, but it can't revoke a single person, show live rankings, or give a client one place to look. It stays as the lightweight option next to the portal.

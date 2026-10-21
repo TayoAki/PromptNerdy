@@ -15,7 +15,10 @@ function SettingsLayout() {
     { to: "/settings" as const, label: "Personal", exact: true },
     // Self-host has no memberships — the organization tab would 404.
     ...(isHostedClientAuthMode()
-      ? [{ to: "/settings/organization" as const, label: "Organization" }]
+      ? [
+          { to: "/settings/organization" as const, label: "Organization" },
+          { to: "/settings/clients" as const, label: "Clients" },
+        ]
       : []),
   ];
 

@@ -29,10 +29,9 @@ export const ensureUserMiddleware = createMiddleware({
     // ADR 0001 intentionally keeps project authorization here so every
     // project-scoped server function gets the same request-scoped org+project
     // check before handlers run. Function-level middleware narrows the type.
-    project = await ProjectRepository.getProjectForOrganization(
-      projectId,
-      context.organizationId,
-    );
+    project =
+      (await ProjectRepository.getProjectForMember(projectId, context)) ??
+      undefined;
 
     if (!project) {
       throw new AppError("NOT_FOUND");

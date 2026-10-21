@@ -54,6 +54,9 @@ export const reports = sqliteTable(
     // When the current token was minted. Re-sharing mints a new token and a new
     // stamp; content saves never touch either column.
     sharedAt: text("shared_at"),
+    // When the agency published the report to the project's client portal
+    // (spec 0017). Null means agency-only. Content saves never touch it.
+    clientVisibleAt: text("client_visible_at"),
     // Timestamps are text on both dialects and stamped by the repository. The
     // default emits ISO (unlike current_timestamp's space format) because the
     // list order is lexicographic against app-written ISO stamps.

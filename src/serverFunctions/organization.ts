@@ -1,17 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
-import { APIError } from "better-auth/api";
 import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
-import { getAuth, getHostedBaseUrl } from "@/lib/auth";
-import { hasOrgPermission } from "@/lib/org-permissions";
-import { consumeInvitationSendBudget } from "@/server/auth/invitation-send-limit";
+import { getAuth } from "@/lib/auth";
+import { hasOrgPermission, isClientRole } from "@/lib/org-permissions";
 import { requireOrgPermission } from "@/server/auth/org-gate";
 import { transferOrganizationOwnership } from "@/server/auth/ownership-transfer";
 import { AuthRepository } from "@/server/auth/repositories/AuthRepository";
-import {
-  isInvitationEmailConfigured,
-  sendHostedInvitationEmail,
-} from "@/server/email/loops";
+import { createAndDeliverInvitation } from "@/server/auth/invitations";
 import { AppError } from "@/server/lib/errors";
 import { requireAuthenticatedContext } from "@/serverFunctions/middleware";
 
@@ -57,16 +52,20 @@ export const getTeam = createServerFn({ method: "GET" })
       invitation: ["create"],
     });
     const now = Date.now();
+    // Client contacts (spec 0017) are managed on the Clients page, not here.
     const pendingInvitations = canViewInvitations
       ? (fullOrganization.invitations ?? []).filter(
           (invitation) =>
             invitation.status === "pending" &&
+            invitation.role !== "client" &&
             new Date(invitation.expiresAt).getTime() > now,
         )
       : [];
 
     return {
-      members: fullOrganization.members ?? [],
+      members: (fullOrganization.members ?? []).filter(
+        (member) => !isClientRole(member.role),
+      ),
       pendingInvitations,
     };
   });
@@ -103,13 +102,8 @@ export const switchOrganization = createServerFn({ method: "POST" })
 
 const sendInvitationSchema = z.object({ email: z.string().email() });
 
-// Invite (or re-invite) a teammate. better-auth creates the pending
-// invitation — its server-side checks (inviter must be a member with invite
-// permission, admin-only role lock, 20-pending cap) all still run — but the
-// email is sent here rather than via the plugin's sendInvitationEmail
-// callback: better-auth swallows throws from that callback, so a failed send
-// would still read as "sent". Here it fails the call. resend: true re-mails
-// an existing pending invitation with the same link and a refreshed expiry.
+// Invite (or re-invite) a teammate. See createAndDeliverInvitation for why the
+// email is sent here and not by better-auth.
 export const sendTeamInvitation = createServerFn({ method: "POST" })
   .middleware(requireAuthenticatedContext)
   .validator(sendInvitationSchema)
@@ -118,62 +112,10 @@ export const sendTeamInvitation = createServerFn({ method: "POST" })
     // budget or calling the plugin, so the budget cannot be exhausted by
     // low-privilege callers.
     requireOrgPermission(context, { invitation: ["create"] });
-
-    await consumeInvitationSendBudget(context.organizationId, data.email);
-
-    const invitation = await getAuth()
-      .api.createInvitation({
-        headers: getRequest().headers,
-        body: {
-          email: data.email,
-          role: "admin",
-          resend: true,
-          // Bind the invitation to the request's resolved org, not the session's
-          // active-organization hint, which can be stale after a switch.
-          organizationId: context.organizationId,
-        },
-      })
-      .catch((error: unknown) => {
-        // The invite dialog shows this one inline, next to the email.
-        if (
-          error instanceof APIError &&
-          error.body?.code === "USER_IS_ALREADY_A_MEMBER_OF_THIS_ORGANIZATION"
-        ) {
-          throw new AppError("CONFLICT");
-        }
-        throw error;
-      });
-
-    const inviteUrl = `${getHostedBaseUrl()}/accept-invitation/${invitation.id}`;
-    if (!isInvitationEmailConfigured()) {
-      return { invitationId: invitation.id, inviteUrl, emailed: false };
-    }
-
-    const [inviter, memberships] = await Promise.all([
-      AuthRepository.getHostedUser(context.userId),
-      AuthRepository.listMembershipsForUser(context.userId),
-    ]);
-    const organizationName =
-      memberships.find(
-        (membership) => membership.organizationId === context.organizationId,
-      )?.organizationName ?? "Organization";
-
-    try {
-      await sendHostedInvitationEmail({
-        email: data.email,
-        inviteUrl,
-        organizationName,
-        inviterName: inviter?.name?.trim() || context.userEmail,
-        inviterEmail: context.userEmail,
-      });
-    } catch (error) {
-      // The invitation row exists and stays pending — surface the send
-      // failure so the inviter retries instead of assuming it landed.
-      console.error("Invitation email send failed:", error);
-      throw new AppError("UPSTREAM_UNAVAILABLE");
-    }
-
-    return { invitationId: invitation.id, inviteUrl, emailed: true };
+    return createAndDeliverInvitation(context, {
+      email: data.email,
+      role: "admin",
+    });
   });
 
 const transferOwnershipSchema = z.object({ memberId: z.string().min(1) });

@@ -44,6 +44,7 @@ beforeAll(async () => {
       size_bytes INTEGER NOT NULL,
       share_token TEXT UNIQUE,
       shared_at TEXT,
+      client_visible_at TEXT,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL
     );

@@ -1,11 +1,20 @@
 import { env } from "cloudflare:workers";
 import { betterAuth } from "better-auth";
-import { APIError, createAuthMiddleware } from "better-auth/api";
+import {
+  APIError,
+  createAuthMiddleware,
+  getSessionFromCtx,
+} from "better-auth/api";
 import { captcha } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { isDisposableEmailDomain } from "@/server/auth/disposable-email";
 import { canCreateAccount } from "@/server/auth/signup-policy";
+import {
+  assertInvitationShape,
+  isPathClosedToClients,
+  refuseClientCaller,
+} from "@/server/auth/client-access";
 import * as d1Schema from "@/db/d1/schema";
 import { d1Db } from "@/db/d1/client";
 import { pgDb } from "@/db/pg/client";
@@ -76,11 +85,7 @@ function createAuth() {
               // that would re-mint a fresh org + free-plan grant at next
               // sign-in.
               beforeCreateInvitation: async ({ invitation }) => {
-                if (invitation.role !== "admin") {
-                  throw new APIError("BAD_REQUEST", {
-                    message: "Teammates can only be invited as admins.",
-                  });
-                }
+                assertInvitationShape(invitation);
               },
               beforeAcceptInvitation: async ({ invitation, user }) => {
                 const existing = await AuthRepository.getMembership(
@@ -92,6 +97,13 @@ function createAuth() {
                     message: "You are already a member of this organization.",
                   });
                 }
+                // Deleting a client clears its id from pending invitations;
+                // accepting one then would mint a client with no client.
+                if (invitation.role === "client" && !invitation.teamId) {
+                  throw new APIError("BAD_REQUEST", {
+                    message: "This client no longer exists.",
+                  });
+                }
               },
               // The invite flow only ever mints "admin", but the raw
               // update-member-role endpoint accepts any role string and the
@@ -101,7 +113,17 @@ function createAuth() {
               // free-grant loop at next sign-in). Ownership moves only through
               // the transferOwnership server function, which swaps the two
               // roles atomically — reject owner here.
-              beforeUpdateMemberRole: async ({ newRole }) => {
+              beforeUpdateMemberRole: async ({ member, newRole }) => {
+                // Client access comes only from a client invitation, so a
+                // role change can neither make nor unmake a client.
+                if (
+                  member.role === "client" ||
+                  newRole.split(",").some((r) => r.trim() === "client")
+                ) {
+                  throw new APIError("BAD_REQUEST", {
+                    message: "Client access is managed from the Clients page.",
+                  });
+                }
                 if (
                   newRole
                     .split(",")
@@ -219,6 +241,10 @@ function createAuth() {
       tanstackStartCookies(),
     ],
     hooks: {
+      before: createAuthMiddleware(async (ctx) => {
+        if (!isPathClosedToClients(ctx.path)) return;
+        await refuseClientCaller(ctx, await getSessionFromCtx(ctx));
+      }),
       // Marked when the user creates an MCP API key, the API-key counterpart
       // of OAuth's authorize step. Not on each /mcp request: isolates share no
       // memory, so every one would re-send it and hit Loops' team-wide rate

@@ -23,6 +23,7 @@ import { createPromptNerdyMcpServer } from "@/server/mcp/server";
 import { supportsMcpApps } from "@/server/mcp/ui-capabilities";
 import { AuthRepository } from "@/server/auth/repositories/AuthRepository";
 import { resolveExistingActiveHostedOrganization } from "@/server/auth/default-hosted-organization";
+import { isClientRole } from "@/lib/org-permissions";
 
 // Mirrors the agents SDK's DEFAULT_CORS_OPTIONS so legacy responses carry the
 // same CORS surface as the modern handler's.
@@ -213,6 +214,12 @@ export async function handleAuthenticatedPromptNerdyMcpRequest(
     return new Response("Organization access revoked", {
       status: 401,
       headers: { "WWW-Authenticate": 'Bearer error="invalid_token"' },
+    });
+  }
+  // Client contacts (spec 0017) use the portal, never MCP.
+  if (isClientRole(organization.role)) {
+    return new Response("MCP isn't available to client accounts", {
+      status: 403,
     });
   }
 

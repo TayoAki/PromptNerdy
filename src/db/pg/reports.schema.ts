@@ -31,6 +31,7 @@ export const reports = pgTable(
     sizeBytes: integer("size_bytes").notNull(),
     shareToken: text("share_token"),
     sharedAt: text("shared_at"),
+    clientVisibleAt: text("client_visible_at"),
     createdAt: text("created_at").notNull().default(isoNow),
     updatedAt: text("updated_at").notNull().default(isoNow),
   },

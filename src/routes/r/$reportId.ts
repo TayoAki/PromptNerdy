@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers";
 import { createFileRoute } from "@tanstack/react-router";
 import { isHostedAuthMode } from "@/lib/auth-mode";
+import { isClientRole } from "@/lib/org-permissions";
 import { resolveUserContextFromHeaders } from "@/middleware/ensure-user/resolve";
 import { ProjectRepository } from "@/server/features/projects/repositories/ProjectRepository";
 import { ReportRepository } from "@/server/features/reports/repositories/ReportRepository";
@@ -55,14 +56,17 @@ async function handleReportRequest(
   const projectId = await ReportRepository.getReportProjectId(reportId);
   if (!projectId) return reportNotFound();
 
-  // The canonical project-access check — org ownership plus "not archived" —
-  // the same one ensureUserMiddleware uses for server functions. Org ids are
-  // never compared by hand.
-  const project = await ProjectRepository.getProjectForOrganization(
+  // The canonical project-access check — org ownership, "not archived", and a
+  // client contact's own clients (spec 0017) — the same one ensureUserMiddleware
+  // uses for server functions. Org ids are never compared by hand.
+  const isClient = isClientRole(context.role);
+  const project = await ProjectRepository.getProjectForMember(
     projectId,
-    context.organizationId,
+    context,
   );
   if (!project) {
+    // A client contact is not told about the agency's archived projects.
+    if (isClient) return reportNotFound();
     const archived = await ProjectRepository.getArchivedProjectForOrganization(
       projectId,
       context.organizationId,
@@ -74,7 +78,9 @@ async function handleReportRequest(
     );
   }
 
-  const html = await ReportRepository.getReportHtml(projectId, reportId);
+  const html = await ReportRepository.getReportHtml(projectId, reportId, {
+    publishedToClient: isClient,
+  });
   if (html === null) return reportNotFound();
 
   // Print mode. "Export" in the app opens `/r/<id>?print=1`, and the appended

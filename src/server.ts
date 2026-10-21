@@ -11,6 +11,7 @@ import { reconcileStaleAudits } from "@/server/features/audit/services/auditReco
 import { sendFirstAuditEmails } from "@/server/features/audit/services/firstAuditEmails";
 import { getOrCreateOrganizationCustomer } from "@/server/billing/subscription";
 import { getAuthMode, isHostedAuthMode } from "@/lib/auth-mode";
+import { isClientRole } from "@/lib/org-permissions";
 import {
   createPromptNerdyOAuthProvider,
   type PromptNerdyOAuthEnv,
@@ -79,6 +80,10 @@ async function authorizeSamChat(
     context = await resolveUserContextFromHeaders(request.headers);
   } catch {
     return new Response("Unauthorized", { status: 401 });
+  }
+  // SAM is an agency tool; client contacts (spec 0017) never get a socket.
+  if (isClientRole(context.role)) {
+    return new Response("Forbidden", { status: 403 });
   }
   const session = await SamSessionRepository.getActiveSession(
     sessionId,

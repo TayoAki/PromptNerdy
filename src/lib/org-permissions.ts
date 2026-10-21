@@ -41,6 +41,9 @@ export const orgRoles = {
   member: orgAccessControl.newRole({
     ...memberAc.statements,
   }),
+  // A contact at one of the agency's clients (spec 0017). No permissions at
+  // all: clients reach only the portal, which scopes to their client teams.
+  client: orgAccessControl.newRole({}),
 };
 
 export type OrgPermissionRequest = Partial<{
@@ -62,4 +65,10 @@ export function hasOrgPermission(
     const candidate = roleByName.get(name.trim());
     return candidate ? candidate.authorize(permissions).success : false;
   });
+}
+
+// True when every role the member holds is "client". A member who also holds
+// a staff role is staff.
+export function isClientRole(role: string): boolean {
+  return role.split(",").every((name) => name.trim() === "client");
 }

@@ -3,6 +3,8 @@ import { AuthPageCard, AuthPageShell } from "@/client/features/auth/AuthPage";
 import { useHostedAuthRouteGuard } from "@/client/features/auth/useHostedAuthRouteGuard";
 import { PageLoading } from "@/client/components/Spinner";
 import { Button } from "@/client/components/ui/button";
+import { NoWorkspaceCard } from "@/client/features/clients/NoWorkspaceCard";
+import { useClientPortalRedirect } from "@/client/features/clients/useClientPortalRedirect";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedShellLayout,
@@ -10,6 +12,9 @@ export const Route = createFileRoute("/_authenticated")({
 
 function AuthenticatedShellLayout() {
   const authGate = useHostedAuthRouteGuard();
+  const viewer = useClientPortalRedirect(
+    authGate.canRenderAuthenticatedContent,
+  );
 
   // Every page under this layout is hosted-only.
   if (!authGate.isHostedMode) {
@@ -32,7 +37,8 @@ function AuthenticatedShellLayout() {
     );
   }
 
-  if (!authGate.canRenderAuthenticatedContent) {
+  if (viewer === "no-workspace") return <NoWorkspaceCard />;
+  if (!authGate.canRenderAuthenticatedContent || viewer === "pending") {
     return <PageLoading />;
   }
 

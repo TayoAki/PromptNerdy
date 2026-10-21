@@ -1,6 +1,7 @@
 import { and, count, desc, eq, isNotNull, isNull, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { projects } from "@/db/schema";
+import { projects, teamMember } from "@/db/schema";
+import { isClientRole } from "@/lib/org-permissions";
 import { AppError } from "@/server/lib/errors";
 
 async function listProjects(organizationId: string) {
@@ -42,6 +43,50 @@ async function getProjectForOrganization(
     )
     .limit(1);
   return project ?? null;
+}
+
+// The canonical project access rule (spec 0017): the project is in the
+// caller's organization and, for a client contact, assigned to one of their
+// client teams. Staff see every project in the organization.
+async function getProjectForMember(
+  projectId: string,
+  caller: { organizationId: string; userId: string; role: string },
+) {
+  const project = await getProjectForOrganization(
+    projectId,
+    caller.organizationId,
+  );
+  if (!project || !isClientRole(caller.role)) return project;
+  if (!project.clientTeamId) return null;
+  const [membership] = await db
+    .select({ id: teamMember.id })
+    .from(teamMember)
+    .where(
+      and(
+        eq(teamMember.teamId, project.clientTeamId),
+        eq(teamMember.userId, caller.userId),
+      ),
+    )
+    .limit(1);
+  return membership ? project : null;
+}
+
+// Assigns a project to one of the organization's clients, or back to
+// agency-internal with null. The caller has checked the client is in the org.
+async function setClientTeam(
+  projectId: string,
+  organizationId: string,
+  clientTeamId: string | null,
+) {
+  await db
+    .update(projects)
+    .set({ clientTeamId })
+    .where(
+      and(
+        eq(projects.id, projectId),
+        eq(projects.organizationId, organizationId),
+      ),
+    );
 }
 
 // The archived counterpart of getProjectForOrganization, for the surfaces that
@@ -233,6 +278,8 @@ export const ProjectRepository = {
   listArchivedProjects,
   countProjects,
   getProjectForOrganization,
+  getProjectForMember,
+  setClientTeam,
   getArchivedProjectForOrganization,
   getProjectById,
   createProject,

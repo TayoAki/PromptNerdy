@@ -115,6 +115,8 @@ export const {
   apikey,
   verification,
   organization,
+  team,
+  teamMember,
   member,
   invitation,
   billingCustomerStatus,

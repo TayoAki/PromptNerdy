@@ -61,6 +61,13 @@ export function createBaseAuthConfig(options?: {
         // only rate control that actually holds on Workers (in-memory rate
         // limiting is per-isolate).
         invitationLimit: 20,
+        // An agency's clients are teams (spec 0017). No default team: an org
+        // starts with no clients, and an agency can remove its last one.
+        teams: {
+          enabled: true,
+          defaultTeam: { enabled: false },
+          allowRemovingAllTeams: true,
+        },
         ...options?.organization,
       }),
     ],

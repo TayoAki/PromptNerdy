@@ -59,6 +59,8 @@ To give each person their own login instead, run with `AUTH_MODE=hosted` (remove
 
 With billing off, sign-up is invite-only. The listed addresses can create an account, and everyone else needs an invitation from **Settings → Organization**. Without an email provider, PromptNerdy shows you the invite link to send yourself, and password reset isn't available.
 
+Agencies can add their clients under **Settings → Clients**: assign each client its projects, invite the client's contacts, and publish reports to them. Contacts sign in to a view-only portal that shows only their own projects and published reports.
+
 ## Telemetry
 
 PromptNerdy collects anonymized telemetry for core usage events: heartbeats with aggregate counts (installs, users, projects, feature usage) tied to a random install ID, sent every 5 minutes during the first two hours after install, then at most once daily. Telemetry also includes failed setup check names and statuses, never values or error messages. No URLs, keywords, prompts, emails, or IP-derived location are collected, and idle installs send nothing.
