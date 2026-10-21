@@ -75,7 +75,8 @@ Bare organization lookups stay only on internal Workflow and Durable Object path
 
 - **The billing unit is the active client.** A client counts from creation until it's archived, and the Clients page shows the count.
 - **With billing on, the client count is an Autumn usage feature, like seats.** Creating or restoring a client adds one and archiving removes one. Creating a client beyond the plan's allowance is refused with an upgrade prompt.
-- **Research usage is unchanged.** DataForSEO and AI calls are still metered against the agency's organization-wide credits, whichever client's project they ran on.
+- **Each client's price includes SEO usage credits.** Usage on a client's projects draws from that client's balance (one billing entity per client under the agency's customer). Agency-internal projects draw from the organization's own credits.
+- **Per-client usage is visible.** The Clients page shows each client's usage, so an agency can pass the cost on and charge a heavy client more.
 - **White-label is a separate Autumn feature on a higher tier.** The portal checks it only to decide whether to show the badge.
 - **With billing off (the MVP), clients are unlimited and every portal shows the badge.** No plan exists to grant white-label.
 
@@ -112,8 +113,5 @@ Anything a contact can change (comments, approvals, uploads, research), a custom
 
 - **View-only for contacts.** Anything a contact can change waits for a later spec.
 - **Agencies pay per active client,** not per contact. Contacts are unlimited.
+- **Each client's price includes its own SEO usage credits,** so usage is attributed per client and an agency can charge accordingly.
 - **White-labelling is a paid tier.** For now it only hides the badge; a custom portal domain can join that tier later.
-
-## Open questions
-
-- Does each client's price include usage credits, or do credits stay one organization-wide pool bought separately? This design assumes one pool.
