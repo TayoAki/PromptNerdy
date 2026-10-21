@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed. Builds on multi-user organizations (`specs/0011-multi-user-organizations.md`), which deferred per-project authorization inside an organization; this is that work, shaped for agencies.
+Proposed; product decisions are recorded under Decisions. Builds on multi-user organizations (`specs/0011-multi-user-organizations.md`), which deferred per-project authorization inside an organization; this is that work, shaped for agencies.
 
 ## What it does
 
@@ -10,12 +10,13 @@ PromptNerdy serves an SEO agency and the businesses it works for.
 
 - **The agency is an organization.** Its staff are the owner and admins they already are today. They see every client and every project, run research, and pay for usage.
 - **A client is a named account inside the agency's organization**, such as "Acme Plumbing". It has one or more projects (websites) and any number of client contacts.
-- **Client contacts get their own logins** and land in a portal, not the app. The portal shows only their client's projects, read-only. It has no research tools, agent chat, MCP, integrations, settings or billing.
+- **Client contacts get their own logins** and land in a portal, not the app. The portal shows only their client's projects and is view-only: a contact can look at everything shared with them but change nothing. It has no research tools, agent chat, MCP, integrations, settings or billing.
 - **The agency decides what each client sees.** Reports are private to the agency until a staff member publishes one to the client.
+- **Agencies pay per client**, and **white-labelling is a paid tier**.
 
 ### Portal (client contacts)
 
-A slim shell branded with the agency's name and logo, the client's name, and a small "Powered by PromptNerdy".
+A slim shell branded with the agency's name and logo and the client's name. A small "Powered by PromptNerdy" appears unless the agency is on the white-label tier.
 
 - **Overview.** One card per website: Search Console clicks and impressions over 28 days with the change against the prior period, rank-tracking movers (up, down, new in the top 10), and site health from the latest audit. Every number shows when it was last updated.
 - **Reports.** The reports the agency published, newest first, in the same sandboxed viewer the app uses. Print stays available.
@@ -29,7 +30,7 @@ A contact who belongs to two clients, or to two agencies, switches between them 
 - **Clients page** (organization level): create, rename and archive clients; assign projects to a client; invite contacts by email; see each contact's last sign-in; remove a contact.
 - **Project header:** shows which client the project belongs to, with a "View as client" preview that renders the portal for that client.
 - **Report page:** a "Visible to client" toggle beside the existing public-link Share.
-- **Organization settings:** agency name and logo for the portal header.
+- **Organization settings:** agency name and logo for the portal header, on every plan. The white-label tier removes the PromptNerdy badge.
 
 ## How it works
 
@@ -70,7 +71,13 @@ Bare organization lookups stay only on internal Workflow and Durable Object path
 - Archiving a client hides it from the portal and the Clients page. Its projects return to agency-internal and their data is kept.
 - Deleting a client is a support action, like deleting an organization.
 
-**Billing.** Usage stays per organization: the agency pays for everything, including work done on a client's projects. Per-client usage reporting can read the existing metering events by project later.
+**Billing.**
+
+- **The billing unit is the active client.** A client counts from creation until it's archived, and the Clients page shows the count.
+- **With billing on, the client count is an Autumn usage feature, like seats.** Creating or restoring a client adds one and archiving removes one. Creating a client beyond the plan's allowance is refused with an upgrade prompt.
+- **Research usage is unchanged.** DataForSEO and AI calls are still metered against the agency's organization-wide credits, whichever client's project they ran on.
+- **White-label is a separate Autumn feature on a higher tier.** The portal checks it only to decide whether to show the badge.
+- **With billing off (the MVP), clients are unlimited and every portal shows the badge.** No plan exists to grant white-label.
 
 ## Alternatives considered
 
@@ -83,7 +90,7 @@ Bare organization lookups stay only on internal Workflow and Durable Object path
 
 ## Not in scope
 
-Client-side research tools, comments or approvals, client uploads, white-labelling beyond name and logo, a custom portal domain, per-client billing or invoices, scheduled email digests (these need an email provider), contact roles inside a client, and a client-facing MCP.
+Anything a contact can change (comments, approvals, uploads, research), a custom portal domain, invoices per client, scheduled email digests (these need an email provider), contact roles inside a client, and a client-facing MCP.
 
 ## Delivery
 
@@ -96,10 +103,17 @@ Client-side research tools, comments or approvals, client uploads, white-labelli
    - the Clients page with invite links
    - a portal shell with Reports and the publish toggle
 2. **Portal data:** the Overview, Rankings and Site health screens from stored data, plus "View as client".
-3. **Branding and reach:** agency logo and name in the portal, email digests once an email provider is configured, and per-client usage reporting.
+3. **Branding, billing and reach:**
+   - agency logo and name in the portal
+   - per-client billing and the white-label tier, once Autumn is set up
+   - email digests, once an email provider is configured
+
+## Decisions
+
+- **View-only for contacts.** Anything a contact can change waits for a later spec.
+- **Agencies pay per active client,** not per contact. Contacts are unlimited.
+- **White-labelling is a paid tier.** For now it only hides the badge; a custom portal domain can join that tier later.
 
 ## Open questions
 
-- Should a contact ever do more than view, for example approve content or leave comments? This design assumes view-only.
-- Should the portal hide "Powered by PromptNerdy" (white-label), and is that a paid tier?
-- Should agencies pay per client or per contact once billing is on? The data model supports either.
+- Does each client's price include usage credits, or do credits stay one organization-wide pool bought separately? This design assumes one pool.
