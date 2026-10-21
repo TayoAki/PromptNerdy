@@ -9,7 +9,6 @@ import {
 import { sendCreditsExhaustedEvent } from "@/server/email/onboarding-drip";
 import { AppError } from "@/server/lib/errors";
 import { captureServerEvent } from "@/server/lib/posthog";
-import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
 import {
   estimateRenderingCredits,
   renderingCreditsNeededText,
@@ -20,6 +19,7 @@ import {
   AUTUMN_SEO_DATA_BALANCE_FEATURE_ID,
   AUTUMN_SEO_DATA_TOPUP_BALANCE_FEATURE_ID,
 } from "@/shared/billing";
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 
 // Autumn allows 24 hours at most; keep a minute of margin for clock skew. An
 // audit that dies without settling returns its hold when the lock expires.
@@ -42,7 +42,7 @@ export async function lockRenderingCredits(input: {
   auditId: string;
   maxPages: number;
 }): Promise<RenderingLock[]> {
-  if (!(await isHostedServerAuthMode())) return [];
+  if (!(await isBillingEnabled())) return [];
   const { id: customerId } = await getOrCreateOrganizationCustomer(
     input.customer,
   );

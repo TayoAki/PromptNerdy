@@ -3,7 +3,6 @@ import {
   checkUsageCreditsDepleted,
   type BillingCustomerContext,
 } from "@/server/billing/subscription";
-import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
 import type { ContextAuthor } from "@/types/schemas/projectContext";
 import { ProjectContextRepository } from "@/server/features/project-context/repositories/ProjectContextRepository";
 import { ProjectRepository } from "@/server/features/projects/repositories/ProjectRepository";
@@ -19,6 +18,7 @@ import {
   saveProjectWebsiteSetupSchema,
   type SaveProjectWebsiteSetup,
 } from "@/types/schemas/projectWebsite";
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 
 async function requireProject(
   customer: BillingCustomerContext,
@@ -40,7 +40,7 @@ async function research(
   // Any positive credit balance admits the whole research task. Its model
   // calls and searches finish before billing, even if the balance goes negative.
   if (
-    (await isHostedServerAuthMode()) &&
+    (await isBillingEnabled()) &&
     (await checkUsageCreditsDepleted(customer)).depleted
   )
     throw new AppError(

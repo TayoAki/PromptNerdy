@@ -14,7 +14,6 @@ import {
   type WebsiteResearch,
 } from "@/types/schemas/projectWebsite";
 import { AppError } from "@/server/lib/errors";
-import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
 import { AiVisibilityRepository as repo } from "../repositories/AiVisibilityRepository";
 import {
   writeConfiguration,
@@ -24,6 +23,7 @@ import {
   prepareWebsiteTracking,
   startWebsiteTrackingRun,
 } from "./websiteTrackingSetup";
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 
 /**
  * Prompt Research needs saved keywords. Website setup writes them; a
@@ -113,7 +113,7 @@ export async function startAiResearchSetup(
   // Once admitted, never recheck or reserve credits during research: finish
   // all model calls and searches, then bill actual spend, allowing a negative balance.
   if (
-    (await isHostedServerAuthMode()) &&
+    (await isBillingEnabled()) &&
     (await checkUsageCreditsDepleted(customer)).depleted
   )
     throw new AppError(

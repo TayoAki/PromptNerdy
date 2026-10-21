@@ -20,6 +20,8 @@ vi.mock(
   () => ({ RankTrackingRepository: mocks }),
 );
 vi.mock("@/server/lib/runtime-env", () => ({
+  // Unset BILLING_ENABLED: hosted mode bills.
+  getOptionalEnvValue: vi.fn(),
   isHostedServerAuthMode: mocks.isHostedServerAuthMode,
 }));
 vi.mock("@/server/billing/subscription", () => ({

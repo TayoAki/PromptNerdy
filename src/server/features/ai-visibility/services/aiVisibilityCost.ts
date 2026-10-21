@@ -1,10 +1,7 @@
 import { AiVisibilityRepository as repo } from "../repositories/AiVisibilityRepository";
 import { AiVisibilityError } from "./aiVisibilityErrors";
 import { aiScope } from "./aiVisibilityConfiguration";
-import {
-  getOptionalEnvValue,
-  isHostedServerAuthMode,
-} from "@/server/lib/runtime-env";
+import { getOptionalEnvValue } from "@/server/lib/runtime-env";
 import {
   aiEngineUsesModelApi,
   AI_ENGINE_LABELS,
@@ -21,6 +18,7 @@ import {
 import { scheduledChecksPerMonth } from "@/shared/rank-tracking";
 import type { EstimateAiCostInput } from "@/types/schemas/ai-visibility";
 import { projectPatch } from "./aiVisibilityMutation";
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 
 /**
  * Raw DataForSEO USD for one answer. Claude and Perplexity always use the
@@ -71,9 +69,9 @@ export async function estimateCost(
     );
   const scope = aiScope(config, input.promptIds);
   const answers = scope.prompts.flatMap(() => scope.engines);
-  const hosted = await isHostedServerAuthMode();
-  const cost = aiCostForAnswers(answers, hosted, "queued");
-  const runNow = aiCostForAnswers(answers, hosted, "live");
+  const billed = await isBillingEnabled();
+  const cost = aiCostForAnswers(answers, billed, "queued");
+  const runNow = aiCostForAnswers(answers, billed, "live");
   const liveEngines = scope.engines.filter(aiEngineUsesModelApi);
   const scheduleInterval =
     input.scheduleInterval ?? current?.tracker.scheduleInterval ?? "weekly";
@@ -90,9 +88,9 @@ export async function estimateCost(
     monthlyCostUsd: Math.round(cost.costUsd * checksPerMonth * 1e6) / 1e6,
     currency: "USD",
     warnings: [
-      hosted
+      billed
         ? "Customer cost uses PromptNerdy data credits, including the service markup."
-        : "Self-hosted: cost estimates your own DataForSEO account charges. PromptNerdy credits are not used.",
+        : "Cost estimates the DataForSEO account charges. PromptNerdy credits are not used.",
       `One fresh answer per prompt and engine. The ${scheduleInterval} estimate assumes ${checksPerMonth} ${checksPerMonth === 1 ? "check" : "checks"} per month.`,
       ...(liveEngines.length
         ? [

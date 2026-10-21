@@ -46,6 +46,19 @@ You can also persist it in `.env`.
 
 If you have no auth proxy of your own, set `BASIC_AUTH_USERNAME` and `BASIC_AUTH_PASSWORD` in `.env`. The app then asks every visitor for that username and password before serving anything except `/api/health`. MCP clients can't connect through this gate.
 
+## Accounts and teams
+
+To give each person their own login instead, run with `AUTH_MODE=hosted` (remove the `AUTH_MODE=local_noauth` line from `compose.yaml`'s `environment:` list, which overrides `.env`). Then set the following in `.env`:
+
+- `BETTER_AUTH_SECRET`: a long random secret.
+- `BETTER_AUTH_URL`: the public URL of your deployment.
+- `BILLING_ENABLED=false`: there is no usage billing.
+- `GOOGLE_SIGN_IN_ENABLED=false`: unless you set up a Google OAuth client.
+- `BYPASS_EMAIL_VERIFICATION=true`: unless you set up Loops email.
+- `SIGNUP_ALLOWED_EMAILS`: your own email address.
+
+With billing off, sign-up is invite-only. The listed addresses can create an account, and everyone else needs an invitation from **Settings → Organization**. Without an email provider, PromptNerdy shows you the invite link to send yourself, and password reset isn't available.
+
 ## Telemetry
 
 PromptNerdy collects anonymized telemetry for core usage events: heartbeats with aggregate counts (installs, users, projects, feature usage) tied to a random install ID, sent every 5 minutes during the first two hours after install, then at most once daily. Telemetry also includes failed setup check names and statuses, never values or error messages. No URLs, keywords, prompts, emails, or IP-derived location are collected, and idle installs send nothing.

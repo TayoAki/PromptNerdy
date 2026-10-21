@@ -3,8 +3,8 @@ import {
   trackUsageCreditSpend,
   type BillingCustomerContext,
 } from "./subscription";
-import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
 import type { CreditFeature } from "@/shared/billing-credit-features";
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 
 export type ResearchSpend = {
   provider: "openrouter" | "dataforseo" | "context";
@@ -21,7 +21,7 @@ export async function billResearchSpend(
   const charges = spend.filter(({ costUsd }) => costUsd > 0);
   if (!charges.length) return;
   try {
-    if (!(await isHostedServerAuthMode())) return;
+    if (!(await isBillingEnabled())) return;
     // Read only to choose the credit pool, never to gate an admitted task.
     // Any excess goes negative on monthly credits, which every org has, rather
     // than disappearing against a top-up balance the user may never have bought.

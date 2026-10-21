@@ -1,12 +1,12 @@
 import { RankTrackingRepository } from "@/server/features/rank-tracking/repositories/RankTrackingRepository";
 import { beginRankCheckRun } from "@/server/features/rank-tracking/services/rankCheckRunGuards";
 import { customerHasPaidPlan } from "@/server/billing/subscription";
-import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
 import {
   computeNextCheckAt,
   devicesCount,
   isScheduledRankTrackingInterval,
 } from "@/shared/rank-tracking";
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 
 // Work admitted per tick, in task units (keywords × devices). Admission
 // control, not a hard rate limit: the first start of a tick is always
@@ -39,7 +39,7 @@ export async function runScheduledRankChecks(env: Env) {
   const nowIso = new Date().toISOString();
   const dueConfigs =
     await RankTrackingRepository.getDueConfigsWithOrganization(nowIso);
-  const isHosted = await isHostedServerAuthMode();
+  const billingEnabled = await isBillingEnabled();
   const keywordCounts = await RankTrackingRepository.getKeywordCountsForConfigs(
     dueConfigs.map((config) => config.id),
   );
@@ -121,7 +121,7 @@ export async function runScheduledRankChecks(env: Env) {
       // Self-hosted deployments treat every config as paid and make no Autumn
       // calls at all.
       let hasPaidPlan = true;
-      if (isHosted) {
+      if (billingEnabled) {
         try {
           hasPaidPlan = await checkPaidPlan(config.organizationId);
         } catch (err) {

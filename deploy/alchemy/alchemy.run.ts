@@ -270,6 +270,9 @@ const dataEnv = {
   // POLICY_AUD are stage-dependent and set in the stack body below.
   DATAFORSEO_API_KEY: Config.redacted("DATAFORSEO_API_KEY"),
   BYPASS_EMAIL_VERIFICATION: optionalVar("BYPASS_EMAIL_VERIFICATION"),
+  BILLING_ENABLED: optionalVar("BILLING_ENABLED"),
+  GOOGLE_SIGN_IN_ENABLED: optionalVar("GOOGLE_SIGN_IN_ENABLED"),
+  SIGNUP_ALLOWED_EMAILS: optionalVar("SIGNUP_ALLOWED_EMAILS"),
   BETTER_AUTH_SECRET: optionalSecret("BETTER_AUTH_SECRET"),
   CRAWLER_ACCESS_SECRET: optionalSecret("CRAWLER_ACCESS_SECRET"),
   GOOGLE_CLIENT_ID: optionalVar("GOOGLE_CLIENT_ID"),
@@ -411,6 +414,7 @@ export default Alchemy.Stack(
         CONTEXT_API_KEY: dataEnv.CONTEXT_API_KEY,
         DATAFORSEO_API_KEY: dataEnv.DATAFORSEO_API_KEY,
         AUTUMN_SECRET_KEY: dataEnv.AUTUMN_SECRET_KEY,
+        BILLING_ENABLED: dataEnv.BILLING_ENABLED,
         POSTHOG_PUBLIC_KEY: dataEnv.POSTHOG_PUBLIC_KEY,
         POSTHOG_HOST: dataEnv.POSTHOG_HOST,
         AUTH_MODE: authMode,

@@ -49,6 +49,13 @@ export function isGoogleSignInClientEnabled() {
   return import.meta.env.GOOGLE_SIGN_IN_ENABLED !== "false";
 }
 
+// Client half of isBillingEnabled (src/server/billing/billing-mode.ts).
+export function isBillingClientEnabled() {
+  return (
+    isHostedClientAuthMode() && import.meta.env.BILLING_ENABLED !== "false"
+  );
+}
+
 export function isEmailVerificationBypassed() {
   // Local-dev escape hatch (BYPASS_EMAIL_VERIFICATION=true). The server skips
   // verification and never marks users emailVerified, so the client must treat

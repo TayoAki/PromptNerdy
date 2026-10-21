@@ -22,7 +22,6 @@ import { buildCacheKey, getCached, setCached } from "@/server/lib/r2-cache";
 import {
   getOptionalEnvValue,
   getRequiredEnvValue,
-  isHostedServerAuthMode,
 } from "@/server/lib/runtime-env";
 import { normalizeAiSuggestion } from "@/shared/ai-prompt-suggestions";
 import {
@@ -34,6 +33,7 @@ import type { ResearchAiPromptsInput } from "@/types/schemas/aiPromptResearch";
 import { aiPromptIsBranded, ownedAiDomain } from "./aiVisibilityMatching";
 import { AiVisibilityRepository as repo } from "../repositories/AiVisibilityRepository";
 import { getTracker } from "./aiVisibilityState";
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 
 /** The provider refreshes prompt data monthly; one paid call per day is enough. */
 const RESEARCH_TTL_SECONDS = 24 * 60 * 60;
@@ -90,7 +90,7 @@ export async function researchAiPrompts(
   // Admit the whole search before buying prompt data, so a search that pays
   // for questions can always finish the relevance check that shows them.
   if (
-    (await isHostedServerAuthMode()) &&
+    (await isBillingEnabled()) &&
     (await checkUsageCreditsDepleted(customer)).depleted
   )
     throw new AppError(

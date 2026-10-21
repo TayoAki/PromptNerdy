@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { QueryError } from "@/client/components/QueryState";
@@ -26,6 +26,7 @@ import { normalizeAuthRedirect } from "@/lib/auth-redirect";
 import { useCanManageBilling } from "@/client/features/team/organizationQueries";
 import { SUPPORT_EMAIL } from "@/client/lib/support";
 import { Button } from "@/client/components/ui/button";
+import { isBillingClientEnabled } from "@/lib/auth-mode";
 
 const PLAN_FEATURES = [
   "Keyword research, backlinks, rank tracking, and site audits",
@@ -43,6 +44,11 @@ export const Route = createFileRoute("/_authenticated/subscribe")({
   // The loader fills the module-scoped query client, so keep it out of server
   // requests: one worker isolate must not cache another account's billing.
   ssr: false,
+  beforeLoad: () => {
+    if (!isBillingClientEnabled()) {
+      throw notFound();
+    }
+  },
   validateSearch: (
     search: Record<string, unknown>,
   ): { upgrade?: true; redirect?: string; checkout?: "success" } => ({

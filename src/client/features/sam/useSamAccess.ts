@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getStandardErrorMessage } from "@/client/lib/error-messages";
-import { isHostedClientAuthMode } from "@/lib/auth-mode";
+import { isBillingClientEnabled } from "@/lib/auth-mode";
 import { getSamAccessSetupStatus } from "@/serverFunctions/samAccess";
 
 // Fails closed: the chat only renders once the check confirms the OpenRouter
@@ -22,21 +22,21 @@ type SamAccess =
     };
 
 export function useSamAccess(projectId: string): SamAccess {
-  // Hosted deployments always have OPENROUTER_API_KEY provisioned (the server
-  // function short-circuits to enabled), so skip the round-trip entirely.
-  const isHosted = isHostedClientAuthMode();
+  // Billed hosted deployments always have OPENROUTER_API_KEY provisioned (the
+  // server function short-circuits to enabled), so skip the round-trip.
+  const isProvisioned = isBillingClientEnabled();
 
   const { data, error, isFetching, isRefetching, refetch } = useQuery({
     queryKey: ["samAccessStatus", projectId],
     queryFn: () => getSamAccessSetupStatus({ data: { projectId } }),
-    enabled: !isHosted,
+    enabled: !isProvisioned,
     refetchOnWindowFocus: false,
     staleTime: 60 * 1000,
   });
 
   const onRetry = () => void refetch();
 
-  if (isHosted) return { status: "ready" };
+  if (isProvisioned) return { status: "ready" };
   if (data === undefined) {
     return error
       ? { status: "error", error, isRetrying: isFetching, onRetry }

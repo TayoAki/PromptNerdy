@@ -45,6 +45,7 @@ import { getPublicOrigin } from "@/server/mcp/public-origin";
 import { MCP_SCOPE } from "@/lib/oauth-resource";
 import { AuthRepository } from "@/server/auth/repositories/AuthRepository";
 import type { ToolAuthContext } from "@/server/mcp/context";
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 
 // SAM's read-only view of the project's shared memory. The block has no `set`
 // provider, so Think exposes no set_context tool for it; writes go through the
@@ -323,15 +324,15 @@ export class SamChatAgent extends Think {
         );
       }
 
-      // Gate every turn on credits in hosted mode: SAM is open to every plan
+      // Gate every turn on credits when billing is on: SAM is open to every plan
       // (including free), and LLM tokens plus DataForSEO tool calls all draw
       // down the org's credit balance. Self-hosted brings its own provider
-      // keys and has no Autumn balance, so it's ungated. Depletion is
+      // keys and has no Autumn balance, so it's ungated, as is a hosted MVP
+      // run with billing off. Depletion is
       // confirmed against a second Autumn read path before refusing — a
       // stale check reading here once locked a paying customer out of chat.
       const { organizationId } = ctx.project;
-      const hosted = await isHostedServerAuthMode();
-      if (hosted) {
+      if (await isBillingEnabled()) {
         const { depleted, monthlyRemaining } = await checkUsageCreditsDepleted({
           userId: ctx.row.userId,
           userEmail: ctx.userEmail,
@@ -359,7 +360,7 @@ export class SamChatAgent extends Think {
         ctx.row.userId,
         organizationId,
       );
-      if (hosted && !membership) {
+      if (!membership && (await isHostedServerAuthMode())) {
         turn.refusal = "no_access";
         return this.refusalTurn(
           "You no longer have access to this organization, so I can't continue this chat.",

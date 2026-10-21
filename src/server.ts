@@ -10,7 +10,6 @@ import { runScheduledRankChecks } from "@/server/features/rank-tracking/services
 import { reconcileStaleAudits } from "@/server/features/audit/services/auditReconciler";
 import { sendFirstAuditEmails } from "@/server/features/audit/services/firstAuditEmails";
 import { getOrCreateOrganizationCustomer } from "@/server/billing/subscription";
-import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
 import { getAuthMode, isHostedAuthMode } from "@/lib/auth-mode";
 import {
   createPromptNerdyOAuthProvider,
@@ -28,6 +27,7 @@ import { maybeSendSelfHostHeartbeat } from "@/server/lib/self-host-telemetry";
 import { siteBasicAuthChallenge } from "@/server/lib/site-basic-auth";
 import { handleGdprStorageErasure } from "@/server/gdpr/storage-erasure";
 import { GDPR_STORAGE_ERASURE_PATH } from "@/shared/gdpr-erasure";
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 
 const startHandler = createStartHandler(defaultStreamHandler);
 
@@ -95,8 +95,8 @@ async function authorizeSamChat(
   }
   // Make sure the Autumn customer (and its default free-plan credits) exists
   // before the DO's balance gate runs, or a brand-new org's first message hits
-  // a false "out of credits". Hosted-only; self-hosted has no Autumn.
-  if (await isHostedServerAuthMode()) {
+  // a false "out of credits". Only when billing is on; otherwise no Autumn.
+  if (await isBillingEnabled()) {
     await getOrCreateOrganizationCustomer(context);
   }
   return undefined;

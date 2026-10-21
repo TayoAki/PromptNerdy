@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   AUTUMN_SEO_DATA_BALANCE_FEATURE_ID,
   AUTUMN_SEO_DATA_TOPUP_BALANCE_FEATURE_ID,
@@ -27,6 +27,7 @@ interface FinalizeCallArg {
 const {
   checkMock,
   finalizeMock,
+  getOptionalEnvValueMock,
   getOrCreateMock,
   isHostedServerAuthModeMock,
   mockEnv,
@@ -34,6 +35,8 @@ const {
   checkMock: vi.fn<(arg: CheckCallArg) => Promise<CheckResult>>(),
   finalizeMock:
     vi.fn<(arg: FinalizeCallArg) => Promise<{ success: boolean }>>(),
+  getOptionalEnvValueMock:
+    vi.fn<(name: string) => Promise<string | undefined>>(),
   getOrCreateMock: vi.fn(),
   isHostedServerAuthModeMock: vi.fn(),
   mockEnv: {},
@@ -64,6 +67,7 @@ vi.mock("@/server/billing/subscription", async (importOriginal) => {
 });
 
 vi.mock("@/server/lib/runtime-env", () => ({
+  getOptionalEnvValue: getOptionalEnvValueMock,
   isHostedServerAuthMode: isHostedServerAuthModeMock,
 }));
 
@@ -182,15 +186,25 @@ function mockDataforseoResult(costUsd: number) {
   });
 }
 
+beforeEach(() => {
+  // Unset BILLING_ENABLED: hosted mode bills.
+  getOptionalEnvValueMock.mockResolvedValue(undefined);
+});
+
 describe("meterDataforseoCall", () => {
-  it("skips billing in non-hosted mode", async () => {
-    isHostedServerAuthModeMock.mockResolvedValue(false);
+  it.each([
+    ["self-hosted mode", false, undefined],
+    ["hosted mode with BILLING_ENABLED=false", true, "false"],
+  ])("skips billing in %s", async (_mode, hosted, billingEnabled) => {
+    isHostedServerAuthModeMock.mockResolvedValue(hosted);
+    getOptionalEnvValueMock.mockResolvedValue(billingEnabled);
     mockDataforseoResult(RAW_COST);
 
     const client = createDataforseoClient(billingCustomer);
     const result = await client.backlinks.summary(backlinksInput);
 
     expect(result).toEqual({ rank: 42 });
+    expect(getOrCreateMock).not.toHaveBeenCalled();
     expect(checkMock).not.toHaveBeenCalled();
     expect(finalizeMock).not.toHaveBeenCalled();
   });

@@ -63,8 +63,8 @@ import {
   fetchAiTrackingLiveAnswer,
   postAiTrackingTasks,
 } from "@/server/lib/dataforseo/ai-tracking";
-import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
 import { AppError } from "@/server/lib/errors";
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 
 export { mapDataforseoPathToCreditFeature };
 
@@ -337,7 +337,7 @@ async function meterDataforseoCalls<T>(
   creditFeature?: CreditFeature,
 ): Promise<PromiseSettledResult<T>[]> {
   if (executes.length === 0) return [];
-  const isHostedMode = await isHostedServerAuthMode();
+  const isHostedMode = await isBillingEnabled();
 
   if (!isHostedMode) {
     return Promise.allSettled(

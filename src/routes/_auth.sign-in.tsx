@@ -15,7 +15,10 @@ import { useGoogleAuth } from "@/client/features/auth/useGoogleAuth";
 import { getFormError } from "@/client/lib/forms";
 import { captureClientEvent } from "@/client/lib/posthog";
 import { authClient } from "@/lib/auth-client";
-import { isGoogleSignInClientEnabled } from "@/lib/auth-mode";
+import {
+  isEmailVerificationBypassed,
+  isGoogleSignInClientEnabled,
+} from "@/lib/auth-mode";
 import {
   getSignInSearch,
   getVerifyEmailSearch,
@@ -116,7 +119,9 @@ function SignInPage() {
                 : "w-full text-sm text-foreground/50"
             }
           >
-            {showEmailForm ? (
+            {/* Bypassing verification means no email provider is set up, so
+                a reset email could never arrive. */}
+            {showEmailForm && !isEmailVerificationBypassed() ? (
               <Link
                 to="/forgot-password"
                 search={getSignInSearch(redirectTo)}

@@ -20,7 +20,7 @@ import { openPlanCheckout } from "@/client/features/billing/checkout";
 import { useCanManageBilling } from "@/client/features/team/organizationQueries";
 import { getStandardErrorMessage } from "@/client/lib/error-messages";
 import { useSession } from "@/lib/auth-client";
-import { isHostedClientAuthMode } from "@/lib/auth-mode";
+import { isBillingClientEnabled } from "@/lib/auth-mode";
 import { BILLING_ROUTE } from "@/shared/billing";
 import { SUPPORT_EMAIL } from "@/client/lib/support";
 
@@ -36,7 +36,7 @@ export const Route = createFileRoute("/_authenticated/yc")({
   // requests: one worker isolate must not cache another account's billing.
   ssr: false,
   beforeLoad: () => {
-    if (!isHostedClientAuthMode()) {
+    if (!isBillingClientEnabled()) {
       throw notFound();
     }
   },

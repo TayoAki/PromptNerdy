@@ -7,6 +7,7 @@ import { type ToolContext } from "@/server/mcp/context";
 import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
 import { optionalMetaOutputSchema } from "@/server/mcp/output-schemas";
 import { z } from "zod";
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 
 export const whoamiTool = {
   name: "whoami",
@@ -32,8 +33,9 @@ export const whoamiTool = {
   handler: async (_args: Record<string, never>, context: ToolContext) => {
     const auth = context.auth;
     const isHosted = await isHostedServerAuthMode();
+    const billingEnabled = await isBillingEnabled();
     let creditsRemaining: number | null = null;
-    if (isHosted) {
+    if (billingEnabled) {
       try {
         const customer = await getOrCreateOrganizationCustomer(auth);
         const { monthlyRemaining, topupRemaining } =
@@ -48,7 +50,7 @@ export const whoamiTool = {
       `Mode: ${isHosted ? "hosted" : "self-hosted"}`,
       `Scopes: ${auth.scopes.length > 0 ? auth.scopes.join(", ") : "none"}`,
     ];
-    if (isHosted) {
+    if (billingEnabled) {
       lines.push(
         `Credits remaining: ${creditsRemaining != null ? creditsRemaining.toLocaleString() : "unknown"}`,
       );
