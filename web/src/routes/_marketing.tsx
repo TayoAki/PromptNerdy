@@ -10,8 +10,9 @@ import { SiteFooter } from "@/components/site-footer";
 import { featureGroups } from "@/lib/feature-pages";
 
 const GITHUB_REPO = "TayoAki/PromptNerdy";
-// Used if GitHub is unreachable at build time so the header never renders empty.
-const FALLBACK_STAR_COUNT = "2.1k";
+// Used if GitHub is unreachable (or the repo is private); the header then
+// shows the GitHub link without a count.
+const FALLBACK_STAR_COUNT = "";
 
 // Round to the nearest hundred and render in thousands, e.g. 3140 -> "3.1k".
 function formatStarCount(count: number): string {
@@ -69,7 +70,7 @@ function getMobileNavItems(githubStarCount: string) {
       label: "Community",
       links: [
         {
-          label: `GitHub ${githubStarCount}`,
+          label: githubStarCount ? `GitHub ${githubStarCount}` : "GitHub",
           href: "https://github.com/TayoAki/PromptNerdy",
         },
       ],
@@ -212,13 +213,17 @@ function MarketingLayout() {
                 href="https://github.com/TayoAki/PromptNerdy"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={`GitHub, ${githubStarCount} stars`}
+                aria-label={
+                  githubStarCount ? `GitHub, ${githubStarCount} stars` : "GitHub"
+                }
                 className="group hidden h-9 items-center gap-1.5 px-2 text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900 md:inline-flex"
               >
                 <GitHubIcon size={16} />
-                <span className="text-neutral-500 transition-colors group-hover:text-neutral-900">
-                  {githubStarCount}
-                </span>
+                {githubStarCount ? (
+                  <span className="text-neutral-500 transition-colors group-hover:text-neutral-900">
+                    {githubStarCount}
+                  </span>
+                ) : null}
               </a>
               <a
                 href="https://app.promptnerdy.com/sign-in"
