@@ -7,7 +7,7 @@ export const Route = createFileRoute("/portal/")({
   component: PortalHome,
 });
 
-// One client goes straight to its reports; several get a picker.
+// One client goes straight to its portal; several get a picker.
 function PortalHome() {
   const { data } = useQuery(portalHomeQueryOptions());
   const clients = data?.clients ?? [];

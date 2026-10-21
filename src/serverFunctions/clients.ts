@@ -131,3 +131,8 @@ export const setReportPublication = createServerFn({ method: "POST" })
       data.visible,
     ),
   );
+
+export const getProjectClient = createServerFn({ method: "GET" })
+  .middleware(requireProjectContext)
+  .validator(z.object({ projectId: z.string().min(1) }))
+  .handler(({ context }) => ClientService.getProjectClient(context.project));

@@ -7,6 +7,7 @@ import type {
   RankCheckScheduleTime,
   RankTrackingConfig,
 } from "@/types/schemas/rank-tracking";
+import type { ComparePeriod } from "@/types/schemas/rank-tracking-search";
 
 // ---------------------------------------------------------------------------
 // Cost constants
@@ -389,6 +390,16 @@ export function scheduleLabel(
   if (interval === "weekly") return "Weekly";
   if (interval === "monthly") return "Monthly";
   return "Manual";
+}
+
+// Rankings compare against one check back: yesterday for daily trackers, a
+// month for monthly ones, a week otherwise.
+export function defaultComparePeriod(
+  interval: RankTrackingConfig["scheduleInterval"],
+): ComparePeriod {
+  if (interval === "daily") return "1d";
+  if (interval === "monthly") return "30d";
+  return "7d";
 }
 
 export function devicesCount(devices: RankTrackingConfig["devices"]): number {

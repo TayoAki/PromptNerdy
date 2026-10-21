@@ -1,5 +1,11 @@
 import { queryOptions } from "@tanstack/react-query";
-import { getPortalHome, listPortalReports } from "@/serverFunctions/portal";
+import {
+  getPortalHome,
+  getPortalOverview,
+  getPortalRankings,
+  getPortalSiteHealth,
+  listPortalReports,
+} from "@/serverFunctions/portal";
 
 export const portalHomeQueryOptions = () =>
   queryOptions({
@@ -12,3 +18,24 @@ export const portalReportsQueryOptions = (clientId: string) =>
     queryKey: ["portal-reports", clientId],
     queryFn: () => listPortalReports({ data: { clientId } }),
   });
+
+export const portalOverviewQueryOptions = (clientId: string) =>
+  queryOptions({
+    queryKey: ["portal-overview", clientId],
+    queryFn: () => getPortalOverview({ data: { clientId } }),
+  });
+
+export const portalRankingsQueryOptions = (clientId: string) =>
+  queryOptions({
+    queryKey: ["portal-rankings", clientId],
+    queryFn: () => getPortalRankings({ data: { clientId } }),
+  });
+
+export const portalSiteHealthQueryOptions = (clientId: string) =>
+  queryOptions({
+    queryKey: ["portal-site-health", clientId],
+    queryFn: () => getPortalSiteHealth({ data: { clientId } }),
+  });
+
+export type PortalOverview = Awaited<ReturnType<typeof getPortalOverview>>;
+export type PortalRankings = Awaited<ReturnType<typeof getPortalRankings>>;

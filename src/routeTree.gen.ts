@@ -33,6 +33,7 @@ import { Route as AcceptInvitationIdRouteImport } from './routes/accept-invitati
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ApiPrivacyRegionRouteImport } from './routes/api/privacy-region'
 import { Route as PortalIndexRouteImport } from './routes/portal.index'
+import { Route as PortalClientIdRouteImport } from './routes/portal.$clientId'
 import { Route as RReportIdRouteImport } from './routes/r/$reportId'
 import { Route as AppBillingFixPaymentRouteImport } from './routes/_app/billing_.fix-payment'
 import { Route as AppHelpDataforseoApiKeyRouteImport } from './routes/_app/help/dataforseo-api-key'
@@ -45,6 +46,8 @@ import { Route as AuthenticatedOnboardingIndexRouteImport } from './routes/_auth
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiAutumnSplatRouteImport } from './routes/api/autumn/$'
 import { Route as PortalClientIdIndexRouteImport } from './routes/portal.$clientId.index'
+import { Route as PortalClientIdHealthRouteImport } from './routes/portal.$clientId.health'
+import { Route as PortalClientIdRankingsRouteImport } from './routes/portal.$clientId.rankings'
 import { Route as STokenIndexRouteImport } from './routes/s/$token/index'
 import { Route as STokenOgDotpngRouteImport } from './routes/s/$token/og[.]png'
 import { Route as STokenRawRouteImport } from './routes/s/$token/raw'
@@ -63,6 +66,7 @@ import { Route as AppPProjectIdSearchPerformanceRouteImport } from './routes/_ap
 import { Route as AppPProjectIdSettingsRouteImport } from './routes/_app/p/$projectId/settings'
 import { Route as ApiGa4OauthCallbackRouteImport } from './routes/api/ga4/oauth/callback'
 import { Route as ApiGscOauthCallbackRouteImport } from './routes/api/gsc/oauth/callback'
+import { Route as PortalClientIdReportsIndexRouteImport } from './routes/portal.$clientId.reports.index'
 import { Route as PortalClientIdReportsReportIdRouteImport } from './routes/portal.$clientId.reports.$reportId'
 import { Route as AppPProjectIdAiVisibilityIndexRouteImport } from './routes/_app/p/$projectId/ai-visibility/index'
 import { Route as AppPProjectIdAiVisibilityResearchRouteImport } from './routes/_app/p/$projectId/ai-visibility/research'
@@ -197,6 +201,11 @@ const PortalIndexRoute = PortalIndexRouteImport.update({
   path: '/',
   getParentRoute: () => PortalRoute,
 } as any)
+const PortalClientIdRoute = PortalClientIdRouteImport.update({
+  id: '/$clientId',
+  path: '/$clientId',
+  getParentRoute: () => PortalRoute,
+} as any)
 const RReportIdRoute = RReportIdRouteImport.update({
   id: '/r/$reportId',
   path: '/r/$reportId',
@@ -254,9 +263,19 @@ const ApiAutumnSplatRoute = ApiAutumnSplatRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const PortalClientIdIndexRoute = PortalClientIdIndexRouteImport.update({
-  id: '/$clientId/',
-  path: '/$clientId/',
-  getParentRoute: () => PortalRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => PortalClientIdRoute,
+} as any)
+const PortalClientIdHealthRoute = PortalClientIdHealthRouteImport.update({
+  id: '/health',
+  path: '/health',
+  getParentRoute: () => PortalClientIdRoute,
+} as any)
+const PortalClientIdRankingsRoute = PortalClientIdRankingsRouteImport.update({
+  id: '/rankings',
+  path: '/rankings',
+  getParentRoute: () => PortalClientIdRoute,
 } as any)
 const STokenIndexRoute = STokenIndexRouteImport.update({
   id: '/s/$token/',
@@ -353,11 +372,17 @@ const ApiGscOauthCallbackRoute = ApiGscOauthCallbackRouteImport.update({
   path: '/api/gsc/oauth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PortalClientIdReportsIndexRoute =
+  PortalClientIdReportsIndexRouteImport.update({
+    id: '/reports/',
+    path: '/reports/',
+    getParentRoute: () => PortalClientIdRoute,
+  } as any)
 const PortalClientIdReportsReportIdRoute =
   PortalClientIdReportsReportIdRouteImport.update({
-    id: '/$clientId/reports/$reportId',
-    path: '/$clientId/reports/$reportId',
-    getParentRoute: () => PortalRoute,
+    id: '/reports/$reportId',
+    path: '/reports/$reportId',
+    getParentRoute: () => PortalClientIdRoute,
   } as any)
 const AppPProjectIdAiVisibilityIndexRoute =
   AppPProjectIdAiVisibilityIndexRouteImport.update({
@@ -458,6 +483,7 @@ export interface FileRoutesByFullPath {
   '/accept-invitation/$id': typeof AcceptInvitationIdRoute
   '/api/health': typeof ApiHealthRoute
   '/api/privacy-region': typeof ApiPrivacyRegionRoute
+  '/portal/$clientId': typeof PortalClientIdRouteWithChildren
   '/r/$reportId': typeof RReportIdRoute
   '/portal/': typeof PortalIndexRoute
   '/p/$projectId': typeof AppPProjectIdRouteRouteWithChildren
@@ -468,6 +494,8 @@ export interface FileRoutesByFullPath {
   '/settings/organization': typeof AppSettingsOrganizationRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
+  '/portal/$clientId/health': typeof PortalClientIdHealthRoute
+  '/portal/$clientId/rankings': typeof PortalClientIdRankingsRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
   '/s/$token/raw': typeof STokenRawRoute
   '/settings/': typeof AppSettingsIndexRoute
@@ -490,6 +518,7 @@ export interface FileRoutesByFullPath {
   '/api/gsc/oauth/callback': typeof ApiGscOauthCallbackRoute
   '/portal/$clientId/reports/$reportId': typeof PortalClientIdReportsReportIdRoute
   '/p/$projectId/': typeof AppPProjectIdIndexRoute
+  '/portal/$clientId/reports/': typeof PortalClientIdReportsIndexRoute
   '/p/$projectId/ai-visibility/research': typeof AppPProjectIdAiVisibilityResearchRoute
   '/p/$projectId/rank-tracking/$configId': typeof AppPProjectIdRankTrackingConfigIdRoute
   '/p/$projectId/reports/$reportId': typeof AppPProjectIdReportsReportIdRoute
@@ -532,6 +561,8 @@ export interface FileRoutesByTo {
   '/settings/organization': typeof AppSettingsOrganizationRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
+  '/portal/$clientId/health': typeof PortalClientIdHealthRoute
+  '/portal/$clientId/rankings': typeof PortalClientIdRankingsRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
   '/s/$token/raw': typeof STokenRawRoute
   '/settings': typeof AppSettingsIndexRoute
@@ -551,6 +582,7 @@ export interface FileRoutesByTo {
   '/api/gsc/oauth/callback': typeof ApiGscOauthCallbackRoute
   '/portal/$clientId/reports/$reportId': typeof PortalClientIdReportsReportIdRoute
   '/p/$projectId': typeof AppPProjectIdIndexRoute
+  '/portal/$clientId/reports': typeof PortalClientIdReportsIndexRoute
   '/p/$projectId/ai-visibility/research': typeof AppPProjectIdAiVisibilityResearchRoute
   '/p/$projectId/rank-tracking/$configId': typeof AppPProjectIdRankTrackingConfigIdRoute
   '/p/$projectId/reports/$reportId': typeof AppPProjectIdReportsReportIdRoute
@@ -589,6 +621,7 @@ export interface FileRoutesById {
   '/accept-invitation/$id': typeof AcceptInvitationIdRoute
   '/api/health': typeof ApiHealthRoute
   '/api/privacy-region': typeof ApiPrivacyRegionRoute
+  '/portal/$clientId': typeof PortalClientIdRouteWithChildren
   '/r/$reportId': typeof RReportIdRoute
   '/_app/': typeof AppIndexRoute
   '/portal/': typeof PortalIndexRoute
@@ -600,6 +633,8 @@ export interface FileRoutesById {
   '/_app/settings/organization': typeof AppSettingsOrganizationRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
+  '/portal/$clientId/health': typeof PortalClientIdHealthRoute
+  '/portal/$clientId/rankings': typeof PortalClientIdRankingsRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
   '/s/$token/raw': typeof STokenRawRoute
   '/_app/settings/': typeof AppSettingsIndexRoute
@@ -622,6 +657,7 @@ export interface FileRoutesById {
   '/api/gsc/oauth/callback': typeof ApiGscOauthCallbackRoute
   '/portal/$clientId/reports/$reportId': typeof PortalClientIdReportsReportIdRoute
   '/_app/p/$projectId/': typeof AppPProjectIdIndexRoute
+  '/portal/$clientId/reports/': typeof PortalClientIdReportsIndexRoute
   '/_app/p/$projectId/ai-visibility/research': typeof AppPProjectIdAiVisibilityResearchRoute
   '/_app/p/$projectId/rank-tracking/$configId': typeof AppPProjectIdRankTrackingConfigIdRoute
   '/_app/p/$projectId/reports/$reportId': typeof AppPProjectIdReportsReportIdRoute
@@ -659,6 +695,7 @@ export interface FileRouteTypes {
     | '/accept-invitation/$id'
     | '/api/health'
     | '/api/privacy-region'
+    | '/portal/$clientId'
     | '/r/$reportId'
     | '/portal/'
     | '/p/$projectId'
@@ -669,6 +706,8 @@ export interface FileRouteTypes {
     | '/settings/organization'
     | '/api/auth/$'
     | '/api/autumn/$'
+    | '/portal/$clientId/health'
+    | '/portal/$clientId/rankings'
     | '/s/$token/og.png'
     | '/s/$token/raw'
     | '/settings/'
@@ -691,6 +730,7 @@ export interface FileRouteTypes {
     | '/api/gsc/oauth/callback'
     | '/portal/$clientId/reports/$reportId'
     | '/p/$projectId/'
+    | '/portal/$clientId/reports/'
     | '/p/$projectId/ai-visibility/research'
     | '/p/$projectId/rank-tracking/$configId'
     | '/p/$projectId/reports/$reportId'
@@ -733,6 +773,8 @@ export interface FileRouteTypes {
     | '/settings/organization'
     | '/api/auth/$'
     | '/api/autumn/$'
+    | '/portal/$clientId/health'
+    | '/portal/$clientId/rankings'
     | '/s/$token/og.png'
     | '/s/$token/raw'
     | '/settings'
@@ -752,6 +794,7 @@ export interface FileRouteTypes {
     | '/api/gsc/oauth/callback'
     | '/portal/$clientId/reports/$reportId'
     | '/p/$projectId'
+    | '/portal/$clientId/reports'
     | '/p/$projectId/ai-visibility/research'
     | '/p/$projectId/rank-tracking/$configId'
     | '/p/$projectId/reports/$reportId'
@@ -789,6 +832,7 @@ export interface FileRouteTypes {
     | '/accept-invitation/$id'
     | '/api/health'
     | '/api/privacy-region'
+    | '/portal/$clientId'
     | '/r/$reportId'
     | '/_app/'
     | '/portal/'
@@ -800,6 +844,8 @@ export interface FileRouteTypes {
     | '/_app/settings/organization'
     | '/api/auth/$'
     | '/api/autumn/$'
+    | '/portal/$clientId/health'
+    | '/portal/$clientId/rankings'
     | '/s/$token/og.png'
     | '/s/$token/raw'
     | '/_app/settings/'
@@ -822,6 +868,7 @@ export interface FileRouteTypes {
     | '/api/gsc/oauth/callback'
     | '/portal/$clientId/reports/$reportId'
     | '/_app/p/$projectId/'
+    | '/portal/$clientId/reports/'
     | '/_app/p/$projectId/ai-visibility/research'
     | '/_app/p/$projectId/rank-tracking/$configId'
     | '/_app/p/$projectId/reports/$reportId'
@@ -1030,6 +1077,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortalIndexRouteImport
       parentRoute: typeof PortalRoute
     }
+    '/portal/$clientId': {
+      id: '/portal/$clientId'
+      path: '/$clientId'
+      fullPath: '/portal/$clientId'
+      preLoaderRoute: typeof PortalClientIdRouteImport
+      parentRoute: typeof PortalRoute
+    }
     '/r/$reportId': {
       id: '/r/$reportId'
       path: '/r/$reportId'
@@ -1109,10 +1163,24 @@ declare module '@tanstack/react-router' {
     }
     '/portal/$clientId/': {
       id: '/portal/$clientId/'
-      path: '/$clientId'
+      path: '/'
       fullPath: '/portal/$clientId/'
       preLoaderRoute: typeof PortalClientIdIndexRouteImport
-      parentRoute: typeof PortalRoute
+      parentRoute: typeof PortalClientIdRoute
+    }
+    '/portal/$clientId/health': {
+      id: '/portal/$clientId/health'
+      path: '/health'
+      fullPath: '/portal/$clientId/health'
+      preLoaderRoute: typeof PortalClientIdHealthRouteImport
+      parentRoute: typeof PortalClientIdRoute
+    }
+    '/portal/$clientId/rankings': {
+      id: '/portal/$clientId/rankings'
+      path: '/rankings'
+      fullPath: '/portal/$clientId/rankings'
+      preLoaderRoute: typeof PortalClientIdRankingsRouteImport
+      parentRoute: typeof PortalClientIdRoute
     }
     '/s/$token/': {
       id: '/s/$token/'
@@ -1240,12 +1308,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGscOauthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/portal/$clientId/reports/': {
+      id: '/portal/$clientId/reports/'
+      path: '/reports'
+      fullPath: '/portal/$clientId/reports/'
+      preLoaderRoute: typeof PortalClientIdReportsIndexRouteImport
+      parentRoute: typeof PortalClientIdRoute
+    }
     '/portal/$clientId/reports/$reportId': {
       id: '/portal/$clientId/reports/$reportId'
-      path: '/$clientId/reports/$reportId'
+      path: '/reports/$reportId'
       fullPath: '/portal/$clientId/reports/$reportId'
       preLoaderRoute: typeof PortalClientIdReportsReportIdRouteImport
-      parentRoute: typeof PortalRoute
+      parentRoute: typeof PortalClientIdRoute
     }
     '/_app/p/$projectId/ai-visibility/': {
       id: '/_app/p/$projectId/ai-visibility/'
@@ -1517,16 +1592,34 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
-interface PortalRouteChildren {
-  PortalIndexRoute: typeof PortalIndexRoute
+interface PortalClientIdRouteChildren {
+  PortalClientIdHealthRoute: typeof PortalClientIdHealthRoute
+  PortalClientIdRankingsRoute: typeof PortalClientIdRankingsRoute
   PortalClientIdIndexRoute: typeof PortalClientIdIndexRoute
   PortalClientIdReportsReportIdRoute: typeof PortalClientIdReportsReportIdRoute
+  PortalClientIdReportsIndexRoute: typeof PortalClientIdReportsIndexRoute
+}
+
+const PortalClientIdRouteChildren: PortalClientIdRouteChildren = {
+  PortalClientIdHealthRoute: PortalClientIdHealthRoute,
+  PortalClientIdRankingsRoute: PortalClientIdRankingsRoute,
+  PortalClientIdIndexRoute: PortalClientIdIndexRoute,
+  PortalClientIdReportsReportIdRoute: PortalClientIdReportsReportIdRoute,
+  PortalClientIdReportsIndexRoute: PortalClientIdReportsIndexRoute,
+}
+
+const PortalClientIdRouteWithChildren = PortalClientIdRoute._addFileChildren(
+  PortalClientIdRouteChildren,
+)
+
+interface PortalRouteChildren {
+  PortalClientIdRoute: typeof PortalClientIdRouteWithChildren
+  PortalIndexRoute: typeof PortalIndexRoute
 }
 
 const PortalRouteChildren: PortalRouteChildren = {
+  PortalClientIdRoute: PortalClientIdRouteWithChildren,
   PortalIndexRoute: PortalIndexRoute,
-  PortalClientIdIndexRoute: PortalClientIdIndexRoute,
-  PortalClientIdReportsReportIdRoute: PortalClientIdReportsReportIdRoute,
 }
 
 const PortalRouteWithChildren =

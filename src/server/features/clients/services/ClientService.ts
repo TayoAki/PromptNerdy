@@ -45,6 +45,15 @@ type ClientProject = {
   clientTeamId: string | null;
 };
 
+// The client a project belongs to, or null for an agency-internal project.
+async function getProjectClient(project: ClientProject) {
+  if (!project.clientTeamId) return null;
+  return ClientRepository.getClientForOrganization(
+    project.clientTeamId,
+    project.organizationId,
+  );
+}
+
 // Whether a report is published to its project's client portal, and to whom.
 async function getReportPublication(project: ClientProject, reportId: string) {
   const visibleAt = await ReportRepository.getClientVisibleAt(
@@ -52,12 +61,7 @@ async function getReportPublication(project: ClientProject, reportId: string) {
     reportId,
   );
   if (visibleAt === undefined) throw new AppError("NOT_FOUND");
-  const client = project.clientTeamId
-    ? await ClientRepository.getClientForOrganization(
-        project.clientTeamId,
-        project.organizationId,
-      )
-    : null;
+  const client = await getProjectClient(project);
   return { client, visibleAt: client ? visibleAt : null };
 }
 
@@ -84,6 +88,7 @@ async function setReportPublication(
 export const ClientService = {
   getClientsOverview,
   requireClient,
+  getProjectClient,
   getReportPublication,
   setReportPublication,
 } as const;

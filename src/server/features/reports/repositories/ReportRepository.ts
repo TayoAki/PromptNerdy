@@ -116,7 +116,10 @@ async function setClientVisibility(
 
 // The portal's report list for one client: published reports on the client's
 // live projects, newest publication first. Never selects `html`.
-async function listClientVisibleReports(clientTeamId: string) {
+async function listClientVisibleReports(
+  clientTeamId: string,
+  organizationId: string,
+) {
   return db
     .select({
       id: reports.id,
@@ -133,6 +136,7 @@ async function listClientVisibleReports(clientTeamId: string) {
     .where(
       and(
         eq(projects.clientTeamId, clientTeamId),
+        eq(projects.organizationId, organizationId),
         isNull(projects.archivedAt),
         isNotNull(reports.clientVisibleAt),
       ),

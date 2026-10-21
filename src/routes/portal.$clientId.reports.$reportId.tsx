@@ -16,9 +16,9 @@ function PortalReport() {
   const report = data?.reports.find((candidate) => candidate.id === reportId);
 
   return (
-    <div className="flex h-[calc(100dvh-10rem)] flex-col gap-3">
+    <div className="flex h-[calc(100dvh-16rem)] min-h-96 flex-col gap-3">
       <div className="flex items-center gap-3">
-        <BackLink to="/portal/$clientId" params={{ clientId }}>
+        <BackLink to="/portal/$clientId/reports" params={{ clientId }}>
           All reports
         </BackLink>
         <h1 className="truncate font-semibold">{report?.title ?? "Report"}</h1>

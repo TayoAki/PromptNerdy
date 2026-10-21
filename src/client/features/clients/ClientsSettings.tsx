@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { revalidateLogic } from "@tanstack/react-form";
+import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -251,15 +252,30 @@ function ClientCard({
             <CardTitle>
               <h3>{client.name}</h3>
             </CardTitle>
-            {canManage ? (
+            <span className="flex gap-1">
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setIsRenaming(true)}
+                nativeButton={false}
+                render={
+                  <Link
+                    to="/portal/$clientId"
+                    params={{ clientId: client.id }}
+                  />
+                }
               >
-                Rename
+                View as client
               </Button>
-            ) : null}
+              {canManage ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsRenaming(true)}
+                >
+                  Rename
+                </Button>
+              ) : null}
+            </span>
           </>
         )}
       </CardHeader>

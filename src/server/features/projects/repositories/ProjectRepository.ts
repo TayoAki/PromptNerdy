@@ -71,6 +71,25 @@ async function getProjectForMember(
   return membership ? project : null;
 }
 
+// A client's live projects (spec 0017), for the portal. Scoped by organization
+// too, so a client id alone never reaches another organization's projects.
+async function listProjectsForClient(
+  clientTeamId: string,
+  organizationId: string,
+) {
+  return db
+    .select({ id: projects.id, name: projects.name, domain: projects.domain })
+    .from(projects)
+    .where(
+      and(
+        eq(projects.clientTeamId, clientTeamId),
+        eq(projects.organizationId, organizationId),
+        isNull(projects.archivedAt),
+      ),
+    )
+    .orderBy(projects.name, projects.id);
+}
+
 // Assigns a project to one of the organization's clients, or back to
 // agency-internal with null. The caller has checked the client is in the org.
 async function setClientTeam(
@@ -280,6 +299,7 @@ export const ProjectRepository = {
   getProjectForOrganization,
   getProjectForMember,
   setClientTeam,
+  listProjectsForClient,
   getArchivedProjectForOrganization,
   getProjectById,
   createProject,

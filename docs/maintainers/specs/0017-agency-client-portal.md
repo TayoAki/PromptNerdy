@@ -2,7 +2,7 @@
 
 ## Status
 
-Phase 1 (foundation) is built; phases 2 and 3 are proposed. Product decisions are recorded under Decisions. Builds on multi-user organizations (`specs/0011-multi-user-organizations.md`), which deferred per-project authorization inside an organization; this is that work, shaped for agencies.
+Phases 1 (foundation) and 2 (portal data) are built; phase 3 is proposed. Product decisions are recorded under Decisions. Builds on multi-user organizations (`specs/0011-multi-user-organizations.md`), which deferred per-project authorization inside an organization; this is that work, shaped for agencies.
 
 ## What it does
 
@@ -18,17 +18,23 @@ PromptNerdy serves an SEO agency and the businesses it works for.
 
 A slim shell branded with the agency's name and logo and the client's name. A small "Powered by PromptNerdy" appears unless the agency is on the white-label tier.
 
-- **Overview.** One card per website: Search Console clicks and impressions over 28 days with the change against the prior period, rank-tracking movers (up, down, new in the top 10), and site health from the latest audit. Every number shows when it was last updated.
+- **Overview.** A row of cards per website:
+  - Google search clicks and impressions over the last 28 days, with the change against the 28 days before.
+  - Rank-tracking movement: keywords tracked, how many sit in the top 10, how many moved up or down, and the biggest gains.
+  - Site health from the latest scan.
+
+  Rankings and site health say when they were last checked.
+
 - **Reports.** The reports the agency published, newest first, in the same sandboxed viewer the app uses. Print stays available.
-- **Rankings.** The tracked keywords and their history, read-only.
-- **Site health.** The latest audit's score and top issues, read-only.
+- **Rankings.** The site's own tracked keywords with their position on each tracked device and the change since the previous check (a day, a week or a month, following the tracker's schedule). Trackers on competitors' domains stay with the agency.
+- **Site health.** The latest finished scan of the site's domain: how many critical issues, warnings and notices it found, and each issue with the number of pages it affects. Problems with the crawl itself (blocked or rate-limited pages, content that may need JavaScript) are the agency's to fix and are left out. A scan the site mostly blocked shows as no scan, never as a clean bill of health.
 
 A contact who belongs to two clients, or to two agencies, switches between them with the existing organization switcher plus a client picker.
 
 ### Agency side
 
 - **Clients page** (organization level): create, rename and archive clients; assign projects to a client; invite contacts by email; see each contact's last sign-in; remove a contact.
-- **Project header:** shows which client the project belongs to, with a "View as client" preview that renders the portal for that client.
+- **"View as client":** on a client project's dashboard and on each client on the Clients page, opening the portal exactly as that client's contacts see it.
 - **Report page:** a "Visible to client" toggle beside the existing public-link Share.
 - **Organization settings:** agency name and logo for the portal header, on every plan. The white-label tier removes the PromptNerdy badge.
 
@@ -64,7 +70,9 @@ Bare organization lookups stay only on internal Workflow and Durable Object path
 - SAM refuses it at connect and on every turn.
 - The app's route guard sends a `client`-role session to `/portal` from every app route, and the portal guard sends staff without a client selected back to the app.
 
-**No spend from the portal.** Portal services read saved tables only: stored Search Console results, rank snapshots, audits and published reports. They never call DataForSEO, OpenRouter or Google, and never start audits or refreshes. Client visits therefore cost the agency nothing, and the portal shows the data from the agency's last refresh. The agency's own visits and scheduled jobs keep that data current.
+**No spend from the portal.** Portal services read rank snapshots, audits and published reports from the database. They never call DataForSEO, OpenRouter or any other paid provider, and never start audits, rank checks or refreshes. Client visits therefore cost the agency nothing, and rankings and site health show the data from the agency's last check.
+
+Search Console is the one live read, because nothing stores its totals and Google doesn't charge for it. The portal asks Google for the two 28-day windows through the agency's own connection and keeps the answer for a day, like the dashboard's Search Console cards. A site with no working connection shows no search data, and a Google fault hides that card instead of the whole overview.
 
 **Membership lifecycle.**
 
@@ -89,6 +97,8 @@ Bare organization lookups stay only on internal Workflow and Durable Object path
 - **Granting a client per project, with no client entity.** This is simpler for one-site clients, but a client with several sites and several contacts becomes an N×M grant list with no name to manage it by.
 - **Reusing the defined-but-unused `member` role.** `member` is meant for limited agency staff who still use the app. Clients need a different surface and deny-by-default, and folding the two together would leak app features into the portal.
 - **Public share links only.** Spec 0014 already lets an agency send a report link with no login. That covers one-off sends, but it can't revoke a single person, show live rankings, or give a client one place to look. It stays as the lightweight option next to the portal.
+- **A single site-health score.** The audit doesn't compute one, and a score invented for the portal would give the client a different measure of the site than the agency sees. Counts by severity say the same thing without a new formula.
+- **Storing Search Console totals for the portal.** This would make the portal read only from the database, but it needs a sync job and a table for numbers Google returns for free. A day-long cache gives the same cost and freshness.
 - **Letting portal visits refresh data.** Clients would see fresher numbers, but the agency's credits would be spent by people it doesn't control. Stored data with a visible "last updated" fits a first version; scheduled refreshes can come later.
 
 ## Not in scope

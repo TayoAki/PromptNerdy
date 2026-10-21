@@ -18,9 +18,32 @@ export const getPortalHome = createServerFn({ method: "GET" })
   .middleware(requirePortalContext)
   .handler(({ context }) => PortalService.getHome(context));
 
+const clientInputSchema = z.object({ clientId: z.string().min(1) });
+
 export const listPortalReports = createServerFn({ method: "GET" })
   .middleware(requirePortalContext)
-  .validator(z.object({ clientId: z.string().min(1) }))
+  .validator(clientInputSchema)
   .handler(({ data, context }) =>
     PortalService.listReports(context, data.clientId),
+  );
+
+export const getPortalOverview = createServerFn({ method: "GET" })
+  .middleware(requirePortalContext)
+  .validator(clientInputSchema)
+  .handler(({ data, context }) =>
+    PortalService.getOverview(context, data.clientId),
+  );
+
+export const getPortalRankings = createServerFn({ method: "GET" })
+  .middleware(requirePortalContext)
+  .validator(clientInputSchema)
+  .handler(({ data, context }) =>
+    PortalService.getRankings(context, data.clientId),
+  );
+
+export const getPortalSiteHealth = createServerFn({ method: "GET" })
+  .middleware(requirePortalContext)
+  .validator(clientInputSchema)
+  .handler(({ data, context }) =>
+    PortalService.getSiteHealth(context, data.clientId),
   );
