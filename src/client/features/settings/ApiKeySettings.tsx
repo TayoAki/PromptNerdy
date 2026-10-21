@@ -49,7 +49,7 @@ export function ApiKeySettings() {
 
   const mcpUrl =
     typeof window === "undefined"
-      ? "https://app.openseo.so/mcp"
+      ? "https://app.promptnerdy.com/mcp"
       : `${window.location.origin}/mcp`;
 
   const apiKeysQuery = useQuery({
@@ -129,7 +129,7 @@ export function ApiKeySettings() {
           <p className="mt-1 text-sm">
             <a
               className="text-primary underline-offset-4 hover:underline"
-              href="https://openseo.so/docs/mcp"
+              href="https://promptnerdy.com/docs/mcp"
               target="_blank"
               rel="noreferrer"
             >
@@ -171,7 +171,7 @@ export function ApiKeySettings() {
                         className="font-mono text-xs text-muted-foreground"
                         data-ph-mask
                       >
-                        {key.start || "oseo_"}…
+                        {key.start || "pnrd_"}…
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
                         {key.createdAt.toLocaleDateString()}

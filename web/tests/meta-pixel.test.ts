@@ -12,7 +12,7 @@ const route = Route as unknown as {
 
 async function servesPixel(country: string, headers = {}) {
   const response = route.server.handlers.GET({
-    request: new Request("https://openseo.so/js/meta.js", {
+    request: new Request("https://promptnerdy.com/js/meta.js", {
       headers: { "cf-ipcountry": country, ...headers },
     }),
   });
@@ -25,9 +25,9 @@ describe("/js/meta.js", () => {
   it("serves the pixel only where the visitor's advertising choice allows it", async () => {
     // The full set of region and saved-choice cases is in
     // src/shared/privacy-choices.test.ts; this covers the route's inputs.
-    expect(await servesPixel("DE", { cookie: "openseo_privacy=a0.d0.m1" })).toBe(
-      true,
-    );
+    expect(
+      await servesPixel("DE", { cookie: "promptnerdy_privacy=a0.d0.m1" }),
+    ).toBe(true);
     expect(await servesPixel("US", { "sec-gpc": "1" })).toBe(false);
   });
 });

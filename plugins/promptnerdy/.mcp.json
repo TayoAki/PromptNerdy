@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "promptnerdy": {
+      "type": "http",
+      "url": "https://app.promptnerdy.com/mcp"
+    }
+  }
+}

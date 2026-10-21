@@ -33,7 +33,7 @@ const faqs = [
   {
     question: "Is there a free SEO audit report template?",
     answer:
-      "The structure on this page is the template, and it is more useful than a formatted document because it tells you what goes in each section and what to leave out. OpenSEO can produce every section from a real crawl using the prompt above; it is open source and free to start, with paid plans from $10/month for larger crawls.",
+      "The structure on this page is the template, and it is more useful than a formatted document because it tells you what goes in each section and what to leave out. PromptNerdy can produce every section from a real crawl using the prompt above; it is open source and free to start, with paid plans from $10/month for larger crawls.",
   },
 ];
 
@@ -55,7 +55,7 @@ export const Route = createFileRoute(
       title: "SEO Audit Report Template: Structure That Gets Actioned",
       description: frontmatter.description,
       path: PATH,
-      titleSuffix: "OpenSEO Library",
+      titleSuffix: "PromptNerdy Library",
       ogType: "article",
     }),
   component: () => (

@@ -1,16 +1,16 @@
 {
-  "name": "openseo",
+  "name": "promptnerdy",
   "owner": {
-    "name": "Every App, Inc",
-    "email": "support@openseo.so"
+    "name": "PromptNerdy",
+    "email": "support@promptnerdy.com"
   },
   "metadata": {
-    "description": "OpenSEO's official Cursor plugin marketplace."
+    "description": "PromptNerdy's official Cursor plugin marketplace."
   },
   "plugins": [
     {
-      "name": "openseo",
-      "source": "plugins/openseo",
+      "name": "promptnerdy",
+      "source": "plugins/promptnerdy",
       "description": "SEO made simple. Research keywords and competitors, audit sites, track rankings, and use Search Console data from your agent."
     }
   ]

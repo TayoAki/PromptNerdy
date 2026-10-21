@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "open-seo-landing",
+  "name": "promptnerdy-landing",
   "compatibility_date": "2026-02-19",
   "compatibility_flags": ["nodejs_compat"],
   "main": "./src/worker.ts",
@@ -28,11 +28,11 @@
   },
   "routes": [
     {
-      "pattern": "openseo.so",
+      "pattern": "promptnerdy.com",
       "custom_domain": true,
     },
     {
-      "pattern": "www.openseo.so",
+      "pattern": "www.promptnerdy.com",
       "custom_domain": true,
     },
   ],
@@ -46,7 +46,7 @@
   "env": {
     // Bindings are not inherited by named envs; keep preview's copies in sync.
     "preview": {
-      "name": "open-seo-landing-preview",
+      "name": "promptnerdy-landing-preview",
       "workers_dev": true,
       "preview_urls": true,
       "routes": [],

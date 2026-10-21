@@ -1,13 +1,13 @@
 import type { ReactNode } from "react";
 import { trackTool } from "@/lib/free-tools/analytics";
 
-const SIGNUP_URL = "https://app.openseo.so/sign-up";
+const SIGNUP_URL = "https://app.promptnerdy.com/sign-up";
 
 /** Shown under truncated results: what the free run leaves out, and the CTA. */
 export function UpsellCard({
   tool,
   children,
-  cta = "Explore more in OpenSEO",
+  cta = "Explore more in PromptNerdy",
 }: {
   tool: string;
   children: ReactNode;

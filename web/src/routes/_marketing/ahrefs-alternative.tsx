@@ -16,7 +16,7 @@ const PATH = "/ahrefs-alternative";
 const UPDATED = "2026-10-05";
 
 const comparison: ComparisonTableProps = {
-  columns: [{ name: "OpenSEO", highlight: true }, { name: "Ahrefs" }],
+  columns: [{ name: "PromptNerdy", highlight: true }, { name: "Ahrefs" }],
   rows: [
     {
       label: "Starting price",
@@ -158,7 +158,7 @@ const webPageLd = {
   url: toCanonicalUrl(PATH),
   dateModified: UPDATED,
   about: [
-    { "@type": "SoftwareApplication", name: "OpenSEO", url: SITE_URL },
+    { "@type": "SoftwareApplication", name: "PromptNerdy", url: SITE_URL },
     {
       "@type": "SoftwareApplication",
       name: "Ahrefs",
@@ -233,7 +233,7 @@ function SignUpButton() {
   return (
     <div className="not-prose mt-6">
       <a
-        href="https://app.openseo.so/sign-up"
+        href="https://app.promptnerdy.com/sign-up"
         className="inline-flex h-10 items-center justify-center rounded-lg bg-neutral-950 px-5 text-sm font-medium text-white transition-colors hover:bg-neutral-800"
       >
         Start free trial

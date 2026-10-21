@@ -261,7 +261,7 @@ function AnalysisReport({ result }: { result: AnalysisResult }) {
         ) : (
           <>Try another country or competitor to explore more ranking data. </>
         )}
-        Browse more competitor keywords in OpenSEO, filter by search volume,
+        Browse more competitor keywords in PromptNerdy, filter by search volume,
         difficulty, and ranking position, and save keywords for further
         research.
       </UpsellCard>

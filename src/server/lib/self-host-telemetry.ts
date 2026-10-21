@@ -21,8 +21,8 @@ import {
 import { getSetupIssueSummary } from "@/server/lib/setup-status";
 import { isTelemetryOptOutValue } from "@/shared/selfhost-checks";
 
-const SELF_HOST_POSTHOG_KEY =
-  "phc_xaXj4vE4LikxfvR7q6EHemAYNBSZW4hQkqor7fpf8aGT";
+// Self-host heartbeats are off until this is set to a PostHog project key.
+const SELF_HOST_POSTHOG_KEY = "";
 const SELF_HOST_POSTHOG_HOST = "https://us.i.posthog.com";
 
 const DAILY_HEARTBEAT_INTERVAL_MS = 24 * 60 * 60 * 1000;
@@ -127,7 +127,7 @@ async function telemetryIsDisabled() {
   if (await isHostedServerAuthMode()) return true;
   if (
     isTelemetryOptOutValue(
-      await getOptionalEnvValue("OPENSEO_TELEMETRY_DISABLED"),
+      await getOptionalEnvValue("PROMPTNERDY_TELEMETRY_DISABLED"),
     )
   ) {
     return true;
@@ -230,6 +230,7 @@ async function sendHeartbeat(
   installId: string,
   properties: HeartbeatProperties,
 ) {
+  if (!SELF_HOST_POSTHOG_KEY) return;
   const client = new PostHog(SELF_HOST_POSTHOG_KEY, {
     host: SELF_HOST_POSTHOG_HOST,
     flushAt: 1,

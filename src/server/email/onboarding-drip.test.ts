@@ -41,7 +41,7 @@ it("still sends from a Workflow step, where waitUntil throws", async () => {
 it("sends a scheduled check's refusal to the organization's owner", async () => {
   await sendCreditsExhaustedEvent({
     userId: "system",
-    userEmail: "system@openseo.so",
+    userEmail: "system@promptnerdy.com",
     organizationId: "org",
   });
 

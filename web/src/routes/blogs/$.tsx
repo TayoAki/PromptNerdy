@@ -21,13 +21,13 @@ export const Route = createFileRoute("/blogs/$")({
     const data = loaderData as
       | { title?: string; description?: string; url?: string }
       | undefined;
-    const title = data?.title ?? "OpenSEO Blog";
+    const title = data?.title ?? "PromptNerdy Blog";
     const description = data?.description;
     return buildPageSeo({
       title,
       description,
       path: data?.url ?? "/blogs",
-      titleSuffix: "OpenSEO Blog",
+      titleSuffix: "PromptNerdy Blog",
       ogType: "article",
     });
   },
@@ -114,13 +114,6 @@ function BlogPost() {
   );
 }
 
-// Keyed by the `author` name in blog frontmatter.
-const authorXUrls = new Map([
-  ["Ben Senescu", "https://x.com/bensenescu"],
-  ["Jeremy Rivera", "https://x.com/JeremyRiveraSEO"],
-  ["Sohan Bhat", "https://x.com/sohanbhat2324"],
-]);
-
 function BlogHeader({
   title,
   description,
@@ -132,8 +125,6 @@ function BlogHeader({
   author: string;
   date: string;
 }) {
-  const authorUrl = authorXUrls.get(author);
-
   return (
     <header className="mb-10 border-b border-[var(--color-border-subtle)] pb-8">
       <div className="mb-4">
@@ -154,19 +145,7 @@ function BlogHeader({
         </p>
       )}
       <p className="mt-6 text-sm text-[var(--color-brand-muted)]">
-        By{" "}
-        {authorUrl ? (
-          <a
-            href={authorUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium text-neutral-950 underline decoration-[var(--color-brand-accent)] underline-offset-4"
-          >
-            {author}
-          </a>
-        ) : (
-          <span className="font-medium text-neutral-950">{author}</span>
-        )}
+        By <span className="font-medium text-neutral-950">{author}</span>
         <span aria-hidden="true"> · </span>
         <PostDate date={date} />
       </p>

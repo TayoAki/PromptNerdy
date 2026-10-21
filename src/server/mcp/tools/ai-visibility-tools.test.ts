@@ -3,7 +3,7 @@ import { z } from "zod";
 import { McpServer } from "@modelcontextprotocol/server";
 import { AiVisibilityError } from "@/server/features/ai-visibility/services/aiVisibilityErrors";
 import { buildSamMcpTools } from "@/server/features/sam/samChatTools";
-import { createOpenSeoMcpServer } from "@/server/mcp/server";
+import { createPromptNerdyMcpServer } from "@/server/mcp/server";
 import * as definitions from "./ai-visibility-tools";
 import { makeToolContext, textContent } from "./tool-test-support";
 
@@ -72,7 +72,7 @@ beforeEach(() => {
 describe("AI visibility assistant tools", () => {
   it("registers the same tools in MCP and SAM and hides SAM's project argument", () => {
     const register = vi.spyOn(McpServer.prototype, "registerTool");
-    createOpenSeoMcpServer({ openSeoAuth: context.auth });
+    createPromptNerdyMcpServer({ promptNerdyAuth: context.auth });
     const sam = buildSamMcpTools(context.auth, {
       id: projectId,
       domain: "example.com",
@@ -129,7 +129,7 @@ describe("AI visibility assistant tools", () => {
       data: state,
       meta: {
         projectId,
-        url: `https://open-seo.test/p/${projectId}/ai-visibility`,
+        url: `https://promptnerdy.test/p/${projectId}/ai-visibility`,
       },
     });
     expect(

@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_marketing/serp-simulator")({
       description:
         "Preview your title and meta description in desktop and mobile search results, with pixel measurements and approximate truncation. No signup, no email.",
       path: TOOL.path,
-      titleSuffix: "OpenSEO",
+      titleSuffix: "PromptNerdy",
     }),
   component: SerpSimulatorPage,
 });
@@ -70,7 +70,7 @@ function SerpSimulatorPage() {
       faqs={FAQS}
       cta={{
         heading: "Find every page that needs this",
-        body: "Find missing, duplicate, and long titles and descriptions with an OpenSEO site audit. Start with free trial credits.",
+        body: "Find missing, duplicate, and long titles and descriptions with a PromptNerdy site audit. Start with free trial credits.",
         featureLabel: "Learn about Site Audit",
       }}
     >

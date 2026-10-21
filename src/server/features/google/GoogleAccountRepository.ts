@@ -62,7 +62,7 @@ async function remove(input: AccountInput) {
   const { connections, grant, usage } = scope(input);
   // Atomic on D1 and Postgres: never leave a partial account removal.
   // Both deletes are scoped to the authenticated owner, including on retries
-  // after this Google identity has been linked to a different OpenSEO user.
+  // after this Google identity has been linked to a different PromptNerdy user.
   await runBatch((tx) => [
     tx.delete(connections).where(usage),
     tx.delete(account).where(grant),
@@ -148,7 +148,7 @@ async function deleteUnusedGrant(id: string) {
   return deleted.length > 0;
 }
 
-/** Whether any OpenSEO user still stores a data grant for this Google account. */
+/** Whether any PromptNerdy user still stores a data grant for this Google account. */
 async function hasDataGrantsForGoogleAccount(accountId: string) {
   const [result] = await db
     .select({ grants: count() })

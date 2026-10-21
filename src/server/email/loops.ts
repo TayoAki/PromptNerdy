@@ -110,7 +110,7 @@ export async function upsertHostedSignupContact({
     payload: {
       email,
       userId,
-      source: "openseo-signup",
+      source: "promptnerdy-signup",
       userGroup: "app-user",
       ...getContactNameParts(name),
       // Only ever adds: someone who joined the list through the website's
@@ -169,7 +169,7 @@ export async function sendHostedVerificationEmail({
     email,
     transactionalId: config.verificationTemplateId,
     dataVariables: {
-      appName: "OpenSEO",
+      appName: "PromptNerdy",
       confirmationUrl,
     },
   });
@@ -197,7 +197,7 @@ export async function sendHostedInvitationEmail({
     email,
     transactionalId: templateId,
     dataVariables: {
-      appName: "OpenSEO",
+      appName: "PromptNerdy",
       inviteUrl,
       organizationName,
       inviterName,
@@ -219,7 +219,7 @@ export async function sendHostedPasswordResetEmail({
     email,
     transactionalId: config.passwordResetTemplateId,
     dataVariables: {
-      appName: "OpenSEO",
+      appName: "PromptNerdy",
       resetUrl,
     },
   });

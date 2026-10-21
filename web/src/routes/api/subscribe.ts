@@ -52,7 +52,7 @@ export const Route = createFileRoute("/api/subscribe")({
               },
               body: JSON.stringify({
                 email: parsed.data.email,
-                source: "openseo-waitlist",
+                source: "promptnerdy-waitlist",
                 ...(mailingLists ? { mailingLists } : {}),
               }),
             },

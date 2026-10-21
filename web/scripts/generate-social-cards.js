@@ -62,7 +62,7 @@ function card(title) {
       h(
         "div",
         { style: { fontSize: 34, fontWeight: 600, letterSpacing: -1 } },
-        "OpenSEO",
+        "PromptNerdy",
       ),
     ),
     h(
@@ -100,7 +100,7 @@ function card(title) {
           color: "#65716b",
         },
       },
-      "openseo.so",
+      "promptnerdy.com",
     ),
   );
 }

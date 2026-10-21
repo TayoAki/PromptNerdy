@@ -1,22 +1,20 @@
-# OpenSEO
+# PromptNerdy
 
 > Open source alternative to Semrush and Ahrefs
 
-OpenSEO is an SEO tool for _the people_. If tools like Semrush or Ahrefs are too expensive or bloated, OpenSEO is a pay-as-you-go alternative that you actually control.
+PromptNerdy is an SEO tool for _the people_. If tools like Semrush or Ahrefs are too expensive or bloated, PromptNerdy is a pay-as-you-go alternative that you actually control.
 
 > All-in-one SEO tool for you and your AI agent.
 
-Connect with any agent like Claude Code, OpenClaw or Hermes. We have pre-built skills, but you can build your own to tailor OpenSEO to your needs.
-
-<img width="100%" alt="openseo-keyword-research" src="https://github.com/user-attachments/assets/8ebdc439-3e72-41ab-8bde-8cda771ef2e8" />
+Connect with any agent like Claude Code, OpenClaw or Hermes. We have pre-built skills, but you can build your own to tailor PromptNerdy to your needs.
 
 ## Hosted Version
 
-Try OpenSEO for free on our website. If you want to support the project, a hosted subscription is $10/month.
+Try PromptNerdy for free on our website. If you want to support the project, a hosted subscription is $10/month.
 
-[openseo.so](https://openseo.so)
+[promptnerdy.com](https://promptnerdy.com)
 
-## Why use OpenSEO?
+## Why use PromptNerdy?
 
 - Best in class MCP and AI Skills.
 - Modern, simple UI.
@@ -34,18 +32,18 @@ Try OpenSEO for free on our website. If you want to support the project, a hoste
 - Site Audits
 - AI Visibility
 
-## OpenSEO MCP & Agent Skills
+## PromptNerdy MCP & Agent Skills
 
-OpenSEO exposes an MCP server so AI agents like Claude Code, OpenClaw, and Hermes can use your SEO data directly. Agent Skills are reusable workflows that guide your agent through SEO tasks using the MCP.
+PromptNerdy exposes an MCP server so AI agents like Claude Code, OpenClaw, and Hermes can use your SEO data directly. Agent Skills are reusable workflows that guide your agent through SEO tasks using the MCP.
 
-- [Set up ChatGPT web or desktop](https://openseo.so/docs/chatgpt) (works on Free and paid ChatGPT plans)
-- [Set up Codex](https://openseo.so/docs/codex-plugin)
-- [Set up OpenSEO MCP](https://openseo.so/docs/mcp)
-- [Set up OpenSEO Agent Skills](https://openseo.so/docs/skills/setup)
+- [Set up ChatGPT web or desktop](https://promptnerdy.com/docs/chatgpt) (works on Free and paid ChatGPT plans)
+- [Set up Codex](https://promptnerdy.com/docs/codex-plugin)
+- [Set up PromptNerdy MCP](https://promptnerdy.com/docs/mcp)
+- [Set up PromptNerdy Agent Skills](https://promptnerdy.com/docs/skills/setup)
 
 ## Self-Hosting
 
-OpenSEO supports two self-hosting paths:
+PromptNerdy supports two self-hosting paths:
 
 - **Simple: Docker (Best for testing it out)** - For personal use on your own machine. See [`docs/SELF_HOSTING_DOCKER.md`](./docs/SELF_HOSTING_DOCKER.md).
   - Unless you already are self-hosting other apps and are confident doing so, we recommend self-hosting with Cloudflare as opposed to Railway, Coolify or Dokploy.
@@ -56,9 +54,9 @@ Either way, you need a DataForSEO API key to get SEO data. See [`docs/DATAFORSEO
 
 ## Costs
 
-OpenSEO needs a [DataForSEO](https://dataforseo.com/?aff=255379) API key so that you can get SEO data. You pay them directly when self hosting.
+PromptNerdy needs a [DataForSEO](https://dataforseo.com/) API key so that you can get SEO data. You pay them directly when self hosting.
 
-See [openseo.so/pricing](https://openseo.so/pricing)
+See [promptnerdy.com/pricing](https://promptnerdy.com/pricing)
 
 When you self host, your costs will be slightly lower than the estimates on our website. The way the hosted service makes money is by charging 28% extra for every request we make to DataForSEO.
 
@@ -75,14 +73,9 @@ Read more here: [`docs/CONTRIBUTING.md`](./docs/CONTRIBUTING.md)
 We have this skill: `/simple-issue-description` which helps.
 
 ```sh
-npx skills add every-app/open-seo --skill simple-issue-description
+npx skills add TayoAki/PromptNerdy --skill simple-issue-description
 ```
 
 ## Community
 
-Join Discord to chat: [Discord](https://discord.gg/c9uGs3cFXr)
-
-Follow along for updates:
-
-- Follow on X: https://x.com/bensenescu
-- Sign up for the mailing list on our website: [openseo.so](https://openseo.so)
+Sign up for the mailing list on our website: [promptnerdy.com](https://promptnerdy.com)

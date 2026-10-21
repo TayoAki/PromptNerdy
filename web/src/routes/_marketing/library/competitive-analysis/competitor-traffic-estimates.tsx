@@ -17,7 +17,7 @@ export const Route = createFileRoute(
       title: "How Accurate Are Competitor Traffic Estimates?",
       description: frontmatter.description,
       path: PATH,
-      titleSuffix: "OpenSEO Library",
+      titleSuffix: "PromptNerdy Library",
       ogType: "article",
     }),
   component: () => (

@@ -26,7 +26,7 @@ vi.mock("@/server/lib/posthog", () => ({ captureServerError: vi.fn() }));
 const fetchMock = vi.fn<typeof fetch>();
 
 function browserRequest(headers: Record<string, string>) {
-  return new Request("https://app.openseo.so/api/auth/sign-up/email", {
+  return new Request("https://app.promptnerdy.com/api/auth/sign-up/email", {
     headers: { cookie: "_fbp=fb.1.1.1", ...headers },
   });
 }
@@ -51,7 +51,7 @@ describe("captureMetaSignup", () => {
     captureMetaSignup(
       browserRequest({
         "cf-ipcountry": "DE",
-        cookie: "_fbp=fb.1.1.1; openseo_privacy=a0.d0.m1",
+        cookie: "_fbp=fb.1.1.1; promptnerdy_privacy=a0.d0.m1",
       }),
     );
     expect(fetchMock).toHaveBeenCalledOnce();

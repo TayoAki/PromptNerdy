@@ -33,7 +33,7 @@ const faqs = [
   {
     question: "Can a site audit tool find index bloat?",
     answer:
-      "Not directly, because every bloated page returns 200 and passes its per-page checks. What a crawler gives you is the raw material, repeated titles, thin word counts, and recurring URL patterns. Pair it with Search Console URL inspection to find out which of those URLs Google holds. OpenSEO does both: crawls up to 50 pages on the free plan and 10,000 on the $10/month plan, and runs URL inspection against your connected property at no credit cost.",
+      "Not directly, because every bloated page returns 200 and passes its per-page checks. What a crawler gives you is the raw material, repeated titles, thin word counts, and recurring URL patterns. Pair it with Search Console URL inspection to find out which of those URLs Google holds. PromptNerdy does both: crawls up to 50 pages on the free plan and 10,000 on the $10/month plan, and runs URL inspection against your connected property at no credit cost.",
   },
 ];
 
@@ -55,7 +55,7 @@ export const Route = createFileRoute(
       title: "Index Bloat: When the Fix Is Deleting Pages",
       description: frontmatter.description,
       path: PATH,
-      titleSuffix: "OpenSEO Library",
+      titleSuffix: "PromptNerdy Library",
       ogType: "article",
     }),
   component: () => (

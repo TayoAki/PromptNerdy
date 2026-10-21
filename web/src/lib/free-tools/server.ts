@@ -235,7 +235,7 @@ export async function chargeToolBudget(input: {
     const message =
       decision === "visitor"
         ? "You've hit today's free limit. Sign up for the full workspace."
-        : "This free tool has reached today's limit. Try again tomorrow, or sign up for OpenSEO to keep researching.";
+        : "This free tool has reached today's limit. Try again tomorrow, or sign up for PromptNerdy to keep researching.";
     return jsonResponse({ error: message }, 429);
   } catch (err) {
     console.error(`Free tool budget unavailable (${input.tool}):`, err);
@@ -256,7 +256,7 @@ function cacheStore(): Cache {
 
 function cacheRequest(tool: string, key: string): Request {
   return new Request(
-    `https://openseo.so/api/${tool}/${encodeURIComponent(key)}`,
+    `https://promptnerdy.com/api/${tool}/${encodeURIComponent(key)}`,
   );
 }
 

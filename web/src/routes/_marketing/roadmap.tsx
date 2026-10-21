@@ -12,7 +12,7 @@ export const Route = createFileRoute("/_marketing/roadmap")({
       title: roadmapFrontmatter.title,
       description: roadmapFrontmatter.description,
       path: "/roadmap",
-      titleSuffix: "OpenSEO",
+      titleSuffix: "PromptNerdy",
     }),
   component: Roadmap,
 });

@@ -172,7 +172,7 @@ function getPreferredRepo() {
 
 /** @param {string | undefined} repo */
 function getDefaultToRef(repo) {
-  return repo === "every-app/open-seo" ? "main" : "HEAD";
+  return repo === "TayoAki/PromptNerdy" ? "main" : "HEAD";
 }
 
 /** @param {readonly string[]} rangeArgs */

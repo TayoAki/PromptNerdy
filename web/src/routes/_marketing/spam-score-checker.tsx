@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_marketing/spam-score-checker")({
       description:
         "Check a domain's backlink spam score and see the spammiest links pointing at it. No signup, no email.",
       path: TOOL.path,
-      titleSuffix: "OpenSEO",
+      titleSuffix: "PromptNerdy",
     }),
   component: SpamScoreCheckerPage,
 });
@@ -32,12 +32,12 @@ const FAQS = [
   {
     question: "How many links does the free check show?",
     answer:
-      "The 10 highest-spam referring domains, one link each. OpenSEO lets you filter the full backlink profile by spam score and see how much of the profile is affected.",
+      "The 10 highest-spam referring domains, one link each. PromptNerdy lets you filter the full backlink profile by spam score and see how much of the profile is affected.",
   },
   {
     question: "Where does the data come from?",
     answer:
-      "DataForSEO's backlink index, cached for 24 hours per domain. It's the same data OpenSEO uses for backlink research.",
+      "DataForSEO's backlink index, cached for 24 hours per domain. It's the same data PromptNerdy uses for backlink research.",
   },
 ];
 
@@ -69,7 +69,7 @@ function SpamScoreCheckerPage() {
       faqs={FAQS}
       cta={{
         heading: "Review more of the backlink profile",
-        body: "Filter backlinks by spam score, rank, and follow status in OpenSEO. Start with free trial credits.",
+        body: "Filter backlinks by spam score, rank, and follow status in PromptNerdy. Start with free trial credits.",
         featureLabel: "Learn about Backlinks",
       }}
     >

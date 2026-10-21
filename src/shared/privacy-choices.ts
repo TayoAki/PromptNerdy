@@ -1,5 +1,5 @@
-// Optional tracking choices shared by the marketing site (openseo.so) and the
-// app (app.openseo.so). Both read one first-party cookie on `.openseo.so`, so a
+// Optional tracking choices shared by the marketing site (promptnerdy.com) and the
+// app (app.promptnerdy.com). Both read one first-party cookie on `.promptnerdy.com`, so a
 // choice made on either side applies to both. Necessary cookies (sign-in,
 // security, this cookie) are not optional and are not covered here.
 
@@ -10,7 +10,7 @@ export type PrivacyChoices = {
   analytics: boolean;
   /** Partner referral attribution (Dub's referral cookie). */
   referrals: boolean;
-  /** Meta ad measurement: the Meta Pixel on openseo.so and the app's signup
+  /** Meta ad measurement: the Meta Pixel on promptnerdy.com and the app's signup
    *  and subscription events to Meta's Conversions API. */
   advertising: boolean;
 };
@@ -21,7 +21,7 @@ type SavedPrivacyChoices = Omit<PrivacyChoices, "advertising"> & {
   advertising?: boolean;
 };
 
-const PRIVACY_COOKIE = "openseo_privacy";
+const PRIVACY_COOKIE = "promptnerdy_privacy";
 const PRIVACY_COOKIE_MAX_AGE_SECONDS = 180 * 24 * 60 * 60;
 
 // For visitors from these countries nothing optional runs until they opt in.
@@ -122,8 +122,8 @@ export function hasGlobalPrivacyControl(): boolean {
 
 function cookieDomainAttribute(): string {
   const host = location.hostname;
-  return host === "openseo.so" || host.endsWith(".openseo.so")
-    ? "; Domain=openseo.so"
+  return host === "promptnerdy.com" || host.endsWith(".promptnerdy.com")
+    ? "; Domain=promptnerdy.com"
     : "";
 }
 
@@ -154,4 +154,5 @@ export function savePrivacyChoices(choices: PrivacyChoices) {
   window.dispatchEvent(new Event(PRIVACY_CHOICES_CHANGED_EVENT));
 }
 
-export const PRIVACY_CHOICES_CHANGED_EVENT = "openseo:privacy-choices-changed";
+export const PRIVACY_CHOICES_CHANGED_EVENT =
+  "promptnerdy:privacy-choices-changed";

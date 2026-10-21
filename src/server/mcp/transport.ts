@@ -19,7 +19,7 @@ import {
   type McpProps,
 } from "@/server/mcp/context";
 import { getPublicOrigin } from "@/server/mcp/public-origin";
-import { createOpenSeoMcpServer } from "@/server/mcp/server";
+import { createPromptNerdyMcpServer } from "@/server/mcp/server";
 import { supportsMcpApps } from "@/server/mcp/ui-capabilities";
 import { AuthRepository } from "@/server/auth/repositories/AuthRepository";
 import { resolveExistingActiveHostedOrganization } from "@/server/auth/default-hosted-organization";
@@ -103,8 +103,8 @@ async function handleLegacyJsonRequest(
   // buffers the response and lets the finally below tear everything down
   // before the request completes. JSON mode silently drops server-to-client
   // requests (sampling/elicitation) and would hang the buffered response —
-  // no OpenSEO tool issues them.
-  const server = createOpenSeoMcpServer(props, supportsApps);
+  // no PromptNerdy tool issues them.
+  const server = createPromptNerdyMcpServer(props, supportsApps);
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
     enableJsonResponse: true,
@@ -133,7 +133,7 @@ function createRequestHandler(
   allowedOriginHostnames?: string[],
 ) {
   const modernHandler = createMcpHandler(
-    () => createOpenSeoMcpServer(props, supportsApps),
+    () => createPromptNerdyMcpServer(props, supportsApps),
     {
       route: MCP_ROUTE,
       allowedOriginHostnames,
@@ -176,7 +176,7 @@ async function resolveRequestOrganization(
   return resolveExistingActiveHostedOrganization(userId);
 }
 
-export async function handleAuthenticatedOpenSeoMcpRequest(
+export async function handleAuthenticatedPromptNerdyMcpRequest(
   request: Request,
   props: unknown,
   env: unknown,
@@ -240,7 +240,7 @@ export async function handleAuthenticatedOpenSeoMcpRequest(
   ])(request, env, ctx);
 }
 
-export async function handleSelfHostedOpenSeoMcpRequest(
+export async function handleSelfHostedPromptNerdyMcpRequest(
   request: Request,
   authMode: "cloudflare_access" | "local_noauth",
   env: unknown,

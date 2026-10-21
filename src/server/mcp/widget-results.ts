@@ -88,12 +88,12 @@ export async function displayWidgetResult(
     );
   }
   const result = mcpResponse({
-    text: "Showing the saved OpenSEO results.",
+    text: "Showing the saved PromptNerdy results.",
     meta: { projectId: args.projectId },
     structuredContent: { displayed: true, resultId: args.resultId },
   });
   return {
     ...result,
-    _meta: { ...result._meta, openSeoWidget: snapshot.data },
+    _meta: { ...result._meta, promptNerdyWidget: snapshot.data },
   };
 }

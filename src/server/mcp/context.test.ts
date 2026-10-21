@@ -9,10 +9,10 @@ const applicationContext = {
   userId: "user_123",
   userEmail: "alice@example.com",
   organizationId: "org_123",
-  baseUrl: "https://open-seo.test",
+  baseUrl: "https://promptnerdy.test",
 };
 
-describe("OpenSEO tool auth context", () => {
+describe("PromptNerdy tool auth context", () => {
   it("prefers standard OAuth client metadata over the props fallback", () => {
     const props = createWorkersOAuthMcpProps({
       ...applicationContext,

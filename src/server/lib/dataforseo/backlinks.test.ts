@@ -42,14 +42,14 @@ describe("normalizeBacklinksTarget", () => {
       },
     },
     {
-      input: "https://github.com/every-app/open-seo/",
+      input: "https://github.com/TayoAki/PromptNerdy/",
       options: undefined,
       expected: {
         apiTarget: "github.com",
-        displayTarget: "github.com/every-app/open-seo",
+        displayTarget: "github.com/TayoAki/PromptNerdy",
         scope: "subfolder",
         includeSubdomains: false,
-        path: "/every-app/open-seo",
+        path: "/TayoAki/PromptNerdy",
       },
     },
     {
@@ -151,10 +151,10 @@ describe("fetchBacklinksSummary", () => {
     async (hideSpam) => {
       const mode = "as_is";
       vi.mocked(fetch).mockResolvedValue(okResponse([]));
-      const filters = [["domain_from", "=", "openseo.so"]];
+      const filters = [["domain_from", "=", "promptnerdy.com"]];
 
       await fetchBacklinksRows({
-        target: "openseo.so",
+        target: "promptnerdy.com",
         mode,
         offset: 50,
         limit: 50,

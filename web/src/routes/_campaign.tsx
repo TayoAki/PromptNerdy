@@ -33,7 +33,7 @@ function CampaignLayout() {
     <div className="itc itc-campaign">
       <div className="mx-auto w-full max-w-6xl px-4 pt-6 sm:px-6 md:pt-8">
         <nav className="itc-campaign-nav mx-auto flex min-h-14 max-w-5xl items-center justify-between gap-3 rounded-full border border-[var(--color-border-subtle)] bg-white/90 py-2 pl-5 pr-2 shadow-sm shadow-neutral-900/5">
-          <span className="text-sm font-semibold">OpenSEO</span>
+          <span className="text-sm font-semibold">PromptNerdy</span>
           <a
             href={SIGNUP_URL}
             className="inline-flex h-9 items-center rounded-full bg-neutral-950 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-800"
@@ -47,7 +47,7 @@ function CampaignLayout() {
 
       <footer className="itc-campaign-footer itc-caption itc-subtle">
         <div className="itc-container">
-          <p style={{ margin: 0 }}>© 2026 Every App, Inc.</p>
+          <p style={{ margin: 0 }}>© 2026 PromptNerdy</p>
           <nav aria-label="Legal">
             <a href="/privacy">Privacy</a>
             <a href="/terms-and-conditions">Terms</a>

@@ -56,7 +56,7 @@ export async function runScheduledAiVisibility() {
       await startRun(config, "scheduled", {
         organizationId,
         userId: "system",
-        userEmail: "system@openseo.so",
+        userEmail: "system@promptnerdy.com",
         projectId: tracker.projectId,
       });
       started++;

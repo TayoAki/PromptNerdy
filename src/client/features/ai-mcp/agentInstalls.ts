@@ -10,7 +10,7 @@ export const ONE_CLICK_INSTALLS = [
   {
     agent: "claude",
     name: "Claude",
-    href: "https://claude.com/marketplace/connectors/openseo",
+    href: "https://claude.com/marketplace/connectors/promptnerdy",
     Icon: ClaudeIcon,
   },
 ];

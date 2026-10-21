@@ -13,7 +13,7 @@ const mocks = vi.hoisted(() => ({
 vi.mock("cloudflare:workers", () => ({
   env: {
     LOOPS_API_KEY: "loops-key",
-    BETTER_AUTH_URL: "https://app.openseo.so",
+    BETTER_AUTH_URL: "https://app.promptnerdy.com",
   },
   waitUntil: vi.fn(),
 }));
@@ -71,7 +71,8 @@ it("emails a user the summary of their first completed audit", async () => {
           topIssue1: "Missing title tag",
           topIssue2: "Broken internal link",
           topIssue3: "Missing meta description",
-          auditUrl: "https://app.openseo.so/p/project-1/audit?auditId=audit-1",
+          auditUrl:
+            "https://app.promptnerdy.com/p/project-1/audit?auditId=audit-1",
         },
       },
     }),

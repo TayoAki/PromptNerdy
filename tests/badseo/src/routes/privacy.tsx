@@ -8,7 +8,7 @@ export const Route = createFileRoute("/privacy")({
       {
         name: "description",
         content:
-          "How badseo.dev uses Plausible, Google Analytics, and Cloudflare and how visitors control analytics cookies.",
+          "How badseo.dev uses Google Analytics and Cloudflare and how visitors control analytics cookies.",
       },
     ],
   }),
@@ -27,33 +27,17 @@ function PrivacyPage() {
 
         <h2>Who operates this site</h2>
         <p>
-          badseo.dev is operated by Every App, Inc. as a public test site for
-          OpenSEO. The site has no accounts, forms, purchases, or user-submitted
-          content. Privacy questions and requests can be sent to{" "}
-          <a href="mailto:ben@openseo.so">ben@openseo.so</a>.
-        </p>
-
-        <h2>Plausible Analytics</h2>
-        <p>
-          We use Plausible Analytics on every page to understand aggregate
-          traffic and which technical SEO examples people use. Plausible does
-          not set cookies or create a persistent identifier for you. It provides
-          aggregate measurements such as page views, referring sites, browser
-          and device categories, and country-level location.
-        </p>
-        <p>
-          Plausible is provided by Plausible Analytics OÜ. Learn more in the{" "}
-          <a href="https://plausible.io/data-policy">
-            Plausible Analytics data policy
-          </a>
-          .
+          badseo.dev is operated by PromptNerdy as a public test site for
+          PromptNerdy. The site has no accounts, forms, purchases, or
+          user-submitted content. Privacy questions and requests can be sent to{" "}
+          <a href="mailto:privacy@promptnerdy.com">privacy@promptnerdy.com</a>.
         </p>
 
         <h2>Google Analytics</h2>
         <p>
-          Separately, with your permission, we use Google Analytics 4 to
-          understand traffic in the analytics product many OpenSEO users use.
-          The Google tag does not load until you select <strong>Accept</strong>
+          With your permission, we use Google Analytics 4 to understand traffic
+          in the analytics product many PromptNerdy users use. The Google tag
+          does not load until you select <strong>Accept</strong>
           in the analytics banner.
         </p>
         <p>
@@ -71,9 +55,7 @@ function PrivacyPage() {
           remember it. You can change your choice at any time using{" "}
           <strong>Cookie settings</strong> in the footer. Rejecting after a
           previous acceptance disables analytics and removes accessible Google
-          Analytics cookies from this site. This choice controls Google
-          Analytics; the cookieless Plausible measurement described above
-          remains active.
+          Analytics cookies from this site.
         </p>
         <p>
           Learn more about{" "}
@@ -102,12 +84,12 @@ function PrivacyPage() {
 
         <h2>International processing and your rights</h2>
         <p>
-          Google, Plausible, and Cloudflare may process information in the
-          United States, the European Economic Area, and other countries.
-          Depending on where you live, you may have rights to ask about, access,
-          correct, delete, restrict, or object to certain processing of your
-          information. Contact us to make a request. You may also complain to
-          the privacy or data-protection authority where you live.
+          Google and Cloudflare may process information in the United States,
+          the European Economic Area, and other countries. Depending on where
+          you live, you may have rights to ask about, access, correct, delete,
+          restrict, or object to certain processing of your information. Contact
+          us to make a request. You may also complain to the privacy or
+          data-protection authority where you live.
         </p>
 
         <h2>Changes</h2>

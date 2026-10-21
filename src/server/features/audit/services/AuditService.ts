@@ -298,7 +298,7 @@ async function remove(auditId: string, projectId: string) {
 
   await AuditRepository.deleteAuditForProject(auditId, projectId);
   // Best-effort: drop the crawl scratchpad DO with the audit (it lives in
-  // the open-seo-audit worker, behind the AuditEngine RPC). A missed destroy
+  // the promptnerdy-audit worker, behind the AuditEngine RPC). A missed destroy
   // self-cleans via the DO's 7-day alarm.
   try {
     await env.AUDIT_ENGINE.destroyScratchpad(auditId);

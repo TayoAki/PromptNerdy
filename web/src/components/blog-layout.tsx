@@ -38,7 +38,7 @@ export function BlogLayout({ children }: { children: ReactNode }) {
             to="/"
             className="shrink-0 text-base font-semibold text-neutral-950 transition-opacity hover:opacity-80"
           >
-            OpenSEO
+            PromptNerdy
           </Link>
 
           <nav
@@ -60,7 +60,7 @@ export function BlogLayout({ children }: { children: ReactNode }) {
               </Link>
             ))}
             <a
-              href="https://github.com/every-app/open-seo"
+              href="https://github.com/TayoAki/PromptNerdy"
               target="_blank"
               rel="noopener noreferrer"
               className="hidden shrink-0 transition-colors hover:text-neutral-950 sm:inline"

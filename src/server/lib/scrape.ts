@@ -16,7 +16,7 @@ const FETCH_TIMEOUT_MS = 10_000;
 // Covers chains like https://apex -> http://www -> https://www.
 const MAX_REDIRECTS = 3;
 const MAX_RESPONSE_BYTES = 2_000_000;
-const USER_AGENT = "OpenSEO-Onboarding/1.0 (+https://openseo.so)";
+const USER_AGENT = "PromptNerdy-Onboarding/1.0 (+https://promptnerdy.com)";
 
 type ScrapedPage = {
   url: string;

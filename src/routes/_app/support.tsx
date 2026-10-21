@@ -10,8 +10,7 @@ import {
 } from "@/client/components/ui/card";
 import { SUPPORT_EMAIL } from "@/client/lib/support";
 
-const DISCORD_URL = "https://discord.gg/c9uGs3cFXr";
-const GITHUB_URL = "https://github.com/every-app/open-seo";
+const GITHUB_URL = "https://github.com/TayoAki/PromptNerdy";
 
 export const Route = createFileRoute("/_app/support")({
   component: SupportPage,
@@ -27,7 +26,7 @@ function SupportPage() {
           </p>
           <PageHeader
             title="We want to hear from you"
-            description="We want to talk to you! We're super open to feedback and want to learn how you work so we can make OpenSEO better."
+            description="We want to talk to you! We're super open to feedback and want to learn how you work so we can make PromptNerdy better."
           />
         </div>
 
@@ -50,13 +49,6 @@ function SupportPage() {
               />
             </CardContent>
           </Card>
-
-          <SupportLinkCard
-            href={DISCORD_URL}
-            title="Discord"
-            description="Ask for help, share ideas and learn from the community."
-            cta="Join the Discord"
-          />
 
           <SupportLinkCard
             href={`${GITHUB_URL}/issues`}

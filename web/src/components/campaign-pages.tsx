@@ -1,6 +1,6 @@
 /**
  * Paid-traffic landing pages. Each one repeats its Meta ad's headline, keeps
- * proof and the first action on the first phone screen, and is assembled from
+ * the first action on the first phone screen, and is assembled from
  * the homepage's own sections so the two never drift apart in style.
  */
 
@@ -17,9 +17,6 @@ import {
   OpenSourceSection,
   SIGNUP_URL,
   SkillsList,
-  TESTIMONIALS,
-  type Testimonial,
-  Testimonials,
 } from "@/components/landing-page";
 import { MoneyBackGuarantee } from "@/components/money-back-guarantee";
 import { DEFAULT_COUNTRY_CODE } from "@/lib/free-tools/countries";
@@ -29,32 +26,7 @@ import type { RankedKeywordRow } from "@/lib/free-tools/labs";
 import { formatCount } from "@/lib/free-tools/metric-grid";
 import { useToolRun } from "@/lib/free-tools/use-tool-run";
 
-const EXAMPLE_REPORT_URL =
-  "https://app.openseo.so/s/QEZZWxoLl4TpzhKxeiNRGuM_Hj15eUzY";
-
 // ─── Shared pieces ───────────────────────────────────────────────────
-
-function ProofRow() {
-  return (
-    <div className="itc-proof">
-      <span className="itc-proof-avatars" aria-hidden="true">
-        {TESTIMONIALS.map((t) => (
-          <img key={t.name} src={t.avatarSrc} alt="" width={30} height={30} />
-        ))}
-      </span>
-      <span>
-        <strong>3,000+</strong> users
-      </span>
-      <span className="itc-proof-divider" aria-hidden="true" />
-      <span>
-        <span className="itc-proof-star" aria-hidden="true">
-          ★
-        </span>{" "}
-        <strong>22k+</strong> GitHub stars
-      </span>
-    </div>
-  );
-}
 
 function StartFree() {
   return (
@@ -82,11 +54,11 @@ function AgentCtas() {
 function PriceCompare({
   heading,
   body,
-  openSeo,
+  promptNerdy,
 }: {
   heading: string;
   body: string;
-  openSeo: { price: string; caption: string };
+  promptNerdy: { price: string; caption: string };
 }) {
   return (
     <section className="itc-section">
@@ -100,14 +72,14 @@ function PriceCompare({
         <div className="itc-price-compare">
           <div className="itc-card itc-price-card">
             <p className="itc-body-sm" style={{ margin: 0, fontWeight: 500 }}>
-              OpenSEO
+              PromptNerdy
             </p>
             <p className="itc-price">
-              {openSeo.price}
+              {promptNerdy.price}
               <span className="itc-price-unit">/mo</span>
             </p>
             <p className="itc-body-sm itc-muted" style={{ margin: "8px 0 0" }}>
-              {openSeo.caption}
+              {promptNerdy.caption}
             </p>
           </div>
           <div className="itc-card itc-price-card itc-price-card-muted">
@@ -178,7 +150,7 @@ function Closing({
 
 const SELF_HOST_ANSWER = (
   <>
-    Yes. OpenSEO is open source. Run it on your own server with your own
+    Yes. PromptNerdy is open source. Run it on your own server with your own
     DataForSEO key.{" "}
     <a href="/docs/self-hosting" className="itc-inline-link">
       Self-hosting guide
@@ -190,21 +162,6 @@ const BILLING_ANSWER =
   "One plan at $10/mo includes $10 of usage every month. Buy extra usage when you need it; top-ups never expire. Cancel anytime from your billing portal.";
 
 // ─── /agencies ───────────────────────────────────────────────────────
-
-const AGENCY_TESTIMONIALS: Testimonial[] = [
-  {
-    quote:
-      "Our agency killed $2,000 in Semrush and $1,000 in Ahrefs costs because of OpenSEO & DataForSEO. We went from $3,000 a month to $30 in API calls to DataForSEO.",
-    name: "Gabe Fletcher",
-    role: "NannerAds",
-    initial: "G",
-    handle: "@gabefletcher",
-    href: "https://x.com/gabefletcher/status/2108388926281167057",
-    network: "x",
-    avatarSrc: "/avatars/gabe-avatar.jpg",
-  },
-  ...TESTIMONIALS.filter((t) => t.name !== "Tom Raine"),
-];
 
 const AGENCY_FEATURES = [
   {
@@ -221,7 +178,6 @@ const AGENCY_FEATURES = [
     title: "Show the client",
     body: "Research your agent runs is saved as a clean report you can share with a link.",
     Icon: IconReport,
-    link: { label: "See an example report", href: EXAMPLE_REPORT_URL },
   },
 ];
 
@@ -232,7 +188,7 @@ const AGENCY_FAQ: FaqItem[] = [
       "Yes. Add each client site as its own project, with its own saved keywords and rank tracking.",
   },
   {
-    question: "Do I need an AI agent to use OpenSEO?",
+    question: "Do I need an AI agent to use PromptNerdy?",
     answer:
       "No. Everything works in the web app. You can also connect Claude, Codex, or another MCP client and let an agent run the research for you.",
   },
@@ -449,7 +405,6 @@ export function AgencyLandingPage() {
             Enter a client&apos;s site. See the keywords they&apos;re closest to
             winning, for free.
           </p>
-          <ProofRow />
           <ClientWinsCheck />
         </Container>
       </section>
@@ -464,7 +419,7 @@ export function AgencyLandingPage() {
             </p>
           </div>
           <div className="itc-bd-cards">
-            {AGENCY_FEATURES.map(({ title, body, Icon, link }) => (
+            {AGENCY_FEATURES.map(({ title, body, Icon }) => (
               <div key={title} className="itc-card itc-bd-card">
                 <div className="itc-bd-icons">
                   <span className="itc-agent-icon">
@@ -478,17 +433,6 @@ export function AgencyLandingPage() {
                 >
                   {body}
                 </p>
-                {link ? (
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="itc-textlink itc-bd-link"
-                  >
-                    {link.label}{" "}
-                    <IconArrowRight size={15} className="itc-arrow" />
-                  </a>
-                ) : null}
               </div>
             ))}
           </div>
@@ -498,12 +442,10 @@ export function AgencyLandingPage() {
         </Container>
       </section>
 
-      <Testimonials items={AGENCY_TESTIMONIALS} />
-
       <PriceCompare
         heading="Priced for client work"
         body="One plan at $10/mo with $10 of usage included. More clients means more usage, not a bigger plan."
-        openSeo={{
+        promptNerdy={{
           price: "~$27",
           caption:
             "15 client sites with rankings checked weekly, plus regular keyword research.",
@@ -571,7 +513,6 @@ export function AgentLandingPage() {
             client. Set up in 2 minutes, for free.
           </p>
           <AgentCtas />
-          <ProofRow />
         </Container>
       </section>
 
@@ -597,12 +538,10 @@ export function AgentLandingPage() {
 
       <OpenSourceSection />
 
-      <Testimonials />
-
       <PriceCompare
         heading="Starts at $10/month"
         body="$10 of usage is included every month. One site with weekly rank tracking and regular research fits inside it."
-        openSeo={{
+        promptNerdy={{
           price: "$10",
           caption:
             "One site with rankings checked weekly, plus regular research.",

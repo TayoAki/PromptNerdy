@@ -13,9 +13,9 @@ The catch is that Google hands it to you in a shape designed for spot checks rat
 
 Open a page report and note the click total. Then add up the clicks in the query table underneath. The second number is smaller, often dramatically so. Google anonymizes queries below a privacy threshold, so the searches that drove most of your traffic never appear by name.
 
-The gap is worse than most people assume. On one of my own pages earning around a hundred clicks a month, the interface named five queries. Going through the API raised that to twelve. Out of a hundred clicks, I could name twelve of them, on a page I wrote and understood.
+The gap is worse than most people assume. A page earning around a hundred clicks a month can show five named queries in the interface and only a dozen through the API.
 
-That is the problem the [dark query post](/blogs/dark-queries) works through in detail. This page is the repeatable strategy that comes out of it.
+This page is a repeatable strategy for working with that gap.
 
 Grant Simmons, who has built SEO tooling for years, adds a confidence score to his estimates:
 
@@ -34,7 +34,7 @@ The workflow runs in four steps:
 3. Group those queries by the page currently ranking, which turns a keyword list into a page-by-page work queue.
 4. Sort each page's group by impressions, because impressions measure demand that Google is already showing you losing.
 
-![A ranked-keyword list filtered to positions 10 through 13, showing the keyword, its position, and monthly search volume for each row](/library/keyword-research/gsc-striking-distance-openseo.png)
+![A ranked-keyword list filtered to positions 10 through 13, showing the keyword, its position, and monthly search volume for each row](/library/keyword-research/gsc-striking-distance-promptnerdy.png)
 
 The list above is one site's striking-distance band, filtered to positions 10 through 13. Nothing here is a head term, and that is the point: these are queries the site already half-ranks for, several of them worth a few hundred searches a month, all of them sitting one page away from traffic.
 
@@ -54,12 +54,12 @@ The other half of the mine runs in the opposite direction. Look for pages with h
 
 Sort those by impressions and read the queries attached. When the queries do not match what the page is about, you have found a page drifting off its topic, and the fix is usually a split rather than a rewrite. When the queries match and the clicks still do not come, the fix is the title. Both are cheaper than new content, and both come from data you already own.
 
-## Do it with OpenSEO
+## Do it with PromptNerdy
 
-Because the Search Console connection runs through OpenSEO, your agent can query it alongside your ranking data without a second integration. Connect the [OpenSEO MCP](/docs/mcp) once, or read how the [Search Console MCP](/google-search-console-mcp) fits together, then run the workflow with this prompt.
+Because the Search Console connection runs through PromptNerdy, your agent can query it alongside your ranking data without a second integration. Connect the [PromptNerdy MCP](/docs/mcp) once, or read how the [Search Console MCP](/google-search-console-mcp) fits together, then run the workflow with this prompt.
 
 ```text
-Using the OpenSEO MCP, pull Search Console query data for
+Using the PromptNerdy MCP, pull Search Console query data for
 [mydomain.com] over the longest window available.
 
 1. Striking distance

@@ -49,7 +49,7 @@ export const Route = createFileRoute(
       title: "Search Console Keyword Research: Striking-Distance Queries",
       description: frontmatter.description,
       path: PATH,
-      titleSuffix: "OpenSEO Library",
+      titleSuffix: "PromptNerdy Library",
       ogType: "article",
     }),
   component: () => (

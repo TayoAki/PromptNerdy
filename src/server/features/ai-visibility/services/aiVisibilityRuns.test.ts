@@ -42,7 +42,7 @@ beforeEach(async () => {
   await repo.saveConfiguration(
     configuration({
       engines: ["chatgpt"],
-      prompts: [{ text: "Which SEO tools?" }, { text: "Is OpenSEO good?" }],
+      prompts: [{ text: "Which SEO tools?" }, { text: "Is PromptNerdy good?" }],
     }),
   );
   workflowStatus("running");
@@ -95,7 +95,9 @@ describe("AI visibility checks", () => {
           status: "completed",
           // A completed collection without text means no answer was shown.
           answerMarkdown:
-            answer.prompt === "Is OpenSEO good?" ? "OpenSEO is good." : null,
+            answer.prompt === "Is PromptNerdy good?"
+              ? "PromptNerdy is good."
+              : null,
         })
         .where(eq(aiObservations.id, answer.id));
 
@@ -105,7 +107,7 @@ describe("AI visibility checks", () => {
       Object.fromEntries(
         prompts.map((prompt) => [prompt.text, prompt.hasResults]),
       ),
-    ).toEqual({ "Is OpenSEO good?": true, "Which SEO tools?": false });
+    ).toEqual({ "Is PromptNerdy good?": true, "Which SEO tools?": false });
   });
 
   it("refuses a check that now costs more than the approved maximum", async () => {

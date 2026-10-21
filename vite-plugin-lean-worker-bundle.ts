@@ -133,14 +133,14 @@ export function leanWorkerBundle(): Plugin {
     generateBundle(_options, bundle) {
       // EAGER_DENYLIST only matters for the worker builds' isolate memory; the
       // client bundle never contains these packages (and the zod swap applies
-      // everywhere). "ssr" is the main worker; "open_seo_audit" is the
+      // everywhere). "ssr" is the main worker; "promptnerdy_audit" is the
       // site-audit aux worker, which must stay lean for the same reason it
       // exists.
       const environment = this.environment.name;
       let denylist: typeof EAGER_DENYLIST;
       if (environment === "client") {
         denylist = CLIENT_ENTRY_DENYLIST;
-      } else if (["ssr", "open_seo_audit"].includes(environment)) {
+      } else if (["ssr", "promptnerdy_audit"].includes(environment)) {
         denylist = EAGER_DENYLIST;
       } else {
         return;

@@ -60,7 +60,7 @@ describe("show_serp_results", () => {
       { projectId: "project_1", resultId },
       owner,
     );
-    expect(shown._meta?.openSeoWidget).toMatchObject({
+    expect(shown._meta?.promptNerdyWidget).toMatchObject({
       data: { results: [], resultId },
     });
   });

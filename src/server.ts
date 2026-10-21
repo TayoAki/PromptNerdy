@@ -13,8 +13,8 @@ import { getOrCreateOrganizationCustomer } from "@/server/billing/subscription";
 import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
 import { getAuthMode, isHostedAuthMode } from "@/lib/auth-mode";
 import {
-  createOpenSeoOAuthProvider,
-  type OpenSeoOAuthEnv,
+  createPromptNerdyOAuthProvider,
+  type PromptNerdyOAuthEnv,
 } from "@/server/mcp/oauth-provider";
 import { requestWithPublicOrigin } from "@/server/mcp/public-origin";
 import { MCP_ROUTE } from "@/server/mcp/context";
@@ -61,7 +61,7 @@ async function appFetch(request: Request): Promise<Response> {
   });
 }
 
-const openSeoOAuthProvider = createOpenSeoOAuthProvider(appFetch);
+const promptNerdyOAuthProvider = createPromptNerdyOAuthProvider(appFetch);
 
 // Authorize a SAM agent connection in the Worker, before it reaches the Durable
 // Object. The DO instance name is the sessionId (set client-side); we resolve
@@ -165,9 +165,9 @@ function handleFetch(
       return handleAutumnWebhookRequest(publicRequest);
     }
 
-    return openSeoOAuthProvider.fetch(
+    return promptNerdyOAuthProvider.fetch(
       publicRequest,
-      env as OpenSeoOAuthEnv,
+      env as PromptNerdyOAuthEnv,
       ctx,
     );
   }
@@ -177,8 +177,13 @@ function handleFetch(
     pathname === MCP_ROUTE
   ) {
     return import("@/server/mcp/transport").then(
-      ({ handleSelfHostedOpenSeoMcpRequest }) =>
-        handleSelfHostedOpenSeoMcpRequest(publicRequest, authMode, env, ctx),
+      ({ handleSelfHostedPromptNerdyMcpRequest }) =>
+        handleSelfHostedPromptNerdyMcpRequest(
+          publicRequest,
+          authMode,
+          env,
+          ctx,
+        ),
     );
   }
 
@@ -186,7 +191,7 @@ function handleFetch(
 }
 
 // Export Workflow classes as named exports. SiteAuditWorkflow and the
-// AuditScratchpad DO live in the open-seo-audit aux worker
+// AuditScratchpad DO live in the promptnerdy-audit aux worker
 // (src/audit-worker.ts); this worker reaches them via cross-script bindings.
 export { RankCheckWorkflow } from "./server/workflows/RankCheckWorkflow";
 export { AiVisibilityWorkflow } from "./server/workflows/AiVisibilityWorkflow";
@@ -206,8 +211,8 @@ export default {
     if (controller.cron === MCP_OAUTH_PURGE_CRON) {
       // Only hosted mode runs the OAuth provider (and has OAUTH_KV bound).
       if (isHostedAuthMode(getAuthMode(env.AUTH_MODE))) {
-        const result = await openSeoOAuthProvider.purgeExpiredData(
-          env as OpenSeoOAuthEnv,
+        const result = await promptNerdyOAuthProvider.purgeExpiredData(
+          env as PromptNerdyOAuthEnv,
         );
         console.log("[mcp-oauth] purged expired OAuth data", result);
         // Daily referral-sale sweep: catches paid Autumn invoices the

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Codex plugin installs copy the plugin directory and skip symlinks, so
-// plugins/openseo/skills/* must be real files, not symlinks to .agents/skills/*.
+// plugins/promptnerdy/skills/* must be real files, not symlinks to .agents/skills/*.
 // Run this after editing any of the skills listed below. `pnpm ci:check` runs
 // this and diffs the result, so a stale copy fails CI instead of shipping.
 import { cpSync, rmSync } from "node:fs";
@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = fileURLToPath(new URL("..", import.meta.url));
 const sourceDir = join(repoRoot, ".agents/skills");
-const targetDir = join(repoRoot, "plugins/openseo/skills");
+const targetDir = join(repoRoot, "plugins/promptnerdy/skills");
 
 const skills = [
   "ai-prompt-research",
@@ -36,4 +36,4 @@ for (const skill of skills) {
   });
 }
 
-console.log(`Synced ${skills.length} skills into plugins/openseo/skills/`);
+console.log(`Synced ${skills.length} skills into plugins/promptnerdy/skills/`);

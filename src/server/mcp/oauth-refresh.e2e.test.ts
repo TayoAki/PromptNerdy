@@ -2,7 +2,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { sortBy } from "remeda";
 import { z } from "zod";
-import { createOpenSeoOAuthProvider } from "./oauth-provider";
+import { createPromptNerdyOAuthProvider } from "./oauth-provider";
 
 // End-to-end OAuth lifecycle against the REAL @cloudflare/workers-oauth-provider
 // (only the Workers runtime shims and app session resolution are mocked),
@@ -12,7 +12,7 @@ import { createOpenSeoOAuthProvider } from "./oauth-provider";
 // clients before (PR #420); these tests pin the full register → authorize →
 // consent → token → use → refresh chain.
 
-const BASE = "https://app.openseo.so";
+const BASE = "https://app.promptnerdy.com";
 const MCP_RESOURCE = `${BASE}/mcp`;
 
 vi.mock("cloudflare:workers", () => ({
@@ -27,7 +27,7 @@ vi.mock("cloudflare:workers", () => ({
 }));
 
 vi.mock("@/lib/auth", () => ({
-  getHostedBaseUrl: () => "https://app.openseo.so",
+  getHostedBaseUrl: () => "https://app.promptnerdy.com",
 }));
 
 vi.mock("@/middleware/ensure-user/hosted", () => ({
@@ -51,7 +51,7 @@ vi.mock("@/server/lib/posthog", () => ({
 // The API side of the provider: echo the decrypted grant props back so tests
 // can assert what a tool call would actually see after each token exchange.
 vi.mock("@/server/mcp/transport", () => ({
-  handleAuthenticatedOpenSeoMcpRequest: (
+  handleAuthenticatedPromptNerdyMcpRequest: (
     _request: Request,
     props: unknown,
   ): Promise<Response> => Promise.resolve(Response.json({ props })),
@@ -136,14 +136,14 @@ const ctx: ExecutionContext = {
   props: {},
 };
 
-type Provider = ReturnType<typeof createOpenSeoOAuthProvider>;
+type Provider = ReturnType<typeof createPromptNerdyOAuthProvider>;
 type Env = Parameters<Provider["fetch"]>[1];
 
 let provider: Provider;
 let env: Env;
 
 beforeEach(() => {
-  provider = createOpenSeoOAuthProvider(() => new Response("app"));
+  provider = createPromptNerdyOAuthProvider(() => new Response("app"));
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the provider touches only OAUTH_KV
   env = { OAUTH_KV: createKvFake() } as unknown as Env;
 });
@@ -167,7 +167,7 @@ const tokenErrorSchema = z.looseObject({
 
 const propsEchoSchema = z.object({
   props: z.object({
-    openSeoAuth: z.looseObject({
+    promptNerdyAuth: z.looseObject({
       userId: z.string(),
       organizationId: z.string(),
       clientId: z.string(),
@@ -284,7 +284,7 @@ async function callMcp(accessToken: string) {
     }),
   );
   expect(response.status).toBe(200);
-  return propsEchoSchema.parse(await response.json()).props.openSeoAuth;
+  return propsEchoSchema.parse(await response.json()).props.promptNerdyAuth;
 }
 
 async function setupSession() {
@@ -371,7 +371,7 @@ describe("Codex-style OAuth token refresh (real workers-oauth-provider)", () => 
     expect(await env.OAUTH_KV.get("purge-cursor")).not.toBeNull();
     expect(await env.OAUTH_KV.get(orphanedGrant)).not.toBeNull();
 
-    const nextRun = createOpenSeoOAuthProvider(() => new Response("app"));
+    const nextRun = createPromptNerdyOAuthProvider(() => new Response("app"));
     expect((await nextRun.purgeExpiredData(env)).done).toBe(false);
     expect(await env.OAUTH_KV.get(orphanedGrant)).toBeNull();
     expect(await env.OAUTH_KV.get(orphanedToken)).not.toBeNull();

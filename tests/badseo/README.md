@@ -7,18 +7,18 @@ technical-SEO rule: a missing `<title>`, a redirect loop, a page nothing links
 to, thin content. Point an SEO crawler at it and check what the crawler catches.
 
 It is also the end-to-end test fixture for the
-[OpenSEO](https://openseo.so) site audit. Every page lists the audit issues it
+[PromptNerdy](https://promptnerdy.com) site audit. Every page lists the audit issues it
 should trigger, and a harness runs the real audit engine against a running copy
 to check that it does.
 
-Maintained by the team behind [OpenSEO](https://openseo.so), an open-source SEO
+Maintained by the team behind [PromptNerdy](https://promptnerdy.com), an open-source SEO
 tool.
 
 ---
 
 ## What's covered
 
-Every issue type in the OpenSEO audit engine is exercised by at least one page
+Every issue type in the PromptNerdy audit engine is exercised by at least one page
 (the harness enforces this). Pages are grouped by category:
 
 | Category                     | Pages                                                                                                         |
@@ -54,11 +54,8 @@ states the audit needs to observe.
 
 ## Analytics
 
-Plausible Analytics loads on every page using the site-specific script supplied
-for badseo.dev. It provides the cookieless aggregate baseline without changing
-the Google Analytics consent choice.
-
-Google Analytics uses measurement ID `G-7MXV9FH7SS`. The small consent script in
+Google Analytics is off until you set a GA4 measurement ID in
+`public/analytics.js`. The small consent script in
 `public/analytics.js` is shared by TanStack pages and raw fixture documents. It
 does not request Google's tag or set analytics cookies until a visitor accepts.
 The visitor can reject analytics or revisit the choice from **Cookie settings**
@@ -84,7 +81,7 @@ pnpm exec prettier --write "tests/badseo/**/*.{ts,tsx,json,jsonc,md}"
 
 ## Run the end-to-end audit
 
-The harness drives the **real** OpenSEO crawl + issue-detection functions
+The harness drives the **real** PromptNerdy crawl + issue-detection functions
 (imported straight from `../src`) against a running badseo.dev, then asserts every
 fixture triggers exactly the issues it declares — and that the homepage,
 privacy policy, and support pages come back clean.

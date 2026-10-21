@@ -54,7 +54,7 @@ const MCP_ACCESS_TOKEN_TTL_SECONDS = 60 * 60 * 24;
 const MCP_REFRESH_TOKEN_TTL_SECONDS = 60 * 60 * 24 * 30;
 const MCP_CLIENT_REGISTRATION_TTL_SECONDS = 60 * 60 * 24 * 365;
 
-export type OpenSeoOAuthEnv = Env & {
+export type PromptNerdyOAuthEnv = Env & {
   OAUTH_KV: KVNamespace;
   OAUTH_PROVIDER?: OAuthHelpers;
 };
@@ -70,7 +70,7 @@ const consentResponseSchema = z.object({
   query: z.string(),
 });
 
-function getOAuthHelpers(env: OpenSeoOAuthEnv) {
+function getOAuthHelpers(env: PromptNerdyOAuthEnv) {
   if (!env.OAUTH_PROVIDER) {
     throw new Error("OAuth provider helpers are unavailable");
   }
@@ -216,7 +216,7 @@ function getGrantedMcpScopes(requestedScopes: string[]) {
 
 async function handleOAuthAuthorizeRequest(
   request: Request,
-  env: OpenSeoOAuthEnv,
+  env: PromptNerdyOAuthEnv,
 ) {
   const oauth = getOAuthHelpers(env);
 
@@ -237,7 +237,7 @@ async function handleOAuthAuthorizeRequest(
 
 async function handleOAuthConsentResponse(
   request: Request,
-  env: OpenSeoOAuthEnv,
+  env: PromptNerdyOAuthEnv,
 ) {
   if (request.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });
@@ -352,7 +352,7 @@ async function handleOAuthConsentResponse(
 
 function createDefaultHandler(
   appFetch: AppFetch,
-): ExportedHandlerWithFetch<OpenSeoOAuthEnv> {
+): ExportedHandlerWithFetch<PromptNerdyOAuthEnv> {
   return {
     async fetch(request, env) {
       const url = new URL(request.url);
@@ -370,16 +370,21 @@ function createDefaultHandler(
   };
 }
 
-const mcpApiHandler: ExportedHandlerWithFetch<OpenSeoOAuthEnv> = {
+const mcpApiHandler: ExportedHandlerWithFetch<PromptNerdyOAuthEnv> = {
   async fetch(request, env, ctx) {
-    const { handleAuthenticatedOpenSeoMcpRequest } =
+    const { handleAuthenticatedPromptNerdyMcpRequest } =
       await import("@/server/mcp/transport");
-    return handleAuthenticatedOpenSeoMcpRequest(request, ctx.props, env, ctx);
+    return handleAuthenticatedPromptNerdyMcpRequest(
+      request,
+      ctx.props,
+      env,
+      ctx,
+    );
   },
 };
 
 function createProvider(appFetch: AppFetch, resource: string) {
-  return new OAuthProvider<OpenSeoOAuthEnv>({
+  return new OAuthProvider<PromptNerdyOAuthEnv>({
     apiRoute: MCP_ROUTE,
     apiHandler: mcpApiHandler,
     defaultHandler: createDefaultHandler(appFetch),
@@ -395,7 +400,7 @@ function createProvider(appFetch: AppFetch, resource: string) {
     resourceMetadata: {
       resource,
       scopes_supported: [MCP_SCOPE],
-      resource_name: "OpenSEO MCP",
+      resource_name: "PromptNerdy MCP",
     },
     tokenExchangeCallback: ({ props, requestedScope }) => {
       if (!requestedScope.includes(MCP_SCOPE)) {
@@ -417,16 +422,20 @@ function createProvider(appFetch: AppFetch, resource: string) {
   });
 }
 
-export function createOpenSeoOAuthProvider(appFetch: AppFetch) {
+export function createPromptNerdyOAuthProvider(appFetch: AppFetch) {
   // Built lazily because the canonical resource comes from BETTER_AUTH_URL,
   // which is not readable at module-init time. It is the same base URL the
   // consent handler stamps into grant props.
-  let provider: OAuthProvider<OpenSeoOAuthEnv> | undefined;
+  let provider: OAuthProvider<PromptNerdyOAuthEnv> | undefined;
   const getProvider = () =>
     (provider ??= createProvider(appFetch, getMcpResource(getHostedBaseUrl())));
 
   return {
-    async fetch(request: Request, env: OpenSeoOAuthEnv, ctx: ExecutionContext) {
+    async fetch(
+      request: Request,
+      env: PromptNerdyOAuthEnv,
+      ctx: ExecutionContext,
+    ) {
       const url = new URL(request.url);
 
       const apiKeyResponse = await handleMcpApiKeyRequest(request, env, ctx);
@@ -444,7 +453,7 @@ export function createOpenSeoOAuthProvider(appFetch: AppFetch) {
     },
 
     // Resume the bounded sweep across cron runs, including past live records.
-    async purgeExpiredData(env: OpenSeoOAuthEnv) {
+    async purgeExpiredData(env: PromptNerdyOAuthEnv) {
       const cursor =
         (await env.OAUTH_KV.get(OAUTH_PURGE_CURSOR_KEY)) ?? undefined;
       const result = await getProvider().purgeExpiredData(env, {

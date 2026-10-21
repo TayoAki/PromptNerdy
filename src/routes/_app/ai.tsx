@@ -26,8 +26,8 @@ import {
 import { CopyButton } from "@/client/components/CopyButton";
 import { AgentList } from "@/client/features/ai-mcp/AgentList";
 
-const DOCS_URL = "https://openseo.so/docs/agent-setup";
-const COACH_DOCS_URL = "https://openseo.so/docs/skills/seo-coach";
+const DOCS_URL = "https://promptnerdy.com/docs/agent-setup";
+const COACH_DOCS_URL = "https://promptnerdy.com/docs/skills/seo-coach";
 const LINK_CLASS =
   "text-foreground underline decoration-foreground/25 underline-offset-4 hover:decoration-foreground";
 const MUTED_LINK_CLASS =
@@ -84,7 +84,7 @@ function AiPage() {
       <div className="mx-auto max-w-7xl">
         <PageHeader
           title="Agent setup"
-          description="The most powerful way to use OpenSEO is through the AI agent you already use. Set it up once, then ask it anything."
+          description="The most powerful way to use PromptNerdy is through the AI agent you already use. Set it up once, then ask it anything."
         />
 
         <Tabs
@@ -109,9 +109,9 @@ function AiPage() {
                     <h2>Set up your agent</h2>
                   </CardTitle>
                   <CardDescription>
-                    Paste the setup prompt into your agent to connect OpenSEO
-                    and install its SEO skills. It will guide you through any
-                    manual steps.
+                    Paste the setup prompt into your agent to connect
+                    PromptNerdy and install its SEO skills. It will guide you
+                    through any manual steps.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -159,7 +159,7 @@ function AiPage() {
                   </CardTitle>
                   <CardDescription>
                     Already connected? Paste the update prompt into your agent
-                    to get the latest OpenSEO skills while preserving your
+                    to get the latest PromptNerdy skills while preserving your
                     connection settings and personal edits.
                   </CardDescription>
                 </CardHeader>
@@ -193,7 +193,7 @@ function AiPage() {
                   connect until Managed OAuth is enabled on your Access
                   application.{" "}
                   <a
-                    href="https://openseo.so/docs/self-hosting/cloudflare#connect-the-mcp-server-through-cloudflare-access"
+                    href="https://promptnerdy.com/docs/self-hosting/cloudflare#connect-the-mcp-server-through-cloudflare-access"
                     target="_blank"
                     rel="noreferrer"
                     className="font-medium"
@@ -229,7 +229,7 @@ function AiPage() {
                     className="flex flex-col gap-0.5 sm:flex-row sm:gap-3"
                   >
                     <a
-                      href={`https://openseo.so/docs/skills/${name}`}
+                      href={`https://promptnerdy.com/docs/skills/${name}`}
                       target="_blank"
                       rel="noreferrer"
                       className={`shrink-0 font-mono text-[13px] sm:w-48 ${LINK_CLASS}`}

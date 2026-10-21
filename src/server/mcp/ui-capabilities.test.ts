@@ -8,7 +8,7 @@ const apps = {
 };
 
 function post(method: string, params: unknown) {
-  return new Request("https://open-seo.test/mcp", {
+  return new Request("https://promptnerdy.test/mcp", {
     method: "POST",
     body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
   });

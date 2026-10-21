@@ -150,7 +150,7 @@ export function SpamScoreCheckerTool() {
           </p>
 
           <UpsellCard tool={TOOL} cta="Audit the whole profile">
-            The free check lists the 10 spammiest referring domains. OpenSEO
+            The free check lists the 10 spammiest referring domains. PromptNerdy
             filters the full backlink profile by spam score so you can see how
             much of it is junk.
           </UpsellCard>
