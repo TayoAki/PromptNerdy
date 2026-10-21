@@ -7,7 +7,7 @@
 # rebuilds.
 set -e
 
-echo 'OpenSEO sends an anonymous usage heartbeat (counts only). Disable: OPENSEO_TELEMETRY_DISABLED=1. Details: docs/SELF_HOSTING_DOCKER.md#telemetry'
+echo 'PromptNerdy sends an anonymous usage heartbeat (counts only). Disable: PROMPTNERDY_TELEMETRY_DISABLED=1. Details: docs/SELF_HOSTING_DOCKER.md#telemetry'
 
 # The preflight validates env BEFORE the slow steps, so misconfiguration fails
 # in seconds with the exact fix instead of after a multi-minute build.
@@ -18,11 +18,11 @@ pnpm run db:migrate:local
 # POSTHOG_SOURCEMAPS (CI sourcemap uploads) moves vite's outDir; keep the
 # fingerprint marker beside the output it describes.
 if [ "${POSTHOG_SOURCEMAPS:-}" = "true" ]; then OUT_DIR=dist-sourcemaps; else OUT_DIR=dist; fi
-FP_FILE="$OUT_DIR/.openseo-build-env"
+FP_FILE="$OUT_DIR/.promptnerdy-build-env"
 
 # Everything that changes build output: the envPrefix prefixes from
 # vite.config.ts (keep in sync) plus POSTHOG_SOURCEMAPS.
-FINGERPRINT="$(env | grep -E '^(VITE_|AUTH_MODE|BYPASS_EMAIL_VERIFICATION|POSTHOG_PUBLIC_KEY|POSTHOG_HOST|TURNSTILE_SITE_KEY|POSTHOG_SOURCEMAPS)' | sort | sha256sum | cut -d' ' -f1)"
+FINGERPRINT="$(env | grep -E '^(VITE_|AUTH_MODE|BYPASS_EMAIL_VERIFICATION|BILLING_ENABLED|GOOGLE_SIGN_IN_ENABLED|POSTHOG_PUBLIC_KEY|POSTHOG_HOST|TURNSTILE_SITE_KEY|POSTHOG_SOURCEMAPS)' | sort | sha256sum | cut -d' ' -f1)"
 # A missing sha256sum would yield an empty, always-matching fingerprint and
 # silently disable rebuilds — fail loudly instead.
 test -n "$FINGERPRINT"

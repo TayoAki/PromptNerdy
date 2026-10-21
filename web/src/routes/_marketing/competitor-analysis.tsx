@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_marketing/competitor-analysis")({
       description:
         "See a competitor's top organic keywords and pages, compare their traffic to yours, and find the keywords they rank for that you don't. No signup, no email.",
       path: TOOL.path,
-      titleSuffix: "OpenSEO",
+      titleSuffix: "PromptNerdy",
     }),
   component: CompetitorAnalysisPage,
 });
@@ -32,7 +32,7 @@ const FAQS = [
   {
     question: "Where does the data come from?",
     answer:
-      "DataForSEO's Labs index, the same source behind OpenSEO's competitor research. Traffic figures are modelled estimates, not the competitor's analytics.",
+      "DataForSEO's Labs index, the same source behind PromptNerdy's competitor research. Traffic figures are modelled estimates, not the competitor's analytics.",
   },
   {
     question: "Which competitor should I check?",
@@ -69,7 +69,7 @@ function CompetitorAnalysisPage() {
       faqs={FAQS}
       cta={{
         heading: "Turn the gap into a plan",
-        body: "Browse more competitor keywords in OpenSEO, save the relevant ones, and add them to rank tracking. Start with free trial credits.",
+        body: "Browse more competitor keywords in PromptNerdy, save the relevant ones, and add them to rank tracking. Start with free trial credits.",
         featureLabel: "Learn about Domain Overview",
       }}
     >

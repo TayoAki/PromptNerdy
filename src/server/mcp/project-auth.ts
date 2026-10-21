@@ -2,6 +2,7 @@ import { AuthRepository } from "@/server/auth/repositories/AuthRepository";
 import { ProjectService } from "@/server/features/projects/services/ProjectService";
 import { AppError } from "@/server/lib/errors";
 import { buildBillingCustomer, type ToolContext } from "@/server/mcp/context";
+import { isClientRole } from "@/lib/org-permissions";
 
 type ProjectScopedArgs = {
   projectId: string;
@@ -24,7 +25,7 @@ async function requireProjectAccess(
       : null;
     // One FORBIDDEN for both unknown project and non-membership, so probing
     // with foreign project ids can't distinguish "exists" from "no access".
-    if (!resolved || !membership) {
+    if (!resolved || !membership || isClientRole(membership.role)) {
       throw new AppError("FORBIDDEN");
     }
 
@@ -52,7 +53,7 @@ async function requireProjectAccess(
     auth.organizationId,
     projectId,
   );
-  if (!project) {
+  if (!project || isClientRole(auth.role)) {
     throw new AppError("FORBIDDEN");
   }
 

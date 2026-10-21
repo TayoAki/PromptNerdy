@@ -27,9 +27,9 @@ import {
 import { RankTrackingTableToolbar } from "./RankTrackingTableToolbar";
 import { exportRankTracking } from "./RankTrackingTableParts";
 import type { RankTrackingConfig } from "@/types/schemas/rank-tracking";
+import { defaultComparePeriod } from "@/shared/rank-tracking";
 import {
   rankTrackingDetailSearchSchema,
-  type ComparePeriod,
   type RankTrackingDetailSearch,
 } from "@/types/schemas/rank-tracking-search";
 import { AddKeywordsPanel } from "./AddKeywordsPanel";
@@ -65,14 +65,6 @@ function deviceVisibility(
     showDesktop: devices !== "mobile",
     showMobile: devices !== "desktop",
   };
-}
-
-function defaultComparePeriod(
-  interval: RankTrackingConfig["scheduleInterval"],
-): ComparePeriod {
-  if (interval === "daily") return "1d";
-  if (interval === "monthly") return "30d";
-  return "7d";
 }
 
 export function RankTrackingDomainDetail({

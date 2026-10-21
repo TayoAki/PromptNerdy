@@ -24,7 +24,7 @@ vi.mock("@/db", () => ({ db: testDb.db }));
 vi.mock("@/db/runBatch", () => ({ runBatch: testDb.runBatch }));
 
 const projectId = "project";
-const own = { name: "OpenSEO", domain: "openseo.so", own: true };
+const own = { name: "PromptNerdy", domain: "promptnerdy.com", own: true };
 const rival = { name: "Ahrefs", domain: "ahrefs.com", own: false };
 type Answer = {
   markdown?: string | null;
@@ -116,8 +116,11 @@ beforeEach(() => testDb.seedProject());
 describe("AI visibility results", () => {
   it("rates brands over answered collections only; empty and failed ones are coverage", async () => {
     await seedRun("baseline", [
-      { markdown: "OpenSEO and Ahrefs", mentioned: ["OpenSEO", "Ahrefs"] },
-      { markdown: "Ahrefs", mentioned: ["Ahrefs"], cited: ["OpenSEO"] },
+      {
+        markdown: "PromptNerdy and Ahrefs",
+        mentioned: ["PromptNerdy", "Ahrefs"],
+      },
+      { markdown: "Ahrefs", mentioned: ["Ahrefs"], cited: ["PromptNerdy"] },
       { markdown: null },
       { failed: "UPSTREAM_UNAVAILABLE" },
     ]);
@@ -137,7 +140,7 @@ describe("AI visibility results", () => {
     });
     expect(results.summaries).toMatchObject([
       {
-        domain: "openseo.so",
+        domain: "promptnerdy.com",
         answers: 2,
         mentions: 1,
         citations: 1,
@@ -197,7 +200,7 @@ describe("AI visibility results", () => {
   it("finds competitor gaps: a competitor appears where the brand is neither named nor cited", async () => {
     await seedRun("baseline", [
       { markdown: "Ahrefs", mentioned: ["Ahrefs"] },
-      { markdown: "Ahrefs, OpenSEO", mentioned: ["Ahrefs", "OpenSEO"] },
+      { markdown: "Ahrefs, PromptNerdy", mentioned: ["Ahrefs", "PromptNerdy"] },
       { markdown: "Something else" },
     ]);
     const results = await loadAiResults({
@@ -212,9 +215,9 @@ describe("AI visibility results", () => {
     await seedRun("baseline", [
       {
         markdown: "a",
-        sources: ["https://openseo.so/pricing", "https://ahrefs.com/blog"],
+        sources: ["https://promptnerdy.com/pricing", "https://ahrefs.com/blog"],
       },
-      { markdown: "b", sources: ["https://openseo.so/pricing"] },
+      { markdown: "b", sources: ["https://promptnerdy.com/pricing"] },
       { markdown: null, sources: ["https://example.com/ignored"] },
     ]);
     const sources = await loadAiSources({
@@ -226,7 +229,7 @@ describe("AI visibility results", () => {
     });
     expect(sources.rows).toMatchObject([
       {
-        url: "https://openseo.so/pricing",
+        url: "https://promptnerdy.com/pricing",
         ownership: "own",
         answerCount: 2,
         promptIds: ["prompt-0", "prompt-1"],
@@ -237,15 +240,15 @@ describe("AI visibility results", () => {
 
   it("works out where each mentioned brand appears in the open answer", async () => {
     const runId = await seedRun("baseline", [
-      { markdown: "Use **OpenSEO**.", mentioned: ["OpenSEO"] },
+      { markdown: "Use **PromptNerdy**.", mentioned: ["PromptNerdy"] },
     ]);
     const answer = await loadAiAnswer({
       projectId,
       observationId: `${runId}:prompt-0`,
     });
-    expect(answer.answerText).toBe("Use OpenSEO.");
+    expect(answer.answerText).toBe("Use PromptNerdy.");
     expect(answer.mentions).toEqual([
-      { domain: "openseo.so", spans: [{ start: 4, end: 11 }] },
+      { domain: "promptnerdy.com", spans: [{ start: 4, end: 15 }] },
     ]);
   });
 });
@@ -253,7 +256,11 @@ describe("AI visibility results", () => {
 describe("AI visibility trend reads", () => {
   it("reads each answer's own-brand result and whether it was answered", async () => {
     const runId = await seedRun("baseline", [
-      { markdown: "OpenSEO", mentioned: ["OpenSEO"], cited: ["Ahrefs"] },
+      {
+        markdown: "PromptNerdy",
+        mentioned: ["PromptNerdy"],
+        cited: ["Ahrefs"],
+      },
       { markdown: null },
     ]);
     expect(await getTrendObservations([runId])).toMatchObject([
@@ -266,7 +273,7 @@ describe("AI visibility trend reads", () => {
 describe("AI visibility export", () => {
   it("returns an absolute download link, so it opens outside the app", async () => {
     await seedRun("baseline", [
-      { markdown: "OpenSEO", mentioned: ["OpenSEO"] },
+      { markdown: "PromptNerdy", mentioned: ["PromptNerdy"] },
     ]);
     const { url } = await exportAiData(
       {
@@ -275,19 +282,19 @@ describe("AI visibility export", () => {
         competitorGap: false,
         format: "csv",
       },
-      "https://app.openseo.so",
+      "https://app.promptnerdy.com",
     );
     expect(url).toMatch(
-      /^https:\/\/app\.openseo\.so\/api\/ai-visibility\/download\?projectId=project&exportId=/,
+      /^https:\/\/app\.promptnerdy\.com\/api\/ai-visibility\/download\?projectId=project&exportId=/,
     );
   });
 
   it("writes each answer with its own mentions and citations", async () => {
     await seedRun("baseline", [
       {
-        markdown: "OpenSEO",
-        mentioned: ["OpenSEO"],
-        sources: ["https://openseo.so/pricing"],
+        markdown: "PromptNerdy",
+        mentioned: ["PromptNerdy"],
+        sources: ["https://promptnerdy.com/pricing"],
       },
       {
         markdown: "Ahrefs",
@@ -297,12 +304,12 @@ describe("AI visibility export", () => {
     ]);
     await exportAiData(
       { ...query, includeHistory: false, competitorGap: false, format: "csv" },
-      "https://app.openseo.so",
+      "https://app.promptnerdy.com",
     );
     const csv = r2Put.mock.calls[0]?.[1];
     expect(csv?.split("\r\n").slice(1)).toEqual([
       expect.stringContaining(
-        '"Question 0?","chatgpt","completed","","OpenSEO","https://openseo.so/pricing","OpenSEO"',
+        '"Question 0?","chatgpt","completed","","PromptNerdy","https://promptnerdy.com/pricing","PromptNerdy"',
       ),
       expect.stringContaining(
         '"Question 1?","chatgpt","completed","","Ahrefs","https://ahrefs.com/blog","Ahrefs"',

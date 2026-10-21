@@ -59,12 +59,9 @@ function checkAuthMode(env: EnvRecord, items: PreflightItem[]): void {
   }
 
   if (mode === "hosted") {
-    const missing = [
-      "BETTER_AUTH_URL",
-      "BETTER_AUTH_SECRET",
-      "GOOGLE_CLIENT_ID",
-      "GOOGLE_CLIENT_SECRET",
-    ].filter((name) => !get(env, name));
+    const missing = ["BETTER_AUTH_URL", "BETTER_AUTH_SECRET"].filter(
+      (name) => !get(env, name),
+    );
     items.push(
       missing.length
         ? {
@@ -75,6 +72,18 @@ function checkAuthMode(env: EnvRecord, items: PreflightItem[]): void {
           }
         : { key: "auth", name: "AUTH_MODE", level: "ok", message: "hosted" },
     );
+    if (
+      get(env, "BILLING_ENABLED") === "false" &&
+      !get(env, "SIGNUP_ALLOWED_EMAILS")
+    ) {
+      items.push({
+        key: "auth",
+        name: "SIGNUP_ALLOWED_EMAILS",
+        level: "warn",
+        message:
+          "Billing is off, so sign-up is invite-only. Set SIGNUP_ALLOWED_EMAILS to the address of the first account, or nobody can sign up.",
+      });
+    }
     return;
   }
 

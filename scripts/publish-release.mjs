@@ -44,7 +44,7 @@ const args = [
   "create",
   tag,
   "--repo",
-  "every-app/open-seo",
+  "TayoAki/PromptNerdy",
   "--title",
   tag,
   "--notes-file",

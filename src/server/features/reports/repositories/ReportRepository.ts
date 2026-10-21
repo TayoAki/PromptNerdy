@@ -1,4 +1,4 @@
-import { and, count, desc, eq, isNull, sum } from "drizzle-orm";
+import { and, count, desc, eq, isNotNull, isNull, sum } from "drizzle-orm";
 import { db } from "@/db";
 import { projects, reports } from "@/db/schema";
 import type { ReportMetadata } from "@/types/schemas/reports";
@@ -69,16 +69,79 @@ async function getReportProjectId(reportId: string): Promise<string | null> {
   return row?.projectId ?? null;
 }
 
+// publishedToClient narrows to reports the agency published to the project's
+// client portal (spec 0017), for a client contact's read.
 async function getReportHtml(
   projectId: string,
   reportId: string,
+  { publishedToClient = false } = {},
 ): Promise<string | null> {
   const [row] = await db
     .select({ html: reports.html })
     .from(reports)
-    .where(and(eq(reports.id, reportId), eq(reports.projectId, projectId)))
+    .where(
+      and(
+        eq(reports.id, reportId),
+        eq(reports.projectId, projectId),
+        publishedToClient ? isNotNull(reports.clientVisibleAt) : undefined,
+      ),
+    )
     .limit(1);
   return row?.html ?? null;
+}
+
+async function getClientVisibleAt(projectId: string, reportId: string) {
+  const [row] = await db
+    .select({ clientVisibleAt: reports.clientVisibleAt })
+    .from(reports)
+    .where(and(eq(reports.id, reportId), eq(reports.projectId, projectId)))
+    .limit(1);
+  return row ? row.clientVisibleAt : undefined;
+}
+
+// Publishing stamps client_visible_at; unpublishing clears it. Returns whether
+// the report exists in the project.
+async function setClientVisibility(
+  projectId: string,
+  reportId: string,
+  visible: boolean,
+) {
+  const updated = await db
+    .update(reports)
+    .set({ clientVisibleAt: visible ? new Date().toISOString() : null })
+    .where(and(eq(reports.id, reportId), eq(reports.projectId, projectId)))
+    .returning({ id: reports.id });
+  return updated.length > 0;
+}
+
+// The portal's report list for one client: published reports on the client's
+// live projects, newest publication first. Never selects `html`.
+async function listClientVisibleReports(
+  clientTeamId: string,
+  organizationId: string,
+) {
+  return db
+    .select({
+      id: reports.id,
+      title: reports.title,
+      summary: reports.summary,
+      updatedAt: reports.updatedAt,
+      clientVisibleAt: reports.clientVisibleAt,
+      projectId: projects.id,
+      projectName: projects.name,
+      projectDomain: projects.domain,
+    })
+    .from(reports)
+    .innerJoin(projects, eq(reports.projectId, projects.id))
+    .where(
+      and(
+        eq(projects.clientTeamId, clientTeamId),
+        eq(projects.organizationId, organizationId),
+        isNull(projects.archivedAt),
+        isNotNull(reports.clientVisibleAt),
+      ),
+    )
+    .orderBy(desc(reports.clientVisibleAt), desc(reports.id));
 }
 
 // Metadata and document in one read, for get_report's includeHtml path — the
@@ -264,6 +327,9 @@ export const ReportRepository = {
   getReport,
   getReportProjectId,
   getReportHtml,
+  getClientVisibleAt,
+  setClientVisibility,
+  listClientVisibleReports,
   getReportWithHtml,
   getSharedReportByToken,
   setShareToken,

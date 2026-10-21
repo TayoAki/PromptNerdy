@@ -5,6 +5,7 @@ import {
 import type { SamChatAgent } from "@/server/features/sam/SamChatAgent";
 import { captureServerError } from "@/server/lib/posthog";
 import { deleteR2Prefix } from "@/server/lib/r2";
+import { organizationLogoKey } from "@/server/features/clients/organizationLogo";
 import { DashboardCacheService } from "@/server/features/dashboard/services/DashboardCacheService";
 import { deleteProjectAiObjects } from "@/server/features/ai-visibility/services/aiVisibilityStorage";
 import {
@@ -203,7 +204,7 @@ async function eraseStorage(env: Env, payload: GdprStorageErasurePayload) {
     await samChat.get(samChat.idFromName(sessionId)).destroyForErasure();
   }
   for (const auditId of payload.auditIds) {
-    // The scratchpad DO lives in the open-seo-audit worker; destroy is the
+    // The scratchpad DO lives in the promptnerdy-audit worker; destroy is the
     // same full wipe destroyForErasure performs.
     await env.AUDIT_ENGINE.destroyScratchpad(auditId);
     await env.KV.delete(`audit-progress:${auditId}`);
@@ -228,6 +229,9 @@ async function eraseStorage(env: Env, payload: GdprStorageErasurePayload) {
     env.R2,
     payload.organizationIds,
   );
+  if (payload.organizationIds.length > 0) {
+    await env.R2.delete(payload.organizationIds.map(organizationLogoKey));
+  }
   // aiVisibilityProjectIds lists every project of the erased organizations.
   let aiVisibilityObjects = 0;
   let searchConsoleCacheObjects = 0;

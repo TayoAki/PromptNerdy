@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "open-seo",
+  "name": "promptnerdy",
   "main": "src/server.ts",
   "compatibility_date": "2025-09-02",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
@@ -22,7 +22,7 @@
     "mode": "smart",
   },
   "workflows": [
-    // The site-audit engine lives in the open-seo-audit aux worker
+    // The site-audit engine lives in the promptnerdy-audit aux worker
     // (wrangler.audit.jsonc) — its memory spikes (multi-MB Lighthouse
     // payloads, in-flight HTML) OOMed this worker's near-limit baseline
     // heap. This is a cross-script binding for starting audits and reading
@@ -31,7 +31,7 @@
       "name": "site-audit-workflow",
       "binding": "SITE_AUDIT_WORKFLOW",
       "class_name": "SiteAuditWorkflow",
-      "script_name": "open-seo-audit",
+      "script_name": "promptnerdy-audit",
     },
     {
       "name": "rank-check-workflow",
@@ -57,7 +57,7 @@
       },
     ],
   },
-  // The site-audit engine lives in the open-seo-audit aux worker
+  // The site-audit engine lives in the promptnerdy-audit aux worker
   // (wrangler.audit.jsonc), including the scratchpad DO — the DO cannot be
   // bound cross-script here (the Cloudflare API rejects deleting the class
   // below while any binding still references its name). Cancel + GDPR
@@ -65,7 +65,7 @@
   "services": [
     {
       "binding": "AUDIT_ENGINE",
-      "service": "open-seo-audit",
+      "service": "promptnerdy-audit",
     },
   ],
   "migrations": [
@@ -81,7 +81,7 @@
       "tag": "v3",
       "new_sqlite_classes": ["AuditScratchpad"],
     },
-    // AuditScratchpad moved to the open-seo-audit worker (no binding may
+    // AuditScratchpad moved to the promptnerdy-audit worker (no binding may
     // still reference the class name in the same upload — see the services
     // comment above). Deleting it here is safe: scratchpad state is
     // disposable by design (destroyed at finalize, 7-day cleanup alarm) —
@@ -116,18 +116,18 @@
   "kv_namespaces": [
     {
       "binding": "KV",
-      "id": "4abd52f3f2c549ac83cc2cb4ceec8620",
+      "id": "9dc6f8f23d3d4a32afe3e2e07468e18c",
     },
     {
       "binding": "OAUTH_KV",
-      "id": "bd1759494309474a9b423b029967b0db",
+      "id": "26568e2a33984bf688c38fe1c3984edd",
     },
   ],
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "open-seo",
-      "database_id": "37bee90a-e1aa-404f-b01e-b0d1d479bda1",
+      "database_name": "promptnerdy",
+      "database_id": "2224df69-4be1-42e7-afd6-695591a08480",
       "migrations_dir": "drizzle/sqlite",
     },
   ],
@@ -137,19 +137,19 @@
   // docs/LOCAL_POSTGRES.md, and nothing connects to it unless
   // DATABASE_PROVIDER=postgres is set in .env.local.
   //
-  // Kept commented out: the id lives in OpenSEO's account, and only local
+  // Kept commented out: set the id from your own Cloudflare account; only local
   // Postgres dev reads this block (Alchemy deploys and the Docker image never
   // do). Uncomment when running local Postgres dev per docs/LOCAL_POSTGRES.md.
   // "hyperdrive": [
   //   {
   //     "binding": "HYPERDRIVE",
-  //     "id": "9d64ccfb559f44449ce52a143912f898",
-  //     "localConnectionString": "postgres://openseo:openseo@localhost:5433/openseo",
+  //     "id": "<your-hyperdrive-id>",
+  //     "localConnectionString": "postgres://promptnerdy:promptnerdy@localhost:5433/promptnerdy",
   //   },
   // ],
   "r2_buckets": [
     {
-      "bucket_name": "open-seo",
+      "bucket_name": "promptnerdy",
       "binding": "R2",
     },
   ],

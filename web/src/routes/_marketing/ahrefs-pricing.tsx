@@ -24,7 +24,7 @@ const webPageLd = {
     name: "Ahrefs",
     url: "https://ahrefs.com/",
   },
-  publisher: { "@type": "Organization", name: "OpenSEO", url: SITE_URL },
+  publisher: { "@type": "Organization", name: "PromptNerdy", url: SITE_URL },
 };
 
 export const Route = createFileRoute("/_marketing/ahrefs-pricing")({
@@ -64,8 +64,8 @@ function AhrefsPricingPage() {
           Running out of Ahrefs credits?
         </p>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--color-brand-muted)]">
-          OpenSEO covers keyword research, backlinks, competitor research, rank
-          tracking, and site audits from $10 a month, with $10 of usage
+          PromptNerdy covers keyword research, backlinks, competitor research,
+          rank tracking, and site audits from $10 a month, with $10 of usage
           included. You pay for new data, not for every report you open.{" "}
           <a
             href="/ahrefs-alternative"
@@ -77,7 +77,7 @@ function AhrefsPricingPage() {
         </p>
         <div className="mt-5">
           <a
-            href="https://app.openseo.so/sign-up"
+            href="https://app.promptnerdy.com/sign-up"
             className="inline-flex h-10 items-center justify-center rounded-lg bg-neutral-950 px-5 text-sm font-medium text-white transition-colors hover:bg-neutral-800"
           >
             Start free trial

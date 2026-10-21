@@ -24,9 +24,9 @@ async function tokenForRevocation(grant: {
 }
 
 // Google revokes every scope our OAuth client holds for a Google account, so
-// revoking while another OpenSEO user (or the other integration) still stores
+// revoking while another PromptNerdy user (or the other integration) still stores
 // a grant for it would break that grant too. Best-effort: the local token is
-// already gone, which is what stops OpenSEO from using it.
+// already gone, which is what stops PromptNerdy from using it.
 async function revokeIfLastGrant(accountId: string, token: string | null) {
   if (!token) return;
   if (await GoogleAccountRepository.hasDataGrantsForGoogleAccount(accountId))
@@ -41,7 +41,7 @@ async function revokeIfLastGrant(accountId: string, token: string | null) {
 async function remove(input: AccountInput) {
   // A user owns their personal Google authorization even when its projects
   // belong to other organizations. Removing it releases the provider identity
-  // for another OpenSEO user; it does not delete Google sign-in or other scopes.
+  // for another PromptNerdy user; it does not delete Google sign-in or other scopes.
   const token = await tokenForRevocation({
     userId: input.userId,
     providerId:

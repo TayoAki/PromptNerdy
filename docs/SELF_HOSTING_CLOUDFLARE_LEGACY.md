@@ -9,7 +9,7 @@ Your repo was created by the deploy button and `wrangler.jsonc` holds your resou
 One-time setup:
 
 ```bash
-git remote add upstream https://github.com/every-app/open-seo.git
+git remote add upstream https://github.com/TayoAki/PromptNerdy.git
 ```
 
 Update steps:
@@ -33,17 +33,17 @@ pnpm install
 pnpm run deploy
 ```
 
-`pnpm run deploy` also deploys a second worker, `open-seo-audit`, which runs site audits. Copy your `DB`, `KV`, and `R2` bindings from `wrangler.jsonc` into `wrangler.audit.jsonc` (it needs no `OAUTH_KV`) — the deploy fails on ids that don't exist in your account. Then set its DataForSEO key once, or every Lighthouse check in an audit fails:
+`pnpm run deploy` also deploys a second worker, `promptnerdy-audit`, which runs site audits. Copy your `DB`, `KV`, and `R2` bindings from `wrangler.jsonc` into `wrangler.audit.jsonc` (it needs no `OAUTH_KV`) — the deploy fails on ids that don't exist in your account. Then set its DataForSEO key once, or every Lighthouse check in an audit fails:
 
 ```bash
-pnpm exec wrangler secret put DATAFORSEO_API_KEY --name open-seo-audit
+pnpm exec wrangler secret put DATAFORSEO_API_KEY --name promptnerdy-audit
 ```
 
 ## Giving teammates access
 
 1. Open Cloudflare Zero Trust.
 2. Go to Access -> Applications.
-3. Open your OpenSEO application.
+3. Open your PromptNerdy application.
 4. Edit the `Allow` policy.
 5. Add teammate emails (or your company email domain / group).
 6. Save.
@@ -55,17 +55,17 @@ Screenshots: [edit the Access policy](https://github.com/user-attachments/assets
 DataForSEO API responses are cached in R2 under the `dataforseo-cache/` prefix. Recommended so expired cache objects don't accumulate:
 
 ```bash
-pnpm exec wrangler r2 bucket lifecycle add open-seo dataforseo-cache-expiry dataforseo-cache/ --expire-days 7
+pnpm exec wrangler r2 bucket lifecycle add promptnerdy dataforseo-cache-expiry dataforseo-cache/ --expire-days 7
 ```
 
-Replace `open-seo` with your bucket name if you changed it.
+Replace `promptnerdy` with your bucket name if you changed it.
 
 ## Troubleshooting
 
-**Login fails or OpenSEO doesn't load.** Re-check, on your Worker under `Settings`:
+**Login fails or PromptNerdy doesn't load.** Re-check, on your Worker under `Settings`:
 
 - `Domains & Routes`: `Cloudflare Access` is enabled for the `workers.dev` route.
-- `Variables & Secrets`: `TEAM_DOMAIN` (for example `https://your-team.cloudflareaccess.com`), `POLICY_AUD` (the Access application audience tag), and `DATAFORSEO_API_KEY` are set. The `open-seo-audit` worker needs `DATAFORSEO_API_KEY` too.
+- `Variables & Secrets`: `TEAM_DOMAIN` (for example `https://your-team.cloudflareaccess.com`), `POLICY_AUD` (the Access application audience tag), and `DATAFORSEO_API_KEY` are set. The `promptnerdy-audit` worker needs `DATAFORSEO_API_KEY` too.
 - Manual Wrangler deployments: the binding IDs in `wrangler.jsonc` match your resources.
 
 `https://<your-worker-hostname>/api/health` reports runtime configuration checks and database status. For server errors, open the Worker `Logs` or run `pnpm exec wrangler tail`.

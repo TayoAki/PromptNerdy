@@ -51,6 +51,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/client/components/ui/dropdown-menu";
+import { isBillingClientEnabled } from "@/lib/auth-mode";
 
 const navButtonClass =
   "relative text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground data-active:before:absolute data-active:before:inset-y-1 data-active:before:left-0 data-active:before:w-[3px] data-active:before:rounded-r-full data-active:before:bg-primary";
@@ -145,7 +146,7 @@ export function Sidebar({
           onClick={() => setOpenMobile(false)}
           className="px-1 pb-2 text-base font-semibold text-sidebar-foreground"
         >
-          OpenSEO
+          PromptNerdy
         </Link>
         <ProjectSwitcher
           activeProjectId={projectId}
@@ -292,17 +293,19 @@ function AccountFooter({ ready }: { ready: boolean }) {
                   <Settings className="size-4" />
                   Settings
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  render={
-                    <Link
-                      to={BILLING_ROUTE}
-                      onClick={() => setOpenMobile(false)}
-                    />
-                  }
-                >
-                  <CreditCard className="size-4" />
-                  Billing
-                </DropdownMenuItem>
+                {isBillingClientEnabled() ? (
+                  <DropdownMenuItem
+                    render={
+                      <Link
+                        to={BILLING_ROUTE}
+                        onClick={() => setOpenMobile(false)}
+                      />
+                    }
+                  >
+                    <CreditCard className="size-4" />
+                    Billing
+                  </DropdownMenuItem>
+                ) : null}
                 <DropdownMenuGroup>
                   <DropdownMenuLabel>Theme</DropdownMenuLabel>
                   <div className="px-1 pb-1">

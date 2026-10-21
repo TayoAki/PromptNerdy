@@ -68,7 +68,7 @@ describe("create_project MCP tool", () => {
       domain: "acme.com",
       locationCode: 2840,
       languageCode: "en",
-      url: "https://open-seo.test/p/project_new",
+      url: "https://promptnerdy.test/p/project_new",
     });
     // Self-host and SAM connections have no onboarding wizard to finish.
     expect(mocks.markOnboardingCompleted).not.toHaveBeenCalled();

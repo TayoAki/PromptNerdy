@@ -136,6 +136,27 @@ async function getMembership(userId: string, organizationId: string) {
   return membership ?? null;
 }
 
+// The agency's name and logo for the client portal header (spec 0017).
+async function getOrganizationBranding(organizationId: string) {
+  const [row] = await db
+    .select({ name: organization.name, logo: organization.logo })
+    .from(organization)
+    .where(eq(organization.id, organizationId))
+    .limit(1);
+
+  return row ?? null;
+}
+
+async function getOrganizationIdBySlug(slug: string) {
+  const [row] = await db
+    .select({ id: organization.id })
+    .from(organization)
+    .where(eq(organization.slug, slug))
+    .limit(1);
+
+  return row?.id ?? null;
+}
+
 async function getMemberInOrganization(
   memberId: string,
   organizationId: string,
@@ -330,6 +351,8 @@ export const AuthRepository = {
   findFirstFoundedOrganizationIdForUser,
   findNewestMembershipForUser,
   getMembership,
+  getOrganizationIdBySlug,
+  getOrganizationBranding,
   getMemberInOrganization,
   transferOwnership,
   listMembershipsForUser,

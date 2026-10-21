@@ -4,5 +4,5 @@
 export const CURRENT_TERMS_VERSION = "2026-11";
 export const CURRENT_TERMS_EFFECTIVE_DATE = "November 13, 2026";
 
-export const TERMS_URL = "https://openseo.so/terms-and-conditions";
-export const PRIVACY_URL = "https://openseo.so/privacy";
+export const TERMS_URL = "https://promptnerdy.com/terms-and-conditions";
+export const PRIVACY_URL = "https://promptnerdy.com/privacy";

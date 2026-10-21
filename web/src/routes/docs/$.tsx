@@ -22,10 +22,10 @@ export const Route = createFileRoute("/docs/$")({
       | { title?: string; description?: string; url?: string }
       | undefined;
     return buildPageSeo({
-      title: data?.title ?? "OpenSEO Docs",
+      title: data?.title ?? "PromptNerdy Docs",
       description: data?.description,
       path: data?.url ?? "/docs",
-      titleSuffix: "OpenSEO",
+      titleSuffix: "PromptNerdy",
     });
   },
   component: DocsPost,

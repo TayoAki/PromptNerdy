@@ -18,6 +18,7 @@ import { Fragment } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { sort } from "remeda";
 import { DashboardOnboarding } from "./DashboardOnboarding";
+import { ViewAsClientButton } from "@/client/features/clients/ViewAsClientButton";
 import { DashboardAgentCard } from "./DashboardAgentCard";
 import { getStepStatus } from "./dashboardSteps";
 import {
@@ -174,14 +175,19 @@ export function DashboardPage({
               Search visibility, links and site health in one place.
             </p>
           </div>
-          <Button
-            variant="outline"
-            nativeButton={false}
-            render={<Link to="/p/$projectId/settings" params={{ projectId }} />}
-          >
-            <Settings />
-            Project settings
-          </Button>
+          <div className="flex gap-2">
+            <ViewAsClientButton projectId={projectId} />
+            <Button
+              variant="outline"
+              nativeButton={false}
+              render={
+                <Link to="/p/$projectId/settings" params={{ projectId }} />
+              }
+            >
+              <Settings />
+              Project settings
+            </Button>
+          </div>
         </div>
 
         {isHostedClientAuthMode() &&

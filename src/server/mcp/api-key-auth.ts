@@ -7,7 +7,7 @@ import { recordMcpAuthorized } from "@/server/features/activation/mcpActivation"
 import { createWorkersOAuthMcpProps, MCP_ROUTE } from "@/server/mcp/context";
 
 function getApiKey(request: Request) {
-  // Both branches require the oseo_ prefix: anything else (a Cloudflare OAuth
+  // Both branches require the pnrd_ prefix: anything else (a Cloudflare OAuth
   // access token, a stray foreign x-api-key header) falls through to the
   // OAuth provider instead of being consumed here.
   const headerKey = request.headers.get("x-api-key");
@@ -155,9 +155,14 @@ export async function handleMcpApiKeyRequest(
 
     await recordMcpAuthorized(organizationId);
 
-    const { handleAuthenticatedOpenSeoMcpRequest } =
+    const { handleAuthenticatedPromptNerdyMcpRequest } =
       await import("@/server/mcp/transport");
-    return await handleAuthenticatedOpenSeoMcpRequest(request, props, env, ctx);
+    return await handleAuthenticatedPromptNerdyMcpRequest(
+      request,
+      props,
+      env,
+      ctx,
+    );
   } catch (error) {
     // Without this, a throw here surfaces as a bare platform 500 with no log
     // breadcrumb.

@@ -75,7 +75,7 @@ export function FreePlanBanner() {
     return (
       <AppBanner variant="warning">
         You&rsquo;re running low on credits. {creditsActionLink} to keep using
-        OpenSEO.
+        PromptNerdy.
       </AppBanner>
     );
   }
@@ -83,7 +83,7 @@ export function FreePlanBanner() {
   if (isFreePlan) {
     return (
       <AppBanner variant="info">
-        We hope you&rsquo;re enjoying OpenSEO!{" "}
+        We hope you&rsquo;re enjoying PromptNerdy!{" "}
         <Link
           to={SUBSCRIBE_ROUTE}
           search={{ upgrade: true }}

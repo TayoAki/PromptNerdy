@@ -1,14 +1,14 @@
 {
-  "name": "openseo",
+  "name": "promptnerdy",
   "owner": {
-    "name": "OpenSEO",
-    "url": "https://openseo.so"
+    "name": "PromptNerdy",
+    "url": "https://promptnerdy.com"
   },
-  "description": "OpenSEO's official Claude Code plugin marketplace.",
+  "description": "PromptNerdy's official Claude Code plugin marketplace.",
   "plugins": [
     {
-      "name": "openseo",
-      "source": "./plugins/openseo",
+      "name": "promptnerdy",
+      "source": "./plugins/promptnerdy",
       "description": "Without good data, your agent gives generic advice. Keyword research, competitor research, backlinks, and site audits. All for $10/month.",
       "category": "SEO"
     }

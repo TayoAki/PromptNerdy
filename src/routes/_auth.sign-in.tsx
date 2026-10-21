@@ -16,6 +16,10 @@ import { getFormError } from "@/client/lib/forms";
 import { captureClientEvent } from "@/client/lib/posthog";
 import { authClient } from "@/lib/auth-client";
 import {
+  isEmailVerificationBypassed,
+  isGoogleSignInClientEnabled,
+} from "@/lib/auth-mode";
+import {
   getSignInSearch,
   getVerifyEmailSearch,
   toAuthCallbackURL,
@@ -38,7 +42,9 @@ function SignInPage() {
   const { redirectTo, oauthQuery, isHostedMode } = useAuthPageState(
     search.redirect,
   );
-  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(
+    !isGoogleSignInClientEnabled(),
+  );
   const google = useGoogleAuth({ redirectTo });
 
   const form = useAppForm({
@@ -113,7 +119,9 @@ function SignInPage() {
                 : "w-full text-sm text-foreground/50"
             }
           >
-            {showEmailForm ? (
+            {/* Bypassing verification means no email provider is set up, so
+                a reset email could never arrive. */}
+            {showEmailForm && !isEmailVerificationBypassed() ? (
               <Link
                 to="/forgot-password"
                 search={getSignInSearch(redirectTo)}

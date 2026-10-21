@@ -4,7 +4,7 @@ import { PRINT_SCRIPT, REPORT_CSP, reportCsp } from "@/shared/report-sandbox";
 
 const mocks = vi.hoisted(() => ({
   resolveUserContextFromHeaders: vi.fn(),
-  getProjectForOrganization: vi.fn(),
+  getProjectForMember: vi.fn(),
   getArchivedProjectForOrganization: vi.fn(),
   getReportProjectId: vi.fn(),
   getReportHtml: vi.fn(),
@@ -16,7 +16,7 @@ vi.mock("@/middleware/ensure-user/resolve", () => ({
 }));
 vi.mock("@/server/features/projects/repositories/ProjectRepository", () => ({
   ProjectRepository: {
-    getProjectForOrganization: mocks.getProjectForOrganization,
+    getProjectForMember: mocks.getProjectForMember,
     getArchivedProjectForOrganization: mocks.getArchivedProjectForOrganization,
   },
 }));
@@ -40,7 +40,7 @@ beforeEach(() => {
     role: "owner",
   });
   mocks.getReportProjectId.mockResolvedValue("project-1");
-  mocks.getProjectForOrganization.mockResolvedValue({ id: "project-1" });
+  mocks.getProjectForMember.mockResolvedValue({ id: "project-1" });
   mocks.getArchivedProjectForOrganization.mockResolvedValue(null);
   mocks.getReportHtml.mockResolvedValue(HTML);
 });
@@ -61,10 +61,38 @@ describe("handleReportRequest", () => {
     });
     // Authorized against the row's project before the document is read, so an
     // unauthorized request never pulls one onto the worker's heap.
-    expect(mocks.getProjectForOrganization).toHaveBeenCalledWith(
+    expect(mocks.getProjectForMember).toHaveBeenCalledWith(
       "project-1",
-      "org-1",
+      expect.objectContaining({ organizationId: "org-1", userId: "user-1" }),
     );
+    expect(mocks.getReportHtml).toHaveBeenCalledWith("project-1", "report-1", {
+      publishedToClient: false,
+    });
+  });
+
+  // Spec 0017: a client contact reads only reports the agency published, and
+  // learns nothing about the agency's archived projects.
+  it("serves a client contact only published reports", async () => {
+    mocks.resolveUserContextFromHeaders.mockResolvedValue({
+      userId: "contact-1",
+      userEmail: "contact@client.example",
+      emailVerified: true,
+      organizationId: "org-1",
+      role: "client",
+    });
+
+    await handleReportRequest("report-1", request());
+    expect(mocks.getReportHtml).toHaveBeenCalledWith("project-1", "report-1", {
+      publishedToClient: true,
+    });
+
+    mocks.getProjectForMember.mockResolvedValue(null);
+    mocks.getArchivedProjectForOrganization.mockResolvedValue({
+      id: "project-1",
+      name: "badseo.dev",
+    });
+    const response = await handleReportRequest("report-1", request());
+    expect(await response.text()).toBe(NOT_FOUND_BODY);
   });
 
   // "Export" is one click only because the served document prints itself; the
@@ -117,7 +145,7 @@ describe("handleReportRequest", () => {
     // not exist, on purpose.
     [
       "a project the viewer cannot access",
-      () => mocks.getProjectForOrganization.mockResolvedValue(null),
+      () => mocks.getProjectForMember.mockResolvedValue(null),
     ],
   ])("answers the same 404 for %s", async (_case, arrange) => {
     arrange();
@@ -130,7 +158,7 @@ describe("handleReportRequest", () => {
   });
 
   it("names an archived project of the viewer's own organization", async () => {
-    mocks.getProjectForOrganization.mockResolvedValue(null);
+    mocks.getProjectForMember.mockResolvedValue(null);
     mocks.getArchivedProjectForOrganization.mockResolvedValue({
       id: "project-1",
       name: "badseo.dev",

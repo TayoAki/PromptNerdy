@@ -1,8 +1,8 @@
 import { FREE_TOOL_PATHS } from "@/lib/free-tools/free-tool-paths";
 
-const DEFAULT_SITE_URL = "https://openseo.so";
+const DEFAULT_SITE_URL = "https://promptnerdy.com";
 const DEFAULT_SOCIAL_IMAGE_PATH = "/social-card.jpg";
-const DEFAULT_SOCIAL_IMAGE_ALT = "OpenSEO product preview";
+const DEFAULT_SOCIAL_IMAGE_ALT = "PromptNerdy product preview";
 
 export const SITE_URL = (
   process.env.SITE_URL ??
@@ -21,14 +21,14 @@ export function toCanonicalUrl(path: string): string {
   return new URL(toCanonicalPath(path), `${SITE_URL}/`).href;
 }
 
-// Pages whose share preview shows the page title on an OpenSEO card instead
+// Pages whose share preview shows the page title on a PromptNerdy card instead
 // of the generic product card. An entry ending in "/" covers every page
 // below it, but not the index page itself. scripts/generate-social-cards.js
 // renders the cards from the built HTML.
 const TITLE_CARD_PATHS = [
   "/blogs/",
   "/library/",
-  "/openseo-vs-dataforseo",
+  "/promptnerdy-vs-dataforseo",
   "/semrush-alternative",
   "/semrush-pricing",
   "/ahrefs-alternative",
@@ -92,7 +92,7 @@ export function buildPageSeo({
     meta: [
       { title: fullTitle },
       ...(description ? [{ name: "description", content: description }] : []),
-      { property: "og:site_name", content: "OpenSEO" },
+      { property: "og:site_name", content: "PromptNerdy" },
       { property: "og:type", content: ogType },
       { property: "og:title", content: fullTitle },
       ...(description

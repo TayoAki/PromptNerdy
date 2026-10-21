@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { isHostedClientAuthMode } from "@/lib/auth-mode";
+import { isBillingClientEnabled } from "@/lib/auth-mode";
 import { useQuery } from "@tanstack/react-query";
 import {
   organizationContextQueryOptions,
@@ -19,7 +19,7 @@ import { SkeletonPage } from "@/client/components/SkeletonPresets";
 import { Spinner } from "@/client/components/Spinner";
 import { Button } from "@/client/components/ui/button";
 
-const SUPPORT_EMAIL = "support@openseo.so";
+const SUPPORT_EMAIL = "support@promptnerdy.com";
 
 // How long the post-portal "checking" screen polls Autumn before telling the
 // user the retry is still pending, and how often it polls.
@@ -38,7 +38,7 @@ export const Route = createFileRoute("/_app/billing_/fix-payment")({
       search.returned === true || search.returned === "true" ? true : undefined,
   }),
   beforeLoad: () => {
-    if (!isHostedClientAuthMode()) {
+    if (!isBillingClientEnabled()) {
       throw notFound();
     }
   },

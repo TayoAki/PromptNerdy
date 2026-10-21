@@ -21,6 +21,7 @@ import { useGoogleAuth } from "@/client/features/auth/useGoogleAuth";
 import { getFormError } from "@/client/lib/forms";
 import { captureClientEvent } from "@/client/lib/posthog";
 import { authClient } from "@/lib/auth-client";
+import { isGoogleSignInClientEnabled } from "@/lib/auth-mode";
 import { getSignInSearch, getVerifyEmailSearch } from "@/lib/auth-redirect";
 import { z } from "zod";
 
@@ -54,7 +55,8 @@ function SignUpPage() {
       : search.domain
         ? `/onboarding?${new URLSearchParams({ domain: search.domain }).toString()}`
         : "/onboarding";
-  const [showEmailForm, setShowEmailForm] = useState(false);
+  const googleSignIn = isGoogleSignInClientEnabled();
+  const [showEmailForm, setShowEmailForm] = useState(!googleSignIn);
   const google = useGoogleAuth({ redirectTo, postSignupRedirect });
 
   // Turnstile is active only in hosted mode with a configured site key.
@@ -92,7 +94,7 @@ function SignUpPage() {
           );
         }
         const result = await authClient.signUp.email({
-          name: email.split("@")[0] || "OpenSEO User",
+          name: email.split("@")[0] || "PromptNerdy User",
           email,
           password: value.password,
           callbackURL: verificationCallbackURL.toString(),
@@ -142,7 +144,7 @@ function SignUpPage() {
       title="Create your account"
       footer={
         isHostedMode ? (
-          showEmailForm ? (
+          showEmailForm && googleSignIn ? (
             <button
               type="button"
               className="text-sm text-foreground underline underline-offset-2 hover:text-foreground/80 transition-colors"

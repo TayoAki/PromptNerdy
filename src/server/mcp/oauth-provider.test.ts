@@ -8,7 +8,7 @@ import {
 import type * as WorkersOAuthProvider from "@cloudflare/workers-oauth-provider";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
-import { createOpenSeoOAuthProvider } from "./oauth-provider";
+import { createPromptNerdyOAuthProvider } from "./oauth-provider";
 
 const mocks = vi.hoisted(() => ({
   options: [] as OAuthProviderOptions<unknown>[],
@@ -54,7 +54,7 @@ vi.mock("@cloudflare/workers-oauth-provider", async (importOriginal) => {
 });
 
 vi.mock("@/lib/auth", () => ({
-  getHostedBaseUrl: () => "https://app.openseo.so",
+  getHostedBaseUrl: () => "https://app.promptnerdy.com",
 }));
 
 vi.mock("@/middleware/ensure-user/hosted", () => ({
@@ -71,7 +71,7 @@ vi.mock("@/server/lib/posthog", () => ({
 }));
 
 vi.mock("@/server/mcp/transport", () => ({
-  handleAuthenticatedOpenSeoMcpRequest: vi.fn(),
+  handleAuthenticatedPromptNerdyMcpRequest: vi.fn(),
 }));
 
 const executionContext = {
@@ -81,7 +81,7 @@ const executionContext = {
 } as ExecutionContext;
 
 async function dispatch(
-  provider: ReturnType<typeof createOpenSeoOAuthProvider>,
+  provider: ReturnType<typeof createPromptNerdyOAuthProvider>,
   request: Request,
 ) {
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- mocked provider does not read its KV-backed environment in these configuration tests
@@ -97,16 +97,16 @@ function tokenExchangeOptions(
     subjectClientId: "client-1",
     userId: "user-1",
     grantId: "grant-1",
-    resource: "https://app.openseo.so/mcp",
+    resource: "https://app.promptnerdy.com/mcp",
     env: {},
     scope: ["offline_access", "mcp"],
     requestedScope,
     props: {
-      openSeoAuth: {
+      promptNerdyAuth: {
         userId: "user-1",
         userEmail: "user@example.com",
         organizationId: "org-1",
-        baseUrl: "https://app.openseo.so",
+        baseUrl: "https://app.promptnerdy.com",
         clientId: "client-1",
         scopes: ["offline_access", "mcp"],
       },
@@ -143,7 +143,7 @@ async function invokeDefaultHandler(
   return rawResponse;
 }
 
-describe("OpenSEO OAuth provider configuration", () => {
+describe("PromptNerdy OAuth provider configuration", () => {
   beforeEach(() => {
     mocks.options.length = 0;
     mocks.requests.length = 0;
@@ -151,20 +151,20 @@ describe("OpenSEO OAuth provider configuration", () => {
   });
 
   it("binds tokens and protected-resource metadata to the canonical MCP URL", async () => {
-    const provider = createOpenSeoOAuthProvider(() => new Response("app"));
+    const provider = createPromptNerdyOAuthProvider(() => new Response("app"));
 
-    await dispatch(provider, new Request("https://app.openseo.so/health"));
+    await dispatch(provider, new Request("https://app.promptnerdy.com/health"));
 
     expect(mocks.options).toHaveLength(1);
     expect(mocks.options[0]?.resourceMetadata).toMatchObject({
-      resource: "https://app.openseo.so/mcp",
+      resource: "https://app.promptnerdy.com/mcp",
     });
   });
 
   it("rejects token exchanges that drop the required MCP scope", async () => {
-    const provider = createOpenSeoOAuthProvider(() => new Response("app"));
+    const provider = createPromptNerdyOAuthProvider(() => new Response("app"));
 
-    await dispatch(provider, new Request("https://app.openseo.so/health"));
+    await dispatch(provider, new Request("https://app.promptnerdy.com/health"));
 
     const callback = mocks.options[0]?.tokenExchangeCallback;
     if (!callback) throw new Error("Missing token exchange callback");
@@ -173,11 +173,11 @@ describe("OpenSEO OAuth provider configuration", () => {
     ).toThrowError(ProviderOAuthError);
     expect(callback(tokenExchangeOptions(["mcp"]))).toEqual({
       accessTokenProps: {
-        openSeoAuth: {
+        promptNerdyAuth: {
           userId: "user-1",
           userEmail: "user@example.com",
           organizationId: "org-1",
-          baseUrl: "https://app.openseo.so",
+          baseUrl: "https://app.promptnerdy.com",
           clientId: "client-1",
           scopes: ["mcp"],
         },
@@ -186,11 +186,11 @@ describe("OpenSEO OAuth provider configuration", () => {
   });
 
   it("lets the provider issue Perplexity a real client secret", async () => {
-    const provider = createOpenSeoOAuthProvider(() => new Response("app"));
+    const provider = createPromptNerdyOAuthProvider(() => new Response("app"));
 
     await dispatch(
       provider,
-      new Request("https://app.openseo.so/api/auth/oauth2/register", {
+      new Request("https://app.promptnerdy.com/api/auth/oauth2/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -206,15 +206,15 @@ describe("OpenSEO OAuth provider configuration", () => {
   });
 
   it("includes the authorization-server issuer when consent is denied", async () => {
-    const provider = createOpenSeoOAuthProvider(() => new Response("app"));
-    await dispatch(provider, new Request("https://app.openseo.so/health"));
+    const provider = createPromptNerdyOAuthProvider(() => new Response("app"));
+    await dispatch(provider, new Request("https://app.promptnerdy.com/health"));
 
     const response = await invokeDefaultHandler(
-      new Request("https://app.openseo.so/api/oauth/consent", {
+      new Request("https://app.promptnerdy.com/api/oauth/consent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Origin: "https://app.openseo.so",
+          Origin: "https://app.promptnerdy.com",
         },
         body: JSON.stringify({ accept: false, query: "state=state-1" }),
       }),
@@ -226,7 +226,7 @@ describe("OpenSEO OAuth provider configuration", () => {
               redirectUri: "https://client.example/callback",
               scope: ["mcp"],
               state: "state-1",
-              issuer: "https://app.openseo.so",
+              issuer: "https://app.promptnerdy.com",
             }),
         },
       },
@@ -240,16 +240,16 @@ describe("OpenSEO OAuth provider configuration", () => {
     ).toMatchObject({
       error: "access_denied",
       state: "state-1",
-      iss: "https://app.openseo.so",
+      iss: "https://app.promptnerdy.com",
     });
   });
 
   it("redirects safe authorization errors with state and issuer, rethrowing anything else", async () => {
-    const provider = createOpenSeoOAuthProvider(() => new Response("app"));
-    await dispatch(provider, new Request("https://app.openseo.so/health"));
+    const provider = createPromptNerdyOAuthProvider(() => new Response("app"));
+    await dispatch(provider, new Request("https://app.promptnerdy.com/health"));
 
     const response = await invokeDefaultHandler(
-      new Request("https://app.openseo.so/api/auth/oauth2/authorize"),
+      new Request("https://app.promptnerdy.com/api/auth/oauth2/authorize"),
       {
         OAUTH_PROVIDER: {
           parseAuthRequest: () =>
@@ -258,7 +258,7 @@ describe("OpenSEO OAuth provider configuration", () => {
                 description: "Unsupported scope",
                 redirectUri: "https://client.example/callback",
                 state: "state-1",
-                issuer: "https://app.openseo.so",
+                issuer: "https://app.promptnerdy.com",
               }),
             ),
         },
@@ -272,13 +272,13 @@ describe("OpenSEO OAuth provider configuration", () => {
       error: "invalid_scope",
       error_description: "Unsupported scope",
       state: "state-1",
-      iss: "https://app.openseo.so",
+      iss: "https://app.promptnerdy.com",
     });
 
     // Anything other than a provider AuthorizationError is not a client error.
     await expect(
       invokeDefaultHandler(
-        new Request("https://app.openseo.so/api/auth/oauth2/authorize"),
+        new Request("https://app.promptnerdy.com/api/auth/oauth2/authorize"),
         {
           OAUTH_PROVIDER: {
             parseAuthRequest: () =>

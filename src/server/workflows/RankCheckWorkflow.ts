@@ -27,7 +27,7 @@ import {
   estimateRankCheckCredits,
   rankCheckCostApprovalError,
 } from "@/shared/rank-tracking";
-import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 
 const SINGLE_ATTEMPT_STEP_CONFIG = {
   retries: { limit: 0, delay: "1 second" as const },
@@ -103,7 +103,7 @@ async function prepareRankCheckKeywords(input: {
   // Scheduled checks go through the cheaper task queue, so estimate at queued
   // pricing — a live-price estimate would skip checks the user can afford.
   // The estimate is the worst case, so it covers every retry.
-  if (await isHostedServerAuthMode()) {
+  if (await isBillingEnabled()) {
     const [monthlyCheck, topupCheck] = await Promise.all([
       autumn.check({
         customerId: input.billingCustomer.organizationId,

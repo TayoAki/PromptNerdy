@@ -9,6 +9,9 @@ import { PageLoading } from "@/client/components/Spinner";
 import { getLastProjectId } from "@/client/lib/active-project";
 import { AuthenticatedAppLayout } from "@/client/layout/AppShell";
 import { useOnboardingRedirect } from "@/client/features/onboarding/useOnboardingRedirect";
+import { isBillingClientEnabled } from "@/lib/auth-mode";
+import { NoWorkspaceCard } from "@/client/features/clients/NoWorkspaceCard";
+import { useClientPortalRedirect } from "@/client/features/clients/useClientPortalRedirect";
 
 export const Route = createFileRoute("/_app")({
   component: AppRouteLayout,
@@ -19,6 +22,9 @@ export const Route = createFileRoute("/_app")({
 // between the two.
 function AppRouteLayout() {
   const authGate = useHostedAuthRouteGuard();
+  const viewer = useClientPortalRedirect(
+    authGate.canRenderAuthenticatedContent,
+  );
   const isOnboarded = useOnboardingRedirect();
   const { projectId } = useParams({ strict: false });
   // The shell paints at once, and only the page waits for the session check,
@@ -30,6 +36,10 @@ function AppRouteLayout() {
   useEffect(() => {
     if (ready) prefetchBillingAccount();
   }, [ready]);
+
+  // Client contacts belong in the portal: hold the shell until that's known.
+  if (viewer === "no-workspace") return <NoWorkspaceCard />;
+  if (viewer === "pending") return <PageLoading />;
 
   // Until onboarding is known to be done, show a plain spinner, so a user on
   // their way to /onboarding never sees the dashboard flash first. A browser
@@ -46,7 +56,7 @@ function AppRouteLayout() {
         ready && authGate.isHostedMode ? (
           <>
             <TermsUpdateBanner />
-            {projectId ? <FreePlanBanner /> : null}
+            {projectId && isBillingClientEnabled() ? <FreePlanBanner /> : null}
           </>
         ) : undefined
       }

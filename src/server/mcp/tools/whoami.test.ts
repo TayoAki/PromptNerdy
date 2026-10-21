@@ -24,6 +24,8 @@ vi.mock("@/server/billing/autumn", () => ({
   },
 }));
 vi.mock("@/server/lib/runtime-env", () => ({
+  // Unset BILLING_ENABLED: hosted mode bills.
+  getOptionalEnvValue: vi.fn(),
   isHostedServerAuthMode: mocks.isHosted,
 }));
 vi.mock("@/server/lib/posthog", () => ({ captureServerEvent: vi.fn() }));

@@ -6,14 +6,14 @@ import {
   MCP_AUTH_CONTEXT_PROP,
 } from "@/server/mcp/context";
 import {
-  handleAuthenticatedOpenSeoMcpRequest,
-  handleSelfHostedOpenSeoMcpRequest,
+  handleAuthenticatedPromptNerdyMcpRequest,
+  handleSelfHostedPromptNerdyMcpRequest,
 } from "@/server/mcp/transport";
 
 const selfHostedAuthMocks = vi.hoisted(() => ({
   resolveCloudflareAccessContext: vi.fn(),
   resolveLocalNoAuthContext: vi.fn(),
-  createOpenSeoMcpServer: vi.fn(),
+  createPromptNerdyMcpServer: vi.fn(),
   createMcpHandler: vi.fn(),
 }));
 
@@ -44,21 +44,21 @@ vi.mock("@/middleware/ensure-user/delegated", () => ({
 }));
 
 vi.mock("@/lib/auth", () => ({
-  getHostedBaseUrl: () => "https://open-seo.test",
+  getHostedBaseUrl: () => "https://promptnerdy.test",
 }));
 
 vi.mock("@/server/mcp/server", () => ({
-  createOpenSeoMcpServer: (props?: unknown) => {
-    selfHostedAuthMocks.createOpenSeoMcpServer(props);
+  createPromptNerdyMcpServer: (props?: unknown) => {
+    selfHostedAuthMocks.createPromptNerdyMcpServer(props);
     return new McpServer({
-      name: "OpenSEO MCP",
-      title: "OpenSEO",
+      name: "PromptNerdy MCP",
+      title: "PromptNerdy",
       version: "0.0.11",
       description: "SEO research tools for AI agents",
-      websiteUrl: "https://openseo.so",
+      websiteUrl: "https://promptnerdy.com",
       icons: [
         {
-          src: "https://openseo.so/android-chrome-512x512.png",
+          src: "https://promptnerdy.com/android-chrome-512x512.png",
           mimeType: "image/png",
           sizes: ["512x512"],
         },
@@ -84,7 +84,7 @@ const ctx: ExecutionContext = {
 };
 
 function createMcpRequest(headers?: Record<string, string>) {
-  return new Request("https://open-seo.test/mcp", {
+  return new Request("https://promptnerdy.test/mcp", {
     method: "POST",
     headers: {
       Accept: "application/json, text/event-stream",
@@ -102,7 +102,7 @@ function createMcpRequest(headers?: Record<string, string>) {
 // The modern (2026-07-28) era is selected by the per-request `_meta` envelope
 // claim; without it every POST classifies as legacy traffic.
 function createModernMcpRequest(headers?: Record<string, string>) {
-  return new Request("https://open-seo.test/mcp", {
+  return new Request("https://promptnerdy.test/mcp", {
     method: "POST",
     headers: {
       Accept: "application/json, text/event-stream",
@@ -128,13 +128,13 @@ function hostedProps(scopes: string[] = ["mcp"]) {
     userId: "user-1",
     userEmail: "user@example.com",
     organizationId: "org-1",
-    baseUrl: "https://open-seo.test",
+    baseUrl: "https://promptnerdy.test",
     clientId: "client-1",
     scopes,
   });
 }
 
-describe("handleSelfHostedOpenSeoMcpRequest", () => {
+describe("handleSelfHostedPromptNerdyMcpRequest", () => {
   beforeEach(() => {
     selfHostedAuthMocks.resolveLocalNoAuthContext.mockResolvedValue({
       userId: "local-admin",
@@ -170,7 +170,7 @@ describe("handleSelfHostedOpenSeoMcpRequest", () => {
   ])(
     "accepts %s MCP requests with the resolved identity",
     async (authMode, resolver, identity) => {
-      const response = await handleSelfHostedOpenSeoMcpRequest(
+      const response = await handleSelfHostedPromptNerdyMcpRequest(
         createMcpRequest(),
         authMode,
         {},
@@ -183,10 +183,12 @@ describe("handleSelfHostedOpenSeoMcpRequest", () => {
       );
       expect(response.headers.get("connection")).not.toBe("keep-alive");
       expect(resolver).toHaveBeenCalled();
-      expect(selfHostedAuthMocks.createOpenSeoMcpServer).toHaveBeenCalledWith({
+      expect(
+        selfHostedAuthMocks.createPromptNerdyMcpServer,
+      ).toHaveBeenCalledWith({
         [MCP_AUTH_CONTEXT_PROP]: {
           ...identity,
-          baseUrl: "https://open-seo.test",
+          baseUrl: "https://promptnerdy.test",
         },
       });
       // Self-hosted must not pin Origins to the request's own Host — the
@@ -201,8 +203,8 @@ describe("handleSelfHostedOpenSeoMcpRequest", () => {
   );
 
   it("answers OPTIONS preflight without resolving an auth context", async () => {
-    const response = await handleSelfHostedOpenSeoMcpRequest(
-      new Request("https://open-seo.test/mcp", { method: "OPTIONS" }),
+    const response = await handleSelfHostedPromptNerdyMcpRequest(
+      new Request("https://promptnerdy.test/mcp", { method: "OPTIONS" }),
       "cloudflare_access",
       {},
       ctx,
@@ -213,11 +215,13 @@ describe("handleSelfHostedOpenSeoMcpRequest", () => {
     expect(
       selfHostedAuthMocks.resolveCloudflareAccessContext,
     ).not.toHaveBeenCalled();
-    expect(selfHostedAuthMocks.createOpenSeoMcpServer).not.toHaveBeenCalled();
+    expect(
+      selfHostedAuthMocks.createPromptNerdyMcpServer,
+    ).not.toHaveBeenCalled();
   });
 });
 
-describe("handleAuthenticatedOpenSeoMcpRequest", () => {
+describe("handleAuthenticatedPromptNerdyMcpRequest", () => {
   beforeEach(() => {
     authRepositoryMocks.getMembership.mockResolvedValue({ role: "owner" });
   });
@@ -225,7 +229,7 @@ describe("handleAuthenticatedOpenSeoMcpRequest", () => {
   it("accepts the provider's encrypted identity and MCP scope fallback", async () => {
     const props = hostedProps();
 
-    const response = await handleAuthenticatedOpenSeoMcpRequest(
+    const response = await handleAuthenticatedPromptNerdyMcpRequest(
       createMcpRequest(),
       props,
       {},
@@ -238,7 +242,7 @@ describe("handleAuthenticatedOpenSeoMcpRequest", () => {
     expect(selfHostedAuthMocks.createMcpHandler).toHaveBeenCalledWith(
       expect.objectContaining({
         allowedOriginHostnames: [
-          "open-seo.test",
+          "promptnerdy.test",
           "pghallcbnfabbgfijhbcldaapmgidnaa",
         ],
         legacy: "reject",
@@ -246,19 +250,21 @@ describe("handleAuthenticatedOpenSeoMcpRequest", () => {
     );
     // The transport stamps the per-request role and user scope into the props
     // it hands the server; neither is baked into tokens.
-    expect(selfHostedAuthMocks.createOpenSeoMcpServer).toHaveBeenCalledWith({
-      [MCP_AUTH_CONTEXT_PROP]: {
-        ...props[MCP_AUTH_CONTEXT_PROP],
-        role: "owner",
-        orgScope: "user",
+    expect(selfHostedAuthMocks.createPromptNerdyMcpServer).toHaveBeenCalledWith(
+      {
+        [MCP_AUTH_CONTEXT_PROP]: {
+          ...props[MCP_AUTH_CONTEXT_PROP],
+          role: "owner",
+          orgScope: "user",
+        },
       },
-    });
+    );
   });
 
   it("routes modern-era requests to the SDK handler", async () => {
     const props = hostedProps();
 
-    const response = await handleAuthenticatedOpenSeoMcpRequest(
+    const response = await handleAuthenticatedPromptNerdyMcpRequest(
       createModernMcpRequest(),
       props,
       {},
@@ -269,13 +275,15 @@ describe("handleAuthenticatedOpenSeoMcpRequest", () => {
     expect(await response.json()).toEqual({ handledBy: "modern" });
     // The modern handler owns server construction; the legacy leg must not
     // have built one.
-    expect(selfHostedAuthMocks.createOpenSeoMcpServer).not.toHaveBeenCalled();
+    expect(
+      selfHostedAuthMocks.createPromptNerdyMcpServer,
+    ).not.toHaveBeenCalled();
   });
 
   it("accepts a legacy request from the SurfMind Chrome extension", async () => {
     const props = hostedProps();
 
-    const response = await handleAuthenticatedOpenSeoMcpRequest(
+    const response = await handleAuthenticatedPromptNerdyMcpRequest(
       createMcpRequest({
         Origin: "chrome-extension://pghallcbnfabbgfijhbcldaapmgidnaa",
       }),
@@ -285,13 +293,15 @@ describe("handleAuthenticatedOpenSeoMcpRequest", () => {
     );
 
     expect(response.status).toBe(200);
-    expect(selfHostedAuthMocks.createOpenSeoMcpServer).toHaveBeenCalledWith({
-      [MCP_AUTH_CONTEXT_PROP]: {
-        ...props[MCP_AUTH_CONTEXT_PROP],
-        role: "owner",
-        orgScope: "user",
+    expect(selfHostedAuthMocks.createPromptNerdyMcpServer).toHaveBeenCalledWith(
+      {
+        [MCP_AUTH_CONTEXT_PROP]: {
+          ...props[MCP_AUTH_CONTEXT_PROP],
+          role: "owner",
+          orgScope: "user",
+        },
       },
-    });
+    );
   });
 
   it("rejects provider props missing the OAuth client identity", async () => {
@@ -301,10 +311,10 @@ describe("handleAuthenticatedOpenSeoMcpRequest", () => {
       userId: "user-1",
       userEmail: "user@example.com",
       organizationId: "org-1",
-      baseUrl: "https://open-seo.test",
+      baseUrl: "https://promptnerdy.test",
     });
 
-    const response = await handleAuthenticatedOpenSeoMcpRequest(
+    const response = await handleAuthenticatedPromptNerdyMcpRequest(
       createMcpRequest(),
       props,
       {},
@@ -324,12 +334,12 @@ describe("handleAuthenticatedOpenSeoMcpRequest", () => {
       userId: "user-1",
       userEmail: "user@example.com",
       organizationId: "org-1",
-      baseUrl: "https://open-seo.test",
+      baseUrl: "https://promptnerdy.test",
       clientId: "client-1",
       scopes: ["mcp"],
     });
 
-    const response = await handleAuthenticatedOpenSeoMcpRequest(
+    const response = await handleAuthenticatedPromptNerdyMcpRequest(
       createMcpRequest(),
       props,
       {},
@@ -337,14 +347,16 @@ describe("handleAuthenticatedOpenSeoMcpRequest", () => {
     );
 
     expect(response.status).toBe(200);
-    expect(selfHostedAuthMocks.createOpenSeoMcpServer).toHaveBeenCalledWith({
-      [MCP_AUTH_CONTEXT_PROP]: {
-        ...props[MCP_AUTH_CONTEXT_PROP],
-        organizationId: "org-2",
-        role: "member",
-        orgScope: "user",
+    expect(selfHostedAuthMocks.createPromptNerdyMcpServer).toHaveBeenCalledWith(
+      {
+        [MCP_AUTH_CONTEXT_PROP]: {
+          ...props[MCP_AUTH_CONTEXT_PROP],
+          organizationId: "org-2",
+          role: "member",
+          orgScope: "user",
+        },
       },
-    });
+    );
   });
 
   it("rejects a token whose user belongs to no organization", async () => {
@@ -356,12 +368,12 @@ describe("handleAuthenticatedOpenSeoMcpRequest", () => {
       userId: "user-1",
       userEmail: "user@example.com",
       organizationId: "org-1",
-      baseUrl: "https://open-seo.test",
+      baseUrl: "https://promptnerdy.test",
       clientId: "client-1",
       scopes: ["mcp"],
     });
 
-    const response = await handleAuthenticatedOpenSeoMcpRequest(
+    const response = await handleAuthenticatedPromptNerdyMcpRequest(
       createMcpRequest(),
       props,
       {},
@@ -374,7 +386,7 @@ describe("handleAuthenticatedOpenSeoMcpRequest", () => {
   it("rejects an OAuth client without the MCP scope", async () => {
     const props = hostedProps(["offline_access"]);
 
-    const response = await handleAuthenticatedOpenSeoMcpRequest(
+    const response = await handleAuthenticatedPromptNerdyMcpRequest(
       createMcpRequest(),
       props,
       {},

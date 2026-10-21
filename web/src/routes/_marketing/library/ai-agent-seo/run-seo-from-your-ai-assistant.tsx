@@ -16,7 +16,7 @@ const faqs = [
       "The Model Context Protocol, a standard that lets an AI assistant call external tools and receive data. An SEO MCP server gives the assistant Search Console, keyword, SERP, backlink, rank tracking and audit data inside the conversation, so it can fetch and analyse instead of only writing from what you paste.",
   },
   {
-    question: "Which AI assistants work with the OpenSEO MCP?",
+    question: "Which AI assistants work with the PromptNerdy MCP?",
     answer:
       "Claude Code, Claude Desktop, Codex and Cursor, through one server configuration. The docs carry the setup for each. Agent skills, which are SKILL.md files describing SEO workflows, install alongside it.",
   },
@@ -55,7 +55,7 @@ export const Route = createFileRoute(
       title: "Run SEO From Your AI Assistant: the MCP Workflow",
       description: frontmatter.description,
       path: PATH,
-      titleSuffix: "OpenSEO Library",
+      titleSuffix: "PromptNerdy Library",
       ogType: "article",
     }),
   component: () => (

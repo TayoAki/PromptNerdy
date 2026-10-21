@@ -10,6 +10,8 @@ const { isHostedMock, hasPaidPlanMock, getOrCreateCustomerMock } = vi.hoisted(
 
 vi.mock("cloudflare:workers", () => ({ env: {} }));
 vi.mock("@/server/lib/runtime-env", () => ({
+  // Unset BILLING_ENABLED: hosted mode bills.
+  getOptionalEnvValue: vi.fn(),
   isHostedServerAuthMode: isHostedMock,
 }));
 vi.mock("@/server/billing/subscription", () => ({

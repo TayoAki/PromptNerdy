@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   AUTUMN_SEO_DATA_BALANCE_FEATURE_ID,
   AUTUMN_SEO_DATA_TOPUP_BALANCE_FEATURE_ID,
@@ -27,16 +27,21 @@ interface FinalizeCallArg {
 const {
   checkMock,
   finalizeMock,
+  getOptionalEnvValueMock,
   getOrCreateMock,
   isHostedServerAuthModeMock,
   mockEnv,
+  recordUsageMock,
 } = vi.hoisted(() => ({
   checkMock: vi.fn<(arg: CheckCallArg) => Promise<CheckResult>>(),
   finalizeMock:
     vi.fn<(arg: FinalizeCallArg) => Promise<{ success: boolean }>>(),
+  getOptionalEnvValueMock:
+    vi.fn<(name: string) => Promise<string | undefined>>(),
   getOrCreateMock: vi.fn(),
   isHostedServerAuthModeMock: vi.fn(),
   mockEnv: {},
+  recordUsageMock: vi.fn(),
 }));
 
 vi.mock("cloudflare:workers", () => ({
@@ -63,7 +68,14 @@ vi.mock("@/server/billing/subscription", async (importOriginal) => {
   };
 });
 
+// The per-client usage ledger (spec 0017): keep its cost grouping real.
+vi.mock("@/server/billing/usageLedger", async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  recordUsage: recordUsageMock,
+}));
+
 vi.mock("@/server/lib/runtime-env", () => ({
+  getOptionalEnvValue: getOptionalEnvValueMock,
   isHostedServerAuthMode: isHostedServerAuthModeMock,
 }));
 
@@ -149,6 +161,9 @@ const backlinksInput = {
   target: "example.com",
 };
 const backlinksPath = ["v3", "backlinks", "summary", "live"];
+const ledgerEntry = (costUsd: number) => [
+  { provider: "dataforseo", creditFeature: "backlinks", costUsd },
+];
 
 // Below the summary estimate, as a real charge is (the estimate is an upper bound).
 const RAW_COST = 0.02;
@@ -182,18 +197,35 @@ function mockDataforseoResult(costUsd: number) {
   });
 }
 
+beforeEach(() => {
+  // Unset BILLING_ENABLED: hosted mode bills.
+  getOptionalEnvValueMock.mockResolvedValue(undefined);
+});
+
 describe("meterDataforseoCall", () => {
-  it("skips billing in non-hosted mode", async () => {
-    isHostedServerAuthModeMock.mockResolvedValue(false);
-    mockDataforseoResult(RAW_COST);
+  it.each([
+    ["self-hosted mode", false, undefined],
+    ["hosted mode with BILLING_ENABLED=false", true, "false"],
+  ])(
+    "skips billing in %s but records the cost",
+    async (_mode, hosted, billingEnabled) => {
+      isHostedServerAuthModeMock.mockResolvedValue(hosted);
+      getOptionalEnvValueMock.mockResolvedValue(billingEnabled);
+      mockDataforseoResult(RAW_COST);
 
-    const client = createDataforseoClient(billingCustomer);
-    const result = await client.backlinks.summary(backlinksInput);
+      const client = createDataforseoClient(billingCustomer);
+      const result = await client.backlinks.summary(backlinksInput);
 
-    expect(result).toEqual({ rank: 42 });
-    expect(checkMock).not.toHaveBeenCalled();
-    expect(finalizeMock).not.toHaveBeenCalled();
-  });
+      expect(result).toEqual({ rank: 42 });
+      expect(getOrCreateMock).not.toHaveBeenCalled();
+      expect(checkMock).not.toHaveBeenCalled();
+      expect(finalizeMock).not.toHaveBeenCalled();
+      expect(recordUsageMock).toHaveBeenCalledWith(
+        billingCustomer,
+        ledgerEntry(RAW_COST),
+      );
+    },
+  );
 
   it("never calls the provider when the hold is refused", async () => {
     setupHostedMode();
@@ -235,6 +267,10 @@ describe("meterDataforseoCall", () => {
       action: "confirm",
       overrideValue: EXPECTED_CREDITS,
     });
+    expect(recordUsageMock).toHaveBeenCalledWith(
+      billingCustomer,
+      ledgerEntry(RAW_COST),
+    );
   });
 
   it("confirms a charged DataForSEO task failure at its cost before rethrowing", async () => {

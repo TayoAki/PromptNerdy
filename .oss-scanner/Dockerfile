@@ -26,7 +26,7 @@ RUN pnpm --dir web install --frozen-lockfile
 
 # Same as CI: vite build (the eager-bundle guard) and tsc --noEmit. The repo
 # .npmrc raises the V8 heap for the ~7400-module SSR build. Output lands in
-# dist/ (app worker + client) and dist/open_seo_audit/ (site-audit worker).
+# dist/ (app worker + client) and dist/promptnerdy_audit/ (site-audit worker).
 RUN pnpm run build
 
 # Website: type check and build the marketing site, as CI does. The build

@@ -13,62 +13,13 @@ import {
   useState,
 } from "react";
 import { NewsletterSignup } from "@/components/newsletter-signup";
-import { ProductHuntLaurel } from "@/components/product-hunt-laurel";
 import { SiteFooter } from "@/components/site-footer";
 import { featurePages } from "@/lib/feature-pages";
 import { getAgentSetupPrompt } from "../../../src/client/features/ai-mcp/agentSetupPrompt";
 import "./landing-page.css";
 
-export const SIGNUP_URL = "https://app.openseo.so/sign-up";
-export const PRODUCT_HUNT_URL =
-  "https://www.producthunt.com/products/openseo?launch=openseo";
-const GITHUB_URL = "https://github.com/every-app/open-seo";
-const DISCORD_URL = "https://discord.gg/c9uGs3cFXr";
-
-export type Testimonial = {
-  quote: string;
-  name: string;
-  /** Company or role, shown after the name. */
-  role?: string;
-  initial: string;
-  handle: string;
-  href: string;
-  network: "x" | "linkedin" | "web";
-  avatarSrc?: string;
-};
-
-export const TESTIMONIALS: Testimonial[] = [
-  {
-    quote:
-      "All of the value, none of the bloat. OpenSEO is a no-brainer compared to the expensive alternatives!",
-    name: "Fed",
-    initial: "F",
-    handle: "@foliofed",
-    href: "https://x.com/foliofed",
-    network: "x",
-    avatarSrc: "/avatars/fed-avatar.jpg",
-  },
-  {
-    quote:
-      "I've been using OpenSEO for the past 3 months, Ben keeps launching features to make it the best. I use it every day to find where my competitors are ranking.",
-    name: "Samik",
-    initial: "S",
-    handle: "Subclip",
-    href: "https://www.subclip.app/",
-    network: "web",
-    avatarSrc: "/avatars/samik-avatar.jpg",
-  },
-  {
-    quote:
-      "It's so straightforward and incredibly easy to get started. OpenSEO gives you the complete setup, stripped of all the fluff that you get elsewhere.",
-    name: "Tom Raine",
-    initial: "T",
-    handle: "LinkedIn",
-    href: "https://www.linkedin.com/in/tom-raine-hk/",
-    network: "linkedin",
-    avatarSrc: "/avatars/tom-avatar.jpeg",
-  },
-];
+export const SIGNUP_URL = "https://app.promptnerdy.com/sign-up";
+const GITHUB_URL = "https://github.com/TayoAki/PromptNerdy";
 
 // ─── Icons (inline SVG only, per project convention) ─────────────────
 
@@ -122,60 +73,6 @@ function IconGithub({ size = 16, className }: IconProps) {
   );
 }
 
-function IconX({ size = 14, className }: IconProps) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className={className}
-      aria-hidden="true"
-    >
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-    </svg>
-  );
-}
-
-function IconLinkedIn({ size = 14, className }: IconProps) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className={className}
-      aria-hidden="true"
-    >
-      <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 110-4.14 2.07 2.07 0 010 4.14zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z" />
-    </svg>
-  );
-}
-
-function IconLink({ size = 14, className }: IconProps) {
-  return (
-    <svg {...strokeProps(size, className)}>
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-    </svg>
-  );
-}
-
-function IconDiscord({ size = 18, className }: IconProps) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className={className}
-      aria-hidden="true"
-    >
-      <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" />
-    </svg>
-  );
-}
-
 // ─── Shared bits ─────────────────────────────────────────────────────
 
 export function Container({
@@ -217,15 +114,6 @@ function Hero() {
     <>
       <section className="itc-hero">
         <Container>
-          <a
-            href={PRODUCT_HUNT_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="itc-hero-ph-laurel"
-            aria-label="Number 1 Product of the Day on Product Hunt"
-          >
-            <ProductHuntLaurel />
-          </a>
           <h1
             className="itc-display-xl itc-hero-title"
             style={{ maxWidth: 600, margin: "0 auto" }}
@@ -237,9 +125,9 @@ function Hero() {
             className="itc-subhead itc-muted itc-hero-subtitle"
             style={{ maxWidth: 640, margin: "24px auto 0" }}
           >
-            Connect your favorite AI agent in 2 minutes. OpenSEO gives the data,
-            tools and integrations you need to grow your business's organic
-            traffic.
+            Connect your favorite AI agent in 2 minutes. PromptNerdy gives the
+            data, tools and integrations you need to grow your business's
+            organic traffic.
           </p>
           <div className="itc-hero-ctas">
             <div className="itc-hero-cta-group">
@@ -261,77 +149,6 @@ function Hero() {
         </Container>
       </div>
     </>
-  );
-}
-
-// ─── Testimonial (true-black inverse strip) ──────────────────────────
-
-export function Testimonials({
-  title = "Trusted by 3,000+ entrepreneurs",
-  items = TESTIMONIALS,
-}: {
-  title?: string;
-  items?: Testimonial[];
-}) {
-  return (
-    <section className="itc-inverse">
-      <Container>
-        <div className="itc-testimonials">
-          <h2
-            className="itc-display-md itc-testimonials-title"
-            style={{ margin: "0 auto 32px" }}
-          >
-            {title}
-          </h2>
-          <div className="itc-quote-grid">
-            {items.map((t) => (
-              <figure className="itc-quote-card" key={t.name}>
-                <div className="itc-quote-mark" aria-hidden="true">
-                  &ldquo;
-                </div>
-                <blockquote className="itc-quote-text">{t.quote}</blockquote>
-                <figcaption className="itc-quote-attr">
-                  <span className="itc-quote-avatar" aria-hidden="true">
-                    {t.avatarSrc ? (
-                      <img
-                        src={t.avatarSrc}
-                        alt=""
-                        className="itc-quote-avatar-img"
-                      />
-                    ) : (
-                      t.initial
-                    )}
-                  </span>
-                  <span className="itc-quote-meta">
-                    <span className="itc-quote-name">
-                      {t.name}
-                      {t.role ? (
-                        <span className="itc-quote-role"> · {t.role}</span>
-                      ) : null}
-                    </span>
-                    <a
-                      href={t.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="itc-quote-handle"
-                    >
-                      {t.network === "x" ? (
-                        <IconX size={11} />
-                      ) : t.network === "linkedin" ? (
-                        <IconLinkedIn size={12} />
-                      ) : (
-                        <IconLink size={12} />
-                      )}
-                      {t.handle}
-                    </a>
-                  </span>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        </div>
-      </Container>
-    </section>
   );
 }
 
@@ -388,7 +205,7 @@ function DemoVideo() {
         playsInline
         controls={playing}
         preload="metadata"
-        aria-label="OpenSEO product demo: keyword research, backlinks, site audit, and an agent report"
+        aria-label="PromptNerdy product demo: keyword research, backlinks, site audit, and an agent report"
         onPlay={() => setPlaying(true)}
       >
         <source src="/demo.mp4" type="video/mp4" />
@@ -409,7 +226,7 @@ function DemoVideo() {
             });
             void video.play();
           }}
-          aria-label="Play the OpenSEO demo video"
+          aria-label="Play the PromptNerdy demo video"
         >
           <span className="itc-demo-play-button" aria-hidden="true">
             <svg viewBox="0 0 24 24" width="36" height="36" fill="currentColor">
@@ -512,7 +329,7 @@ export function SkillsList() {
   );
 }
 
-const SETUP_PROMPT = getAgentSetupPrompt("https://app.openseo.so");
+const SETUP_PROMPT = getAgentSetupPrompt("https://app.promptnerdy.com");
 
 export function CopySetupPrompt({ size = "md" }: { size?: "md" | "lg" }) {
   const [toast, setToast] = useState<string | null>(null);
@@ -607,15 +424,15 @@ export function McpTerminal() {
           <span className="itc-terminal-dot" />
           <span className="itc-terminal-dot" />
         </span>
-        <span className="itc-terminal-label">claude · openseo mcp</span>
+        <span className="itc-terminal-label">claude · promptnerdy mcp</span>
       </div>
       <pre>
         <code>
           <span className="t-orange">›</span> find and cluster keywords for{" "}
-          <span className="t-bright">openseo.so</span>
+          <span className="t-bright">promptnerdy.com</span>
           {"\n\n"}
           <span className="t-dim">
-            ⏺ openseo.keyword_research(seed: &quot;open source seo&quot;)
+            ⏺ promptnerdy.keyword_research(seed: &quot;open source seo&quot;)
           </span>
           {"\n"}
           {"  "}keyword{"                      "}volume{"     "}kd{"\n"}
@@ -639,7 +456,7 @@ export function McpTerminal() {
           {"\n"}
           <span className="t-orange">↳</span>
           <span className="t-dim"> View data in app: </span>
-          <span className="t-bright">app.openseo.so/keywords</span>
+          <span className="t-bright">app.promptnerdy.com/keywords</span>
         </code>
       </pre>
     </div>
@@ -978,17 +795,13 @@ const BEYOND_DATA = [
   },
   {
     title: "Project Context",
-    body: "As you use the OpenSEO skills, your agent saves what it learns about your business and how you like to write. No repeating yourself every session.",
+    body: "As you use the PromptNerdy skills, your agent saves what it learns about your business and how you like to write. No repeating yourself every session.",
     icons: [{ name: "Saved context", Icon: IconNotebook }],
   },
   {
     title: "Agent reports",
     body: "Reading agents output is annoying. Every piece of research your agent does is saved as a beautiful, easy to read report.",
     icons: [{ name: "Agent report", Icon: IconReport }],
-    link: {
-      label: "See an example report",
-      href: "https://app.openseo.so/s/QEZZWxoLl4TpzhKxeiNRGuM_Hj15eUzY",
-    },
   },
 ];
 
@@ -999,10 +812,10 @@ export function BeyondDataSection() {
         <div className="itc-narrow">
           <h2 className="itc-display-lg">Beyond data</h2>
           <p className="itc-subhead itc-muted" style={{ margin: "20px 0 0" }}>
-            An SEO tool is nothing without quality data. That&apos;s why OpenSEO
-            uses{" "}
+            An SEO tool is nothing without quality data. That&apos;s why
+            PromptNerdy uses{" "}
             <a
-              href="https://dataforseo.com/?aff=255379"
+              href="https://dataforseo.com/"
               target="_blank"
               rel="noopener noreferrer"
               className="itc-inline-link"
@@ -1014,7 +827,7 @@ export function BeyondDataSection() {
         </div>
 
         <div className="itc-bd-cards">
-          {BEYOND_DATA.map(({ title, body, icons, link }) => (
+          {BEYOND_DATA.map(({ title, body, icons }) => (
             <div key={title} className="itc-card itc-bd-card">
               <div className="itc-bd-icons">
                 {icons.map(({ name, Icon }) => (
@@ -1030,17 +843,6 @@ export function BeyondDataSection() {
               >
                 {body}
               </p>
-              {link && (
-                <a
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="itc-textlink itc-bd-link"
-                >
-                  {link.label}{" "}
-                  <IconArrowRight size={15} className="itc-arrow" />
-                </a>
-              )}
             </div>
           ))}
         </div>
@@ -1060,7 +862,7 @@ export function OpenSourceSection() {
           <p className="itc-subhead itc-muted" style={{ margin: "20px 0 0" }}>
             People should have the option to self-host and customize their
             tools. If you ever hear someone talking about building their own
-            tool from scratch, tell them to build on top of OpenSEO.
+            tool from scratch, tell them to build on top of PromptNerdy.
           </p>
         </div>
 
@@ -1134,7 +936,7 @@ function Footer() {
           className="itc-caption itc-subtle"
           style={{ margin: 0, padding: "40px 0 32px" }}
         >
-          © 2026 Every App, Inc.
+          © 2026 PromptNerdy
         </p>
       </Container>
     </footer>
@@ -1148,21 +950,10 @@ export function LandingPage() {
     <div className="itc">
       <Hero />
       <McpSection />
-      <Testimonials />
       <BeyondDataSection />
       <OpenSourceSection />
       <ProductSection />
       <Footer />
-      <a
-        href={DISCORD_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="itc-discord"
-        aria-label="Join the OpenSEO Discord"
-      >
-        <IconDiscord size={18} />
-        <span>Discord</span>
-      </a>
     </div>
   );
 }

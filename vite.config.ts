@@ -54,6 +54,8 @@ export default defineConfig(({ mode, command }) => {
       "VITE_",
       "AUTH_MODE",
       "BYPASS_EMAIL_VERIFICATION",
+      "BILLING_ENABLED",
+      "GOOGLE_SIGN_IN_ENABLED",
       "POSTHOG_PUBLIC_KEY",
       "POSTHOG_HOST",
       "TURNSTILE_SITE_KEY",
@@ -84,7 +86,7 @@ export default defineConfig(({ mode, command }) => {
       cloudflare({
         inspectorPort: false,
         viteEnvironment: { name: "ssr" },
-        // The site-audit aux worker builds to dist/open_seo_audit/ and runs
+        // The site-audit aux worker builds to dist/promptnerdy_audit/ and runs
         // beside the main worker in dev and preview, with the app's
         // cross-script SITE_AUDIT_WORKFLOW / AUDIT_SCRATCHPAD bindings
         // resolved against it.

@@ -1,0 +1,26 @@
+{
+  "name": "promptnerdy",
+  "displayName": "PromptNerdy",
+  "version": "1.0.23",
+  "description": "Research keywords and competitors, audit sites, track rankings and AI visibility, and use connected Search Console data from your AI assistant.",
+  "author": {
+    "name": "PromptNerdy",
+    "url": "https://promptnerdy.com"
+  },
+  "homepage": "https://promptnerdy.com",
+  "privacyPolicyUrl": "https://promptnerdy.com/privacy",
+  "icon": "./assets/icon.png",
+  "repository": "https://github.com/TayoAki/PromptNerdy",
+  "license": "MIT",
+  "keywords": [
+    "seo",
+    "keyword-research",
+    "serp",
+    "site-audit",
+    "backlinks",
+    "search-console",
+    "rank-tracking",
+    "local-seo",
+    "ai-visibility"
+  ]
+}

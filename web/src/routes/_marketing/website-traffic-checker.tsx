@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_marketing/website-traffic-checker")({
       description:
         "Estimate any website's organic traffic, keyword count, and traffic value, with its top keywords and pages. Compare two domains. No signup, no email.",
       path: TOOL.path,
-      titleSuffix: "OpenSEO",
+      titleSuffix: "PromptNerdy",
     }),
   component: WebsiteTrafficCheckerPage,
 });
@@ -33,12 +33,12 @@ const FAQS = [
   {
     question: "How much do I get for free?",
     answer:
-      "The summary metrics plus the top 5 keywords and top 5 pages per domain, for one country at a time. OpenSEO lets you browse more keywords and pages, filter the results, and save keywords for rank tracking.",
+      "The summary metrics plus the top 5 keywords and top 5 pages per domain, for one country at a time. PromptNerdy lets you browse more keywords and pages, filter the results, and save keywords for rank tracking.",
   },
   {
     question: "Where does the data come from?",
     answer:
-      "DataForSEO's Labs index — the same source behind OpenSEO's domain overview. Results are cached for 24 hours per domain and country.",
+      "DataForSEO's Labs index — the same source behind PromptNerdy's domain overview. Results are cached for 24 hours per domain and country.",
   },
 ];
 
@@ -70,7 +70,7 @@ function WebsiteTrafficCheckerPage() {
       faqs={FAQS}
       cta={{
         heading: "Explore more keywords and pages",
-        body: "Explore domain reports, save promising keywords, and track their rankings in OpenSEO. Start with free trial credits.",
+        body: "Explore domain reports, save promising keywords, and track their rankings in PromptNerdy. Start with free trial credits.",
         featureLabel: "Learn about Domain Overview",
       }}
     >

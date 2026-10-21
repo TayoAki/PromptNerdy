@@ -31,12 +31,16 @@ import {
 import { normalizeAndValidateStartUrl } from "@/server/lib/audit/url-policy";
 import { reconcileRunningAudit } from "@/server/features/audit/services/auditReconciler";
 import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 
 // Free accounts keep bounded audit capacity; rendering reserves usage credits.
 async function resolveAuditLimitTier(
   customer: BillingCustomerContext,
 ): Promise<AuditLimitTier> {
   if (!(await isHostedServerAuthMode())) return "self_hosted";
+  // Without billing there's no plan to look up; every org gets the paid
+  // tier's capacity, which is still bounded.
+  if (!(await isBillingEnabled())) return "paid";
   await getOrCreateOrganizationCustomer(customer);
   return (await customerHasPaidPlan(customer.organizationId)) ? "paid" : "free";
 }
@@ -298,7 +302,7 @@ async function remove(auditId: string, projectId: string) {
 
   await AuditRepository.deleteAuditForProject(auditId, projectId);
   // Best-effort: drop the crawl scratchpad DO with the audit (it lives in
-  // the open-seo-audit worker, behind the AuditEngine RPC). A missed destroy
+  // the promptnerdy-audit worker, behind the AuditEngine RPC). A missed destroy
   // self-cleans via the DO's 7-day alarm.
   try {
     await env.AUDIT_ENGINE.destroyScratchpad(auditId);

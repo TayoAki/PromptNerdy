@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-const moduleId = "virtual:openseo-mcp-widget";
+const moduleId = "virtual:promptnerdy-mcp-widget";
 const resolvedId = `\0${moduleId}`;
 
 // A separate browser bundle keeps React and the app's actual UI components out
@@ -11,7 +11,7 @@ const resolvedId = `\0${moduleId}`;
 // the sandbox needs no network access, session cookies, or asset allowlist.
 export function mcpWidgets(): Plugin {
   return {
-    name: "openseo-mcp-widgets",
+    name: "promptnerdy-mcp-widgets",
     resolveId(id) {
       if (id === moduleId) return resolvedId;
     },
@@ -40,7 +40,7 @@ async function buildWidget() {
       lib: {
         entry: "src/client/mcp-widgets/main.tsx",
         formats: ["iife"],
-        name: "OpenSeoWidgets",
+        name: "PromptNerdyWidgets",
       },
     },
   });
@@ -68,6 +68,6 @@ async function buildWidget() {
           )
         : [],
     ),
-    html: `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OpenSEO</title><style>${css.replaceAll("</style", "<\\/style")}</style></head><body><div id="root"></div><script>${script.replaceAll("</script", "<\\/script")}</script></body></html>`,
+    html: `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PromptNerdy</title><style>${css.replaceAll("</style", "<\\/style")}</style></head><body><div id="root"></div><script>${script.replaceAll("</script", "<\\/script")}</script></body></html>`,
   };
 }

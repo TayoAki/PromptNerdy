@@ -49,7 +49,7 @@ function checkContext(keywordIds: string[]) {
     keywords: keywordIds.map((id) => ({ id, keyword: `keyword ${id}` })),
     devices: "desktop" as const,
     serpDepth: 10,
-    domain: "openseo.so",
+    domain: "promptnerdy.com",
     locationCode: 2840,
     languageCode: "en",
     runId: "run_1",

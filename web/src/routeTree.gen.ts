@@ -15,7 +15,6 @@ import { Route as AgentSetupDottxtRouteImport } from './routes/agent-setup[.]txt
 import { Route as CampaignAgenciesRouteImport } from './routes/_campaign/agencies'
 import { Route as CampaignAgentsRouteImport } from './routes/_campaign/agents'
 import { Route as MarketingIndexRouteImport } from './routes/_marketing/index'
-import { Route as MarketingAboutRouteImport } from './routes/_marketing/about'
 import { Route as MarketingAhrefsAlternativeRouteImport } from './routes/_marketing/ahrefs-alternative'
 import { Route as MarketingAhrefsPricingRouteImport } from './routes/_marketing/ahrefs-pricing'
 import { Route as MarketingBacklinkCheckerRouteImport } from './routes/_marketing/backlink-checker'
@@ -25,9 +24,9 @@ import { Route as MarketingDomainAgeCheckerRouteImport } from './routes/_marketi
 import { Route as MarketingGoogleSearchConsoleMcpRouteImport } from './routes/_marketing/google-search-console-mcp'
 import { Route as MarketingKeywordGeneratorRouteImport } from './routes/_marketing/keyword-generator'
 import { Route as MarketingOpenSourceSeoRouteImport } from './routes/_marketing/open-source-seo'
-import { Route as MarketingOpenseoVsDataforseoRouteImport } from './routes/_marketing/openseo-vs-dataforseo'
 import { Route as MarketingPricingRouteImport } from './routes/_marketing/pricing'
 import { Route as MarketingPrivacyRouteImport } from './routes/_marketing/privacy'
+import { Route as MarketingPromptnerdyVsDataforseoRouteImport } from './routes/_marketing/promptnerdy-vs-dataforseo'
 import { Route as MarketingRoadmapRouteImport } from './routes/_marketing/roadmap'
 import { Route as MarketingSemrushAlternativeRouteImport } from './routes/_marketing/semrush-alternative'
 import { Route as MarketingSemrushPricingRouteImport } from './routes/_marketing/semrush-pricing'
@@ -37,7 +36,7 @@ import { Route as MarketingSupportRouteImport } from './routes/_marketing/suppor
 import { Route as MarketingTermsAndConditionsRouteImport } from './routes/_marketing/terms-and-conditions'
 import { Route as MarketingToolsRouteImport } from './routes/_marketing/tools'
 import { Route as MarketingWebsiteTrafficCheckerRouteImport } from './routes/_marketing/website-traffic-checker'
-import { Route as MarketingWhyOpenseoRouteImport } from './routes/_marketing/why-openseo'
+import { Route as MarketingWhyPromptnerdyRouteImport } from './routes/_marketing/why-promptnerdy'
 import { Route as ApiBacklinkCheckRouteImport } from './routes/api/backlink-check'
 import { Route as ApiCompetitorAnalysisRouteImport } from './routes/api/competitor-analysis'
 import { Route as ApiCompetitorKeywordFinderRouteImport } from './routes/api/competitor-keyword-finder'
@@ -130,11 +129,6 @@ const MarketingIndexRoute = MarketingIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MarketingRoute,
 } as any)
-const MarketingAboutRoute = MarketingAboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => MarketingRoute,
-} as any)
 const MarketingAhrefsAlternativeRoute =
   MarketingAhrefsAlternativeRouteImport.update({
     id: '/ahrefs-alternative',
@@ -187,12 +181,6 @@ const MarketingOpenSourceSeoRoute = MarketingOpenSourceSeoRouteImport.update({
   path: '/open-source-seo',
   getParentRoute: () => MarketingRoute,
 } as any)
-const MarketingOpenseoVsDataforseoRoute =
-  MarketingOpenseoVsDataforseoRouteImport.update({
-    id: '/openseo-vs-dataforseo',
-    path: '/openseo-vs-dataforseo',
-    getParentRoute: () => MarketingRoute,
-  } as any)
 const MarketingPricingRoute = MarketingPricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
@@ -203,6 +191,12 @@ const MarketingPrivacyRoute = MarketingPrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => MarketingRoute,
 } as any)
+const MarketingPromptnerdyVsDataforseoRoute =
+  MarketingPromptnerdyVsDataforseoRouteImport.update({
+    id: '/promptnerdy-vs-dataforseo',
+    path: '/promptnerdy-vs-dataforseo',
+    getParentRoute: () => MarketingRoute,
+  } as any)
 const MarketingRoadmapRoute = MarketingRoadmapRouteImport.update({
   id: '/roadmap',
   path: '/roadmap',
@@ -252,9 +246,9 @@ const MarketingWebsiteTrafficCheckerRoute =
     path: '/website-traffic-checker',
     getParentRoute: () => MarketingRoute,
   } as any)
-const MarketingWhyOpenseoRoute = MarketingWhyOpenseoRouteImport.update({
-  id: '/why-openseo',
-  path: '/why-openseo',
+const MarketingWhyPromptnerdyRoute = MarketingWhyPromptnerdyRouteImport.update({
+  id: '/why-promptnerdy',
+  path: '/why-promptnerdy',
   getParentRoute: () => MarketingRoute,
 } as any)
 const ApiBacklinkCheckRoute = ApiBacklinkCheckRouteImport.update({
@@ -625,7 +619,6 @@ export interface FileRoutesByFullPath {
   '/agent-setup.txt': typeof AgentSetupDottxtRoute
   '/agencies': typeof CampaignAgenciesRoute
   '/agents': typeof CampaignAgentsRoute
-  '/about': typeof MarketingAboutRoute
   '/ahrefs-alternative': typeof MarketingAhrefsAlternativeRoute
   '/ahrefs-pricing': typeof MarketingAhrefsPricingRoute
   '/backlink-checker': typeof MarketingBacklinkCheckerRoute
@@ -635,9 +628,9 @@ export interface FileRoutesByFullPath {
   '/google-search-console-mcp': typeof MarketingGoogleSearchConsoleMcpRoute
   '/keyword-generator': typeof MarketingKeywordGeneratorRoute
   '/open-source-seo': typeof MarketingOpenSourceSeoRoute
-  '/openseo-vs-dataforseo': typeof MarketingOpenseoVsDataforseoRoute
   '/pricing': typeof MarketingPricingRoute
   '/privacy': typeof MarketingPrivacyRoute
+  '/promptnerdy-vs-dataforseo': typeof MarketingPromptnerdyVsDataforseoRoute
   '/roadmap': typeof MarketingRoadmapRoute
   '/semrush-alternative': typeof MarketingSemrushAlternativeRoute
   '/semrush-pricing': typeof MarketingSemrushPricingRoute
@@ -647,7 +640,7 @@ export interface FileRoutesByFullPath {
   '/terms-and-conditions': typeof MarketingTermsAndConditionsRoute
   '/tools': typeof MarketingToolsRoute
   '/website-traffic-checker': typeof MarketingWebsiteTrafficCheckerRoute
-  '/why-openseo': typeof MarketingWhyOpenseoRoute
+  '/why-promptnerdy': typeof MarketingWhyPromptnerdyRoute
   '/api/backlink-check': typeof ApiBacklinkCheckRoute
   '/api/competitor-analysis': typeof ApiCompetitorAnalysisRoute
   '/api/competitor-keyword-finder': typeof ApiCompetitorKeywordFinderRoute
@@ -717,7 +710,6 @@ export interface FileRoutesByTo {
   '/agent-setup.txt': typeof AgentSetupDottxtRoute
   '/agencies': typeof CampaignAgenciesRoute
   '/agents': typeof CampaignAgentsRoute
-  '/about': typeof MarketingAboutRoute
   '/ahrefs-alternative': typeof MarketingAhrefsAlternativeRoute
   '/ahrefs-pricing': typeof MarketingAhrefsPricingRoute
   '/backlink-checker': typeof MarketingBacklinkCheckerRoute
@@ -727,9 +719,9 @@ export interface FileRoutesByTo {
   '/google-search-console-mcp': typeof MarketingGoogleSearchConsoleMcpRoute
   '/keyword-generator': typeof MarketingKeywordGeneratorRoute
   '/open-source-seo': typeof MarketingOpenSourceSeoRoute
-  '/openseo-vs-dataforseo': typeof MarketingOpenseoVsDataforseoRoute
   '/pricing': typeof MarketingPricingRoute
   '/privacy': typeof MarketingPrivacyRoute
+  '/promptnerdy-vs-dataforseo': typeof MarketingPromptnerdyVsDataforseoRoute
   '/roadmap': typeof MarketingRoadmapRoute
   '/semrush-alternative': typeof MarketingSemrushAlternativeRoute
   '/semrush-pricing': typeof MarketingSemrushPricingRoute
@@ -739,7 +731,7 @@ export interface FileRoutesByTo {
   '/terms-and-conditions': typeof MarketingTermsAndConditionsRoute
   '/tools': typeof MarketingToolsRoute
   '/website-traffic-checker': typeof MarketingWebsiteTrafficCheckerRoute
-  '/why-openseo': typeof MarketingWhyOpenseoRoute
+  '/why-promptnerdy': typeof MarketingWhyPromptnerdyRoute
   '/api/backlink-check': typeof ApiBacklinkCheckRoute
   '/api/competitor-analysis': typeof ApiCompetitorAnalysisRoute
   '/api/competitor-keyword-finder': typeof ApiCompetitorKeywordFinderRoute
@@ -811,7 +803,6 @@ export interface FileRoutesById {
   '/agent-setup.txt': typeof AgentSetupDottxtRoute
   '/_campaign/agencies': typeof CampaignAgenciesRoute
   '/_campaign/agents': typeof CampaignAgentsRoute
-  '/_marketing/about': typeof MarketingAboutRoute
   '/_marketing/ahrefs-alternative': typeof MarketingAhrefsAlternativeRoute
   '/_marketing/ahrefs-pricing': typeof MarketingAhrefsPricingRoute
   '/_marketing/backlink-checker': typeof MarketingBacklinkCheckerRoute
@@ -821,9 +812,9 @@ export interface FileRoutesById {
   '/_marketing/google-search-console-mcp': typeof MarketingGoogleSearchConsoleMcpRoute
   '/_marketing/keyword-generator': typeof MarketingKeywordGeneratorRoute
   '/_marketing/open-source-seo': typeof MarketingOpenSourceSeoRoute
-  '/_marketing/openseo-vs-dataforseo': typeof MarketingOpenseoVsDataforseoRoute
   '/_marketing/pricing': typeof MarketingPricingRoute
   '/_marketing/privacy': typeof MarketingPrivacyRoute
+  '/_marketing/promptnerdy-vs-dataforseo': typeof MarketingPromptnerdyVsDataforseoRoute
   '/_marketing/roadmap': typeof MarketingRoadmapRoute
   '/_marketing/semrush-alternative': typeof MarketingSemrushAlternativeRoute
   '/_marketing/semrush-pricing': typeof MarketingSemrushPricingRoute
@@ -833,7 +824,7 @@ export interface FileRoutesById {
   '/_marketing/terms-and-conditions': typeof MarketingTermsAndConditionsRoute
   '/_marketing/tools': typeof MarketingToolsRoute
   '/_marketing/website-traffic-checker': typeof MarketingWebsiteTrafficCheckerRoute
-  '/_marketing/why-openseo': typeof MarketingWhyOpenseoRoute
+  '/_marketing/why-promptnerdy': typeof MarketingWhyPromptnerdyRoute
   '/api/backlink-check': typeof ApiBacklinkCheckRoute
   '/api/competitor-analysis': typeof ApiCompetitorAnalysisRoute
   '/api/competitor-keyword-finder': typeof ApiCompetitorKeywordFinderRoute
@@ -906,7 +897,6 @@ export interface FileRouteTypes {
     | '/agent-setup.txt'
     | '/agencies'
     | '/agents'
-    | '/about'
     | '/ahrefs-alternative'
     | '/ahrefs-pricing'
     | '/backlink-checker'
@@ -916,9 +906,9 @@ export interface FileRouteTypes {
     | '/google-search-console-mcp'
     | '/keyword-generator'
     | '/open-source-seo'
-    | '/openseo-vs-dataforseo'
     | '/pricing'
     | '/privacy'
+    | '/promptnerdy-vs-dataforseo'
     | '/roadmap'
     | '/semrush-alternative'
     | '/semrush-pricing'
@@ -928,7 +918,7 @@ export interface FileRouteTypes {
     | '/terms-and-conditions'
     | '/tools'
     | '/website-traffic-checker'
-    | '/why-openseo'
+    | '/why-promptnerdy'
     | '/api/backlink-check'
     | '/api/competitor-analysis'
     | '/api/competitor-keyword-finder'
@@ -998,7 +988,6 @@ export interface FileRouteTypes {
     | '/agent-setup.txt'
     | '/agencies'
     | '/agents'
-    | '/about'
     | '/ahrefs-alternative'
     | '/ahrefs-pricing'
     | '/backlink-checker'
@@ -1008,9 +997,9 @@ export interface FileRouteTypes {
     | '/google-search-console-mcp'
     | '/keyword-generator'
     | '/open-source-seo'
-    | '/openseo-vs-dataforseo'
     | '/pricing'
     | '/privacy'
+    | '/promptnerdy-vs-dataforseo'
     | '/roadmap'
     | '/semrush-alternative'
     | '/semrush-pricing'
@@ -1020,7 +1009,7 @@ export interface FileRouteTypes {
     | '/terms-and-conditions'
     | '/tools'
     | '/website-traffic-checker'
-    | '/why-openseo'
+    | '/why-promptnerdy'
     | '/api/backlink-check'
     | '/api/competitor-analysis'
     | '/api/competitor-keyword-finder'
@@ -1091,7 +1080,6 @@ export interface FileRouteTypes {
     | '/agent-setup.txt'
     | '/_campaign/agencies'
     | '/_campaign/agents'
-    | '/_marketing/about'
     | '/_marketing/ahrefs-alternative'
     | '/_marketing/ahrefs-pricing'
     | '/_marketing/backlink-checker'
@@ -1101,9 +1089,9 @@ export interface FileRouteTypes {
     | '/_marketing/google-search-console-mcp'
     | '/_marketing/keyword-generator'
     | '/_marketing/open-source-seo'
-    | '/_marketing/openseo-vs-dataforseo'
     | '/_marketing/pricing'
     | '/_marketing/privacy'
+    | '/_marketing/promptnerdy-vs-dataforseo'
     | '/_marketing/roadmap'
     | '/_marketing/semrush-alternative'
     | '/_marketing/semrush-pricing'
@@ -1113,7 +1101,7 @@ export interface FileRouteTypes {
     | '/_marketing/terms-and-conditions'
     | '/_marketing/tools'
     | '/_marketing/website-traffic-checker'
-    | '/_marketing/why-openseo'
+    | '/_marketing/why-promptnerdy'
     | '/api/backlink-check'
     | '/api/competitor-analysis'
     | '/api/competitor-keyword-finder'
@@ -1249,13 +1237,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingIndexRouteImport
       parentRoute: typeof MarketingRoute
     }
-    '/_marketing/about': {
-      id: '/_marketing/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof MarketingAboutRouteImport
-      parentRoute: typeof MarketingRoute
-    }
     '/_marketing/ahrefs-alternative': {
       id: '/_marketing/ahrefs-alternative'
       path: '/ahrefs-alternative'
@@ -1319,13 +1300,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingOpenSourceSeoRouteImport
       parentRoute: typeof MarketingRoute
     }
-    '/_marketing/openseo-vs-dataforseo': {
-      id: '/_marketing/openseo-vs-dataforseo'
-      path: '/openseo-vs-dataforseo'
-      fullPath: '/openseo-vs-dataforseo'
-      preLoaderRoute: typeof MarketingOpenseoVsDataforseoRouteImport
-      parentRoute: typeof MarketingRoute
-    }
     '/_marketing/pricing': {
       id: '/_marketing/pricing'
       path: '/pricing'
@@ -1338,6 +1312,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof MarketingPrivacyRouteImport
+      parentRoute: typeof MarketingRoute
+    }
+    '/_marketing/promptnerdy-vs-dataforseo': {
+      id: '/_marketing/promptnerdy-vs-dataforseo'
+      path: '/promptnerdy-vs-dataforseo'
+      fullPath: '/promptnerdy-vs-dataforseo'
+      preLoaderRoute: typeof MarketingPromptnerdyVsDataforseoRouteImport
       parentRoute: typeof MarketingRoute
     }
     '/_marketing/roadmap': {
@@ -1403,11 +1384,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingWebsiteTrafficCheckerRouteImport
       parentRoute: typeof MarketingRoute
     }
-    '/_marketing/why-openseo': {
-      id: '/_marketing/why-openseo'
-      path: '/why-openseo'
-      fullPath: '/why-openseo'
-      preLoaderRoute: typeof MarketingWhyOpenseoRouteImport
+    '/_marketing/why-promptnerdy': {
+      id: '/_marketing/why-promptnerdy'
+      path: '/why-promptnerdy'
+      fullPath: '/why-promptnerdy'
+      preLoaderRoute: typeof MarketingWhyPromptnerdyRouteImport
       parentRoute: typeof MarketingRoute
     }
     '/api/backlink-check': {
@@ -1869,7 +1850,6 @@ const CampaignRouteWithChildren = CampaignRoute._addFileChildren(
 )
 
 interface MarketingRouteChildren {
-  MarketingAboutRoute: typeof MarketingAboutRoute
   MarketingAhrefsAlternativeRoute: typeof MarketingAhrefsAlternativeRoute
   MarketingAhrefsPricingRoute: typeof MarketingAhrefsPricingRoute
   MarketingBacklinkCheckerRoute: typeof MarketingBacklinkCheckerRoute
@@ -1879,9 +1859,9 @@ interface MarketingRouteChildren {
   MarketingGoogleSearchConsoleMcpRoute: typeof MarketingGoogleSearchConsoleMcpRoute
   MarketingKeywordGeneratorRoute: typeof MarketingKeywordGeneratorRoute
   MarketingOpenSourceSeoRoute: typeof MarketingOpenSourceSeoRoute
-  MarketingOpenseoVsDataforseoRoute: typeof MarketingOpenseoVsDataforseoRoute
   MarketingPricingRoute: typeof MarketingPricingRoute
   MarketingPrivacyRoute: typeof MarketingPrivacyRoute
+  MarketingPromptnerdyVsDataforseoRoute: typeof MarketingPromptnerdyVsDataforseoRoute
   MarketingRoadmapRoute: typeof MarketingRoadmapRoute
   MarketingSemrushAlternativeRoute: typeof MarketingSemrushAlternativeRoute
   MarketingSemrushPricingRoute: typeof MarketingSemrushPricingRoute
@@ -1891,7 +1871,7 @@ interface MarketingRouteChildren {
   MarketingTermsAndConditionsRoute: typeof MarketingTermsAndConditionsRoute
   MarketingToolsRoute: typeof MarketingToolsRoute
   MarketingWebsiteTrafficCheckerRoute: typeof MarketingWebsiteTrafficCheckerRoute
-  MarketingWhyOpenseoRoute: typeof MarketingWhyOpenseoRoute
+  MarketingWhyPromptnerdyRoute: typeof MarketingWhyPromptnerdyRoute
   MarketingIndexRoute: typeof MarketingIndexRoute
   MarketingFeaturesAiBrandVisibilityRoute: typeof MarketingFeaturesAiBrandVisibilityRoute
   MarketingFeaturesAiSearchPromptsRoute: typeof MarketingFeaturesAiSearchPromptsRoute
@@ -1940,7 +1920,6 @@ interface MarketingRouteChildren {
 }
 
 const MarketingRouteChildren: MarketingRouteChildren = {
-  MarketingAboutRoute: MarketingAboutRoute,
   MarketingAhrefsAlternativeRoute: MarketingAhrefsAlternativeRoute,
   MarketingAhrefsPricingRoute: MarketingAhrefsPricingRoute,
   MarketingBacklinkCheckerRoute: MarketingBacklinkCheckerRoute,
@@ -1950,9 +1929,9 @@ const MarketingRouteChildren: MarketingRouteChildren = {
   MarketingGoogleSearchConsoleMcpRoute: MarketingGoogleSearchConsoleMcpRoute,
   MarketingKeywordGeneratorRoute: MarketingKeywordGeneratorRoute,
   MarketingOpenSourceSeoRoute: MarketingOpenSourceSeoRoute,
-  MarketingOpenseoVsDataforseoRoute: MarketingOpenseoVsDataforseoRoute,
   MarketingPricingRoute: MarketingPricingRoute,
   MarketingPrivacyRoute: MarketingPrivacyRoute,
+  MarketingPromptnerdyVsDataforseoRoute: MarketingPromptnerdyVsDataforseoRoute,
   MarketingRoadmapRoute: MarketingRoadmapRoute,
   MarketingSemrushAlternativeRoute: MarketingSemrushAlternativeRoute,
   MarketingSemrushPricingRoute: MarketingSemrushPricingRoute,
@@ -1962,7 +1941,7 @@ const MarketingRouteChildren: MarketingRouteChildren = {
   MarketingTermsAndConditionsRoute: MarketingTermsAndConditionsRoute,
   MarketingToolsRoute: MarketingToolsRoute,
   MarketingWebsiteTrafficCheckerRoute: MarketingWebsiteTrafficCheckerRoute,
-  MarketingWhyOpenseoRoute: MarketingWhyOpenseoRoute,
+  MarketingWhyPromptnerdyRoute: MarketingWhyPromptnerdyRoute,
   MarketingIndexRoute: MarketingIndexRoute,
   MarketingFeaturesAiBrandVisibilityRoute:
     MarketingFeaturesAiBrandVisibilityRoute,

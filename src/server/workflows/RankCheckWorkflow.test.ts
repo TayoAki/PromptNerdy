@@ -54,6 +54,8 @@ vi.mock("@/server/billing/autumn", () => ({
   autumn: { check: mocks.autumnCheck },
 }));
 vi.mock("@/server/lib/runtime-env", () => ({
+  // Unset BILLING_ENABLED: hosted mode bills.
+  getOptionalEnvValue: vi.fn(),
   isHostedServerAuthMode: mocks.isHostedServerAuthMode,
 }));
 

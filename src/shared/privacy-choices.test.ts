@@ -34,7 +34,7 @@ describe("privacy choices", () => {
   });
 
   it("lets Global Privacy Control override a saved advertising choice", () => {
-    const saved = readPrivacyCookie("other=1; openseo_privacy=a1.d1.m1");
+    const saved = readPrivacyCookie("other=1; promptnerdy_privacy=a1.d1.m1");
     expect(
       effectivePrivacyChoices({
         saved,
@@ -45,7 +45,7 @@ describe("privacy choices", () => {
   });
 
   it("applies the region default to Meta in a cookie saved before that choice existed", () => {
-    const saved = readPrivacyCookie("openseo_privacy=a1.d1");
+    const saved = readPrivacyCookie("promptnerdy_privacy=a1.d1");
     expect(
       effectivePrivacyChoices({
         saved,

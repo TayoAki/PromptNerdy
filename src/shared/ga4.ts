@@ -12,4 +12,4 @@ export const GA4_OAUTH_SCOPES = [
 ] as const;
 
 export const GA4_SELF_HOSTED_SETUP_DOCS_URL =
-  "https://github.com/every-app/open-seo/blob/main/docs/SELF_HOSTING_GOOGLE_ANALYTICS.md";
+  "https://github.com/TayoAki/PromptNerdy/blob/main/docs/SELF_HOSTING_GOOGLE_ANALYTICS.md";

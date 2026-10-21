@@ -1,5 +1,5 @@
 {
-  "name": "open-seo",
+  "name": "promptnerdy",
   "private": true,
   "sideEffects": false,
   "version": "0.1.14",
@@ -13,7 +13,7 @@
     "lint": "oxlint . --type-aware",
     "lint:fix": "oxlint . --type-aware --fix",
     "preview": "npm run build && vite preview --port 3001",
-    "deploy": "npm run db:migrate:prod && npm run build && wrangler deploy -c dist/open_seo_audit/wrangler.json && wrangler deploy",
+    "deploy": "npm run db:migrate:prod && npm run build && wrangler deploy -c dist/promptnerdy_audit/wrangler.json && wrangler deploy",
     "deploy:selfhost": "node scripts/selfhost-deploy-preflight.mjs && vite build --mode selfhost && tsc --noEmit && pnpm alchemy deploy deploy/alchemy/alchemy.run.ts --env-file .env.selfhost --stage selfhost",
     "deploy:postgres": "npm run db:migrate:pg && npm run build && pnpm alchemy deploy deploy/alchemy/alchemy.run.ts --env-file .env.production --stage hosted-prod --adopt",
     "deploy:preview": "vite build --mode preview && pnpm alchemy deploy deploy/alchemy/alchemy.run.ts --env-file .env.preview",
@@ -54,7 +54,7 @@
     "repair:rank-locations": "tsx scripts/repair-rank-tracking-locations.ts",
     "seed:rank-tracking": "tsx scripts/seed-rank-tracking.ts",
     "seed:projects": "tsx scripts/seed-projects.ts",
-    "ci:check": "prettier --check . && knip && tsc --noEmit && tsc --noEmit -p tests/badseo/tsconfig.json && oxlint . --type-aware && pnpm sync-plugin-skills && test -z \"$(git status --porcelain -- plugins/openseo/skills)\""
+    "ci:check": "prettier --check . && knip && tsc --noEmit && tsc --noEmit -p tests/badseo/tsconfig.json && oxlint . --type-aware && pnpm sync-plugin-skills && test -z \"$(git status --porcelain -- plugins/promptnerdy/skills)\""
   },
   "cloudflare": {
     "bindings": {

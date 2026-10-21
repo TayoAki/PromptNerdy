@@ -1,14 +1,14 @@
-# OpenSEO threat model
+# PromptNerdy threat model
 
-## What OpenSEO is
+## What PromptNerdy is
 
-OpenSEO is an open-source SEO platform: keyword, SERP and backlink research, site audits, rank tracking, and Google Search Console (GSC) and Google Analytics (GA4) reporting. Users save HTML reports, chat with an in-app agent called SAM, and connect AI clients through an MCP server. It is a TanStack Start app on Cloudflare Workers with D1 (SQLite) or Postgres.
+PromptNerdy is an open-source SEO platform: keyword, SERP and backlink research, site audits, rank tracking, and Google Search Console (GSC) and Google Analytics (GA4) reporting. Users save HTML reports, chat with an in-app agent called SAM, and connect AI clients through an MCP server. It is a TanStack Start app on Cloudflare Workers with D1 (SQLite) or Postgres.
 
-`AUTH_MODE` (`src/lib/auth-mode.ts`) sets how OpenSEO runs:
+`AUTH_MODE` (`src/lib/auth-mode.ts`) sets how PromptNerdy runs:
 
 | Mode                | Where it runs                                     | Login                     | Billing                                  |
 | ------------------- | ------------------------------------------------- | ------------------------- | ---------------------------------------- |
-| `hosted`            | app.openseo.so, multi-tenant                      | Better Auth, free sign-up | Autumn credits                           |
+| `hosted`            | app.promptnerdy.com, multi-tenant                 | Better Auth, free sign-up | Autumn credits                           |
 | `local_noauth`      | Docker default (`deploy/docker/`, `compose.yaml`) | none                      | none (operator pays DataForSEO directly) |
 | `cloudflare_access` | operator's Cloudflare account (`deploy/alchemy/`) | Cloudflare Access         | none (operator pays DataForSEO directly) |
 
@@ -37,7 +37,7 @@ The organization id comes from the signed-in session, never from the client.
 - Anyone without an account: not trusted. They can reach:
   - `/api/auth/*` and the OAuth endpoints (hosted only)
   - `/mcp`, which depends on the mode:
-    - `hosted`: 401 without an OAuth token or `oseo_` key
+    - `hosted`: 401 without an OAuth token or `pnrd_` key
     - `cloudflare_access`: needs the Access JWT
     - `local_noauth`: open
   - share links `/s/<token>`, `/s/<token>/raw`, `/s/<token>/og.png` (hosted only)
@@ -46,7 +46,7 @@ The organization id comes from the signed-in session, never from the client.
   - Roles (`src/lib/org-permissions.ts`): owner (billing), admin (projects, integrations, invitations), member. Handlers check them with `requireOrgPermission` (`src/server/auth/org-gate.ts`).
 - Other members of the same organization: must not use a user's MCP API keys, MCP OAuth authorizations or SAM sessions.
 - Google connections: the OAuth grant (stored tokens, property list, disconnect) belongs to the user who authorized it. The project connection built on it is shared with every organization member by design, and queries run under the connecting member's grant (`docs/maintainers/specs/0003-google-search-console-integration.md`). Another member must not read or export the stored tokens, or connect or re-point a project using a Google account they did not authorize.
-- MCP clients: OAuth tokens (24-hour access, 30-day refresh) and `oseo_` API keys act as the user who created them. They carry no role of their own.
+- MCP clients: OAuth tokens (24-hour access, 30-day refresh) and `pnrd_` API keys act as the user who created them. They carry no role of their own.
 - Self-host operator: fully trusted.
 - DataForSEO, Google, Autumn, OpenRouter and Context (the external page fetcher): treat their responses as untrusted input, but do not treat the services themselves as attackers.
 - Crawled websites, SERP results and AI answers: untrusted, and may carry prompt injection.
@@ -112,7 +112,7 @@ The organization id comes from the signed-in session, never from the client.
 - `local_noauth` has no login, so `/mcp` is open. It is meant to run behind the operator's own auth (`docs/SELF_HOSTING_DOCKER.md`).
 - Every `cloudflare_access` user is owner of the one shared workspace.
 - Paid-plan checks, credit checks and report sharing are hosted-only.
-- The self-host telemetry heartbeat (`src/server/lib/self-host-telemetry.ts`) and preflight beacon (`scripts/selfhost-preflight.ts`). They send aggregate counts, a random install id, version, deploy target, database backend, install age, and the names of failed setup checks. They never send URLs, keywords or emails. Documented in `docs/SELF_HOSTING_DOCKER.md`; off with `OPENSEO_TELEMETRY_DISABLED` or `DO_NOT_TRACK`.
+- The self-host telemetry heartbeat (`src/server/lib/self-host-telemetry.ts`) and preflight beacon (`scripts/selfhost-preflight.ts`). They send aggregate counts, a random install id, version, deploy target, database backend, install age, and the names of failed setup checks. They never send URLs, keywords or emails. Documented in `docs/SELF_HOSTING_DOCKER.md`; off with `PROMPTNERDY_TELEMETRY_DISABLED` or `DO_NOT_TRACK`.
 - Self-host `/api/health` lists which features are configured (never the values).
 - Anything needing the operator's Cloudflare account, environment, database or GDPR secret.
 
@@ -133,7 +133,7 @@ The organization id comes from the signed-in session, never from the client.
 **Public by design**
 
 - Arbitrary markup in report HTML, while the sandbox holds.
-- IndexNow keys. The protocol makes them public: the site key in `web/public/` and per-project keys stored in plain text.
+- IndexNow keys. The protocol makes them public: a site key served from `web/public/` and per-project keys stored in plain text.
 - Context and Cloudflare Browser Rendering follow redirects on their own networks.
 
 ## How to exercise it
@@ -154,7 +154,7 @@ Run the app offline in hosted mode:
 ```sh
 AUTH_MODE=hosted BETTER_AUTH_URL=http://localhost:3001 BETTER_AUTH_SECRET=any-32-or-more-characters-will-do \
 GOOGLE_CLIENT_ID=placeholder GOOGLE_CLIENT_SECRET=placeholder BYPASS_EMAIL_VERIFICATION=true \
-CLOUDFLARE_INCLUDE_PROCESS_ENV=true OPENSEO_TELEMETRY_DISABLED=1 VITE_SHOW_DEVTOOLS=false \
+CLOUDFLARE_INCLUDE_PROCESS_ENV=true PROMPTNERDY_TELEMETRY_DISABLED=1 VITE_SHOW_DEVTOOLS=false \
   bash -c 'pnpm run db:migrate:local && pnpm exec vite preview --port 3001 --host localhost'
 ```
 
@@ -178,7 +178,7 @@ curl -s -b alice.jar -H 'content-type: application/json' -H 'origin: http://loca
 
 ## How we rate severity
 
-A report without a working reproduction is capped at Medium. A dependency CVE needs a reachable OpenSEO code path. Unless noted, assume the attacker has at most a free hosted account.
+A report without a working reproduction is capped at Medium. A dependency CVE needs a reachable PromptNerdy code path. Unless noted, assume the attacker has at most a free hosted account.
 
 **Critical:**
 
@@ -198,7 +198,7 @@ A report without a working reproduction is capped at Medium. A dependency CVE ne
   - a skipped credit check
   - a way around the free-tool budget
   - farming free credits past the sign-up controls
-- stored XSS that runs on app.openseo.so in another user's session
+- stored XSS that runs on app.promptnerdy.com in another user's session
 - script that escapes the report sandbox
 - reading a shared report without its token
 

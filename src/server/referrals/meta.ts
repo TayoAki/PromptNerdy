@@ -7,7 +7,7 @@ import { requestPrivacyChoices } from "@/shared/privacy-choices";
 // Meta ad conversions (hosted only): a signup, and a subscription to the base
 // plan. Sent only when the visitor's advertising (Meta) choice allows it, read
 // from the privacy cookie, location and GPC header of their own request, and
-// the pixel on openseo.so left its cookies. Deliberately no name or email.
+// the pixel on promptnerdy.com left its cookies. Deliberately no name or email.
 //
 // The subscription is confirmed by Autumn's webhook, which carries no browser
 // cookies. So starting a checkout pins the buyer's Meta ids to the

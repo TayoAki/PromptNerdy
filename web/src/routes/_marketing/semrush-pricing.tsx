@@ -23,7 +23,7 @@ const webPageLd = {
     name: "Semrush",
     url: "https://www.semrush.com/",
   },
-  publisher: { "@type": "Organization", name: "OpenSEO", url: SITE_URL },
+  publisher: { "@type": "Organization", name: "PromptNerdy", url: SITE_URL },
 };
 
 export const Route = createFileRoute("/_marketing/semrush-pricing")({
@@ -63,7 +63,7 @@ function SemrushPricingPage() {
           Paying for more Semrush than you use?
         </p>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--color-brand-muted)]">
-          OpenSEO covers keyword research, rank tracking, site audits,
+          PromptNerdy covers keyword research, rank tracking, site audits,
           backlinks, and competitor research from $10 a month, with $10 of usage
           included.{" "}
           <a
@@ -76,7 +76,7 @@ function SemrushPricingPage() {
         </p>
         <div className="mt-5">
           <a
-            href="https://app.openseo.so/sign-up"
+            href="https://app.promptnerdy.com/sign-up"
             className="inline-flex h-10 items-center justify-center rounded-lg bg-neutral-950 px-5 text-sm font-medium text-white transition-colors hover:bg-neutral-800"
           >
             Start free trial

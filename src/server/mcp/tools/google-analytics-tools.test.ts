@@ -191,7 +191,7 @@ describe("Google Analytics MCP tools", () => {
       status: "error",
       error: {
         code: "ga4_reconnect_required",
-        actionUrl: "https://open-seo.test/p/project_1/settings/integrations",
+        actionUrl: "https://promptnerdy.test/p/project_1/settings/integrations",
       },
     });
   });

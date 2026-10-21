@@ -14,7 +14,7 @@ const BLOG_CONTENT_DIR = join(__dirname, "../content/blogs");
 const DOCS_CONTENT_DIR = join(__dirname, "../content/docs");
 const LIBRARY_ROUTES_DIR = join(__dirname, "../src/routes/_marketing/library");
 
-const DEFAULT_SITE_URL = "https://openseo.so";
+const DEFAULT_SITE_URL = "https://promptnerdy.com";
 const SITE_URL = (process.env.SITE_URL ?? DEFAULT_SITE_URL).replace(/\/+$/, "");
 
 const STATIC_PATHS = [
@@ -28,14 +28,13 @@ const STATIC_PATHS = [
   "/features/mcp",
   "/tools",
   "/open-source-seo",
-  "/about",
-  "/why-openseo",
+  "/why-promptnerdy",
   "/google-search-console-mcp",
   "/semrush-alternative",
   "/semrush-pricing",
   "/ahrefs-alternative",
   "/ahrefs-pricing",
-  "/openseo-vs-dataforseo",
+  "/promptnerdy-vs-dataforseo",
   "/roadmap",
   "/support",
   ...Object.values(FEATURE_PAGE_SLUGS).map((slug) => `/features/${slug}`),

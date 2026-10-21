@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Run fresh, isolated Codex sessions against a candidate skill on the local
-// OpenSEO backend. One session per --site, all in parallel. See ../SKILL.md.
+// PromptNerdy backend. One session per --site, all in parallel. See ../SKILL.md.
 //
 //   node .agents/skills/evaluate-skill/scripts/run.mjs \
 //     --skill seo-audit --site example.com --site holdout.example \
@@ -94,7 +94,7 @@ if (identity.mode !== "self-hosted") {
   process.exit(1);
 }
 
-const workspace = await mkdtemp(path.join(tmpdir(), "openseo-skill-eval-"));
+const workspace = await mkdtemp(path.join(tmpdir(), "promptnerdy-skill-eval-"));
 const manifest = {
   skill,
   upstream,
@@ -255,7 +255,7 @@ async function start(name, run) {
 
   const prompt = `Use the supplied .agents/skills/${skill}/SKILL.md and .agents/skills/seo-report/SKILL.md to work on https://${run.domain}. Read those exact local files. Produce a useful result with enough investigation to support your conclusions.
 
-Your only OpenSEO project is ${run.projectId}. Its local MCP endpoint is ${run.endpoint}. You are authorized to perform the research and save a completed report there. Do not access any other OpenSEO project or production app/connector. Do not read prior reports, evaluator materials, personal memories, or files outside this working folder. Use only these supplied skills; do not substitute a globally installed skill.
+Your only PromptNerdy project is ${run.projectId}. Its local MCP endpoint is ${run.endpoint}. You are authorized to perform the research and save a completed report there. Do not access any other PromptNerdy project or production app/connector. Do not read prior reports, evaluator materials, personal memories, or files outside this working folder. Use only these supplied skills; do not substitute a globally installed skill.
 
 The project's business brief is sufficient to start. Verify details from the website; if further business details are unavailable, state reasonable assumptions and continue without questions. First-party analytics are not connected. External public-web reading is allowed. Do not submit forms or alter the audited website.
 
@@ -288,11 +288,11 @@ Save evidence and notes inside this working folder. Deliver the report using loc
     "-c",
     'web_search="live"',
     "-c",
-    `mcp_servers.openseo-local.url=${JSON.stringify(run.endpoint)}`,
+    `mcp_servers.promptnerdy-local.url=${JSON.stringify(run.endpoint)}`,
     "-c",
-    "mcp_servers.openseo-local.required=true",
+    "mcp_servers.promptnerdy-local.required=true",
     "-c",
-    'mcp_servers.openseo-local.default_tools_approval_mode="approve"',
+    'mcp_servers.promptnerdy-local.default_tools_approval_mode="approve"',
     "--json",
     "--output-last-message",
     path.join(run.folder, "result.md"),

@@ -12,7 +12,7 @@ import {
 } from "../src/lib/free-tools/server";
 
 const request = (headers: Record<string, string> = {}) =>
-  new Request("https://openseo.so/api/backlink-check", {
+  new Request("https://promptnerdy.com/api/backlink-check", {
     method: "POST",
     headers: { "cf-connecting-ip": "203.0.113.1", ...headers },
   });
@@ -33,7 +33,7 @@ beforeEach(() => {
   fetchMock = vi.fn().mockResolvedValue(
     Response.json({
       success: true,
-      hostname: "openseo.so",
+      hostname: "promptnerdy.com",
       action: "free_tool",
     }),
   );
@@ -76,7 +76,7 @@ describe("public tool verification", () => {
   it.each([
     { success: false },
     { success: true, hostname: "other.example", action: "free_tool" },
-    { success: true, hostname: "openseo.so", action: "login" },
+    { success: true, hostname: "promptnerdy.com", action: "login" },
     { success: true },
   ])("rejects invalid or mismatched verification %j", async (data) => {
     fetchMock.mockResolvedValue(Response.json(data));
@@ -103,7 +103,7 @@ describe("public tool verification", () => {
 
 describe("body and budget protections", () => {
   it("rejects oversized streamed JSON without relying on Content-Length", async () => {
-    const req = new Request("https://openseo.so/api/backlink-check", {
+    const req = new Request("https://promptnerdy.com/api/backlink-check", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ target: "a".repeat(17000) }),
@@ -112,12 +112,12 @@ describe("body and budget protections", () => {
   });
   it("requires JSON and accepts an ordinary small request", async () => {
     expect(((await readToolBody(request())) as Response).status).toBe(415);
-    const req = new Request("https://openseo.so/api/backlink-check", {
+    const req = new Request("https://promptnerdy.com/api/backlink-check", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: '{"target":"openseo.so"}',
+      body: '{"target":"promptnerdy.com"}',
     });
-    expect(await readToolBody(req)).toEqual({ target: "openseo.so" });
+    expect(await readToolBody(req)).toEqual({ target: "promptnerdy.com" });
   });
   it("fails closed if budget coordination is missing or fails", async () => {
     const input = {
@@ -162,13 +162,22 @@ describe("body and budget protections", () => {
 
 describe("every free API protects cache hits and provider calls", () => {
   const cases = [
-    ["backlink-check", { target: "openseo.so" }],
-    ["competitor-keyword-finder", { target: "openseo.so", locationCode: 2840 }],
+    ["backlink-check", { target: "promptnerdy.com" }],
+    [
+      "competitor-keyword-finder",
+      { target: "promptnerdy.com", locationCode: 2840 },
+    ],
     ["keyword-generator", { keyword: "email marketing", locationCode: 2840 }],
-    ["website-traffic-checker", { target: "openseo.so", locationCode: 2840 }],
-    ["competitor-analysis", { competitor: "openseo.so", locationCode: 2840 }],
-    ["spam-score-checker", { target: "openseo.so" }],
-    ["domain-age-checker", { domains: ["openseo.so"] }],
+    [
+      "website-traffic-checker",
+      { target: "promptnerdy.com", locationCode: 2840 },
+    ],
+    [
+      "competitor-analysis",
+      { competitor: "promptnerdy.com", locationCode: 2840 },
+    ],
+    ["spam-score-checker", { target: "promptnerdy.com" }],
+    ["domain-age-checker", { domains: ["promptnerdy.com"] }],
   ] as const;
   it.each(cases)(
     "%s rejects missing verification before cache or provider access",
@@ -178,7 +187,7 @@ describe("every free API protects cache hits and provider calls", () => {
       vi.stubGlobal("caches", { default: { match } });
       const { Route } = await import(`../src/routes/api/${slug}.ts`);
       const response = await Route.server.handlers.POST({
-        request: new Request(`https://openseo.so/api/${slug}`, {
+        request: new Request(`https://promptnerdy.com/api/${slug}`, {
           method: "POST",
           headers: {
             "content-type": "application/json",
@@ -203,7 +212,7 @@ describe("every free API protects cache hits and provider calls", () => {
       });
       const { Route } = await import(`../src/routes/api/${slug}.ts`);
       const response = await Route.server.handlers.POST({
-        request: new Request(`https://openseo.so/api/${slug}`, {
+        request: new Request(`https://promptnerdy.com/api/${slug}`, {
           method: "POST",
           headers: {
             "content-type": "application/json",
@@ -229,7 +238,7 @@ describe("every free API protects cache hits and provider calls", () => {
         match: vi
           .fn()
           .mockResolvedValue(
-            Response.json({ ok: true, data: { target: "openseo.so" } }),
+            Response.json({ ok: true, data: { target: "promptnerdy.com" } }),
           ),
       },
     });
@@ -240,13 +249,16 @@ describe("every free API protects cache hits and provider calls", () => {
       };
     };
     const response = await route.server.handlers.POST({
-      request: new Request("https://openseo.so/api/backlink-check", {
+      request: new Request("https://promptnerdy.com/api/backlink-check", {
         method: "POST",
         headers: {
           "content-type": "application/json",
           "cf-connecting-ip": "203.0.113.2",
         },
-        body: JSON.stringify({ target: "openseo.so", turnstileToken: "token" }),
+        body: JSON.stringify({
+          target: "promptnerdy.com",
+          turnstileToken: "token",
+        }),
       }),
     });
     expect(response.status).toBe(200);
@@ -317,7 +329,7 @@ describe("keyword discovery provider contracts", () => {
         .mockResolvedValueOnce(
           Response.json({
             success: true,
-            hostname: "openseo.so",
+            hostname: "promptnerdy.com",
             action: "free_tool",
           }),
         )
@@ -328,7 +340,7 @@ describe("keyword discovery provider contracts", () => {
         );
       const { Route } = await import(`../src/routes/api/${slug}.ts`);
       const response = await Route.server.handlers.POST({
-        request: new Request(`https://openseo.so/api/${slug}`, {
+        request: new Request(`https://promptnerdy.com/api/${slug}`, {
           method: "POST",
           headers: {
             "content-type": "application/json",

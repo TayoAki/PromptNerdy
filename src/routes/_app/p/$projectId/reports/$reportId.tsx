@@ -24,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "@/client/components/ui/dropdown-menu";
 import { ReportViewer } from "@/client/features/reports/ReportViewer";
+import { ReportClientPublication } from "@/client/features/clients/ReportClientPublication";
 import {
   DeleteReportModal,
   formatCreatedBy,
@@ -190,6 +191,12 @@ function ReportDetailPage() {
         }
         actions={
           <>
+            {hosted ? (
+              <ReportClientPublication
+                projectId={projectId}
+                reportId={reportId}
+              />
+            ) : null}
             {/* Share links are hosted-only (see shareAccess.ts), so a
                 self-hosted deployment keeps Export as its primary action
                 rather than offering a button the server would refuse. The

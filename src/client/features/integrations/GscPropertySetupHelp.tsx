@@ -56,7 +56,7 @@ export function GscPropertySetupHelp({
               Open Search Console ↗
             </a>
             <a
-              href="https://openseo.so/blogs/google-search-console-setup"
+              href="https://support.google.com/webmasters/answer/34592"
               target="_blank"
               rel="noopener noreferrer"
               className="underline underline-offset-4"
@@ -114,7 +114,7 @@ export function EmptyAccountMessage({
         <>
           No websites found for this account.{" "}
           <a
-            href="https://openseo.so/blogs/google-search-console-setup"
+            href="https://support.google.com/webmasters/answer/34592"
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-4"

@@ -1,15 +1,15 @@
 ---
-title: "Set up OpenSEO Agent Skills"
-description: "Add OpenSEO skill files to your AI agent after connecting OpenSEO MCP."
+title: "Set up PromptNerdy Agent Skills"
+description: "Add PromptNerdy skill files to your AI agent after connecting PromptNerdy MCP."
 ---
 
-OpenSEO Agent Skills are separate files from OpenSEO MCP.
+PromptNerdy Agent Skills are separate files from PromptNerdy MCP.
 
-On Claude Code or Claude Cowork, skip the steps below and use the [OpenSEO plugin](/docs/claude-code-plugin) instead — it installs MCP and every skill in one step. On Codex CLI, use the [OpenSEO plugin](/docs/codex-plugin) the same way.
+On Claude Code or Claude Cowork, skip the steps below and use the [PromptNerdy plugin](/docs/claude-code-plugin) instead — it installs MCP and every skill in one step. On Codex CLI, use the [PromptNerdy plugin](/docs/codex-plugin) the same way.
 
-First, [set up OpenSEO MCP](/docs/mcp). MCP gives your agent access to OpenSEO data.
+First, [set up PromptNerdy MCP](/docs/mcp). MCP gives your agent access to PromptNerdy data.
 
-Then add the OpenSEO `SKILL.md` files you want your agent to use. Each skill gives your agent one SEO workflow.
+Then add the PromptNerdy `SKILL.md` files you want your agent to use. Each skill gives your agent one SEO workflow.
 
 ## ChatGPT
 
@@ -24,15 +24,15 @@ Pick the option that matches how you want to install the files.
 Use this if you want the installer to show the available skills and agents.
 
 ```bash
-npx skills add every-app/open-seo
+npx skills add TayoAki/PromptNerdy
 ```
 
-### Option 2: Install all OpenSEO skills
+### Option 2: Install all PromptNerdy skills
 
-Use this if you want every OpenSEO skill.
+Use this if you want every PromptNerdy skill.
 
 ```bash
-npx skills add every-app/open-seo --skill '*'
+npx skills add TayoAki/PromptNerdy --skill '*'
 ```
 
 ### Option 3: Install all skills for Claude Code only
@@ -40,7 +40,7 @@ npx skills add every-app/open-seo --skill '*'
 Use this if the skills should be available in Claude Code only.
 
 ```bash
-npx skills add every-app/open-seo --skill '*' --agent claude-code
+npx skills add TayoAki/PromptNerdy --skill '*' --agent claude-code
 ```
 
 ### Option 4: Install all skills for OpenAI Codex only
@@ -48,7 +48,7 @@ npx skills add every-app/open-seo --skill '*' --agent claude-code
 Use this if the skills should be available in Codex only.
 
 ```bash
-npx skills add every-app/open-seo --skill '*' --agent codex
+npx skills add TayoAki/PromptNerdy --skill '*' --agent codex
 ```
 
 ### Option 5: Copy the skill files manually
@@ -56,30 +56,30 @@ npx skills add every-app/open-seo --skill '*' --agent codex
 Use this if you prefer to copy files into your agent's skills folder.
 
 ```bash
-git clone https://github.com/every-app/open-seo.git
+git clone https://github.com/TayoAki/PromptNerdy.git
 
 # Codex
 mkdir -p ~/.codex/skills
-cp -R open-seo/plugins/openseo/skills/* ~/.codex/skills/
+cp -R promptnerdy/plugins/promptnerdy/skills/* ~/.codex/skills/
 
 # Claude Code
 mkdir -p ~/.claude/skills
-cp -R open-seo/plugins/openseo/skills/* ~/.claude/skills/
+cp -R promptnerdy/plugins/promptnerdy/skills/* ~/.claude/skills/
 ```
 
 You can also review the source skills on GitHub:
 
-- [OpenSEO Agent Skills on GitHub](https://github.com/every-app/open-seo/tree/main/.agents/skills)
+- [PromptNerdy Agent Skills on GitHub](https://github.com/TayoAki/PromptNerdy/tree/main/.agents/skills)
 
 Each skill page also links to its source `SKILL.md`.
 
 ## Update installed skills
 
-Use the [update prompt or commands for your installation method](/docs/agent-setup#update-your-skills). Update the OpenSEO plugin if it supplies your skills; otherwise use the installer you originally chose or update your manual copies.
+Use the [update prompt or commands for your installation method](/docs/agent-setup#update-your-skills). Update the PromptNerdy plugin if it supplies your skills; otherwise use the installer you originally chose or update your manual copies.
 
 ## Run a skill
 
-Use your agent's skill picker or ask for a workflow by name. In Codex, type `$`; Claude Code plugin skills use `/openseo:skill-name`. Other clients have their own invocation syntax. The available workflows include:
+Use your agent's skill picker or ask for a workflow by name. In Codex, type `$`; Claude Code plugin skills use `/promptnerdy:skill-name`. Other clients have their own invocation syntax. The available workflows include:
 
 - `seo-project-setup`
 - `seo-coach`

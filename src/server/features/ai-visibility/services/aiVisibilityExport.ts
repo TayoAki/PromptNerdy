@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers";
 import { z } from "zod";
 import { resolveUserContextFromHeaders } from "@/middleware/ensure-user/resolve";
+import { isClientRole } from "@/lib/org-permissions";
 import { ProjectRepository } from "@/server/features/projects/repositories/ProjectRepository";
 import type { AiExportInput } from "@/types/schemas/ai-visibility";
 import { loadAiFullAnswers } from "./aiVisibilityResults";
@@ -106,6 +107,9 @@ export async function handleAiVisibilityDownload(
   } catch {
     return new Response("Unauthorized", { status: 401 });
   }
+  // Exports are an agency tool; client contacts (spec 0017) get none.
+  if (isClientRole(auth.role))
+    return new Response("Not found", { status: 404 });
   const project = await ProjectRepository.getProjectForOrganization(
     projectId.data,
     auth.organizationId,

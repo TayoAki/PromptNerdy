@@ -6,10 +6,7 @@ import {
 } from "../repositories/AiVisibilityRepository";
 import { AI_ANSWER_FAILURES, AiVisibilityError } from "./aiVisibilityErrors";
 import { aiScope } from "./aiVisibilityConfiguration";
-import {
-  getOptionalEnvValue,
-  isHostedServerAuthMode,
-} from "@/server/lib/runtime-env";
+import { getOptionalEnvValue } from "@/server/lib/runtime-env";
 import {
   getOrCreateOrganizationCustomer,
   getUsageCreditsRemaining,
@@ -23,6 +20,7 @@ import { requireConfiguration } from "./aiVisibilityMutation";
 import { aiPromptIsBranded } from "./aiVisibilityMatching";
 import { aiRunView } from "./aiVisibilityResults";
 import { aiCostForAnswers } from "./aiVisibilityCost";
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 
 const ACTIVE_WORKFLOW_STATUSES = new Set([
   "queued",
@@ -97,7 +95,7 @@ export async function startRun(
     );
   // Hosted checks need credits for every answer before they start, like rank
   // checks. The tracker says why no check ran, whichever path started it.
-  if (await isHostedServerAuthMode()) {
+  if (await isBillingEnabled()) {
     const required = aiCostForAnswers(
       scope.prompts.flatMap(() => scope.engines),
       true,
@@ -196,7 +194,7 @@ export async function runCheck(
   // Price the check now and refuse it above what the user approved.
   const { costUsd } = aiCostForAnswers(
     scope.prompts.flatMap(() => scope.engines),
-    await isHostedServerAuthMode(),
+    await isBillingEnabled(),
     "live",
   );
   if (Math.round(costUsd * 1e6) > Math.round(input.maxCostUsd * 1e6))

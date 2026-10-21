@@ -88,7 +88,7 @@ describe("maybeSendSelfHostHeartbeat", () => {
   beforeEach(() => {
     vi.unstubAllEnvs();
     vi.stubEnv("AUTH_MODE", "cloudflare_access");
-    vi.stubEnv("OPENSEO_TELEMETRY_DISABLED", "");
+    vi.stubEnv("PROMPTNERDY_TELEMETRY_DISABLED", "");
     vi.stubEnv("DO_NOT_TRACK", "");
   });
 
@@ -141,7 +141,7 @@ describe("maybeSendSelfHostHeartbeat", () => {
 
   it.each([
     ["AUTH_MODE", "hosted"],
-    ["OPENSEO_TELEMETRY_DISABLED", "1"],
+    ["PROMPTNERDY_TELEMETRY_DISABLED", "1"],
     ["DO_NOT_TRACK", "1"],
   ])("does not send when %s=%s", async (name, value) => {
     vi.stubEnv(name, value);

@@ -23,7 +23,7 @@ import {
 
 const privacyRegionSchema = z.object({ optIn: z.boolean() });
 
-// The saved choice is a cookie shared with other tabs and openseo.so, so it is
+// The saved choice is a cookie shared with other tabs and promptnerdy.com, so it is
 // read fresh on every render instead of cached: a stale copy in one tab would
 // write the opposite choice back to the account after a choice in another.
 function subscribeToPrivacyCookie(onChange: () => void) {
@@ -84,7 +84,7 @@ export function usePrivacyChoices() {
   });
 }
 
-/** Saves the browser choice (shared with openseo.so) and mirrors the analytics
+/** Saves the browser choice (shared with promptnerdy.com) and mirrors the analytics
  *  choice onto the account so server-side analytics follows it. */
 export async function updatePrivacyChoices(
   next: PrivacyChoices,

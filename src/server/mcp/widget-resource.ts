@@ -8,14 +8,14 @@ export function registerWidgetResource(server: McpServer) {
       csp: { connectDomains: [], resourceDomains: [] },
     },
     "openai/widgetDescription":
-      "OpenSEO Search Console performance and Google search results. Users can connect Search Console in OpenSEO, inspect results, and send a selection back to the conversation.",
+      "PromptNerdy Search Console performance and Google search results. Users can connect Search Console in PromptNerdy, inspect results, and send a selection back to the conversation.",
   };
   server.registerResource(
-    "OpenSEO research",
+    "PromptNerdy research",
     MCP_WIDGET_URI,
     { mimeType: "text/html;profile=mcp-app", _meta: meta },
     async () => {
-      const { default: html } = await import("virtual:openseo-mcp-widget");
+      const { default: html } = await import("virtual:promptnerdy-mcp-widget");
       return {
         contents: [
           {

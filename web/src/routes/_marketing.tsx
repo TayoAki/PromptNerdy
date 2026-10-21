@@ -9,9 +9,10 @@ import { NewsletterSignup } from "@/components/newsletter-signup";
 import { SiteFooter } from "@/components/site-footer";
 import { featureGroups } from "@/lib/feature-pages";
 
-const GITHUB_REPO = "every-app/open-seo";
-// Used if GitHub is unreachable at build time so the header never renders empty.
-const FALLBACK_STAR_COUNT = "2.1k";
+const GITHUB_REPO = "TayoAki/PromptNerdy";
+// Used if GitHub is unreachable (or the repo is private); the header then
+// shows the GitHub link without a count.
+const FALLBACK_STAR_COUNT = "";
 
 // Round to the nearest hundred and render in thousands, e.g. 3140 -> "3.1k".
 function formatStarCount(count: number): string {
@@ -25,7 +26,7 @@ async function fetchGithubStarCount(): Promise<string> {
       headers: {
         Accept: "application/vnd.github+json",
         // GitHub rejects requests without a User-Agent.
-        "User-Agent": "openseo-landing",
+        "User-Agent": "promptnerdy-landing",
       },
     });
     if (!res.ok) return FALLBACK_STAR_COUNT;
@@ -69,8 +70,8 @@ function getMobileNavItems(githubStarCount: string) {
       label: "Community",
       links: [
         {
-          label: `GitHub ${githubStarCount}`,
-          href: "https://github.com/every-app/open-seo",
+          label: githubStarCount ? `GitHub ${githubStarCount}` : "GitHub",
+          href: "https://github.com/TayoAki/PromptNerdy",
         },
       ],
     },
@@ -184,7 +185,7 @@ function MarketingLayout() {
               to="/"
               className="text-xl font-medium tracking-[-0.06em] hover:opacity-80 transition-opacity"
             >
-              OpenSEO
+              PromptNerdy
             </Link>
 
             <div className="hidden items-center gap-7 md:flex">
@@ -209,19 +210,23 @@ function MarketingLayout() {
                 {mobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
               </button>
               <a
-                href="https://github.com/every-app/open-seo"
+                href="https://github.com/TayoAki/PromptNerdy"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={`GitHub, ${githubStarCount} stars`}
+                aria-label={
+                  githubStarCount ? `GitHub, ${githubStarCount} stars` : "GitHub"
+                }
                 className="group hidden h-9 items-center gap-1.5 px-2 text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900 md:inline-flex"
               >
                 <GitHubIcon size={16} />
-                <span className="text-neutral-500 transition-colors group-hover:text-neutral-900">
-                  {githubStarCount}
-                </span>
+                {githubStarCount ? (
+                  <span className="text-neutral-500 transition-colors group-hover:text-neutral-900">
+                    {githubStarCount}
+                  </span>
+                ) : null}
               </a>
               <a
-                href="https://app.openseo.so/sign-in"
+                href="https://app.promptnerdy.com/sign-in"
                 className="hidden h-9 items-center gap-2 border-l border-[#ded9d2] pl-5 text-sm font-medium text-neutral-900 transition-colors hover:text-neutral-600 md:inline-flex"
               >
                 Sign in <span aria-hidden="true">↗</span>
@@ -233,14 +238,14 @@ function MarketingLayout() {
             <div className="absolute inset-x-0 top-full h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain border-t border-[#ded9d2] bg-[#f5f1ec] p-4 md:hidden">
               <div className="grid grid-cols-2 gap-2">
                 <a
-                  href="https://app.openseo.so/sign-in"
+                  href="https://app.promptnerdy.com/sign-in"
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex h-11 items-center justify-center rounded-xl bg-neutral-950 px-3 text-sm font-medium text-white transition-colors hover:bg-neutral-800"
                 >
-                  Try OpenSEO
+                  Try PromptNerdy
                 </a>
                 <a
-                  href="https://app.openseo.so/sign-in"
+                  href="https://app.promptnerdy.com/sign-in"
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex h-11 items-center justify-center rounded-xl border border-[#ded9d2] bg-white px-3 text-sm font-medium text-neutral-800 transition-colors hover:border-neutral-900"
                 >
@@ -291,12 +296,12 @@ function ResourcesDropdown() {
     {
       label: "MCP",
       href: "/docs/mcp",
-      description: "Connect OpenSEO to AI clients.",
+      description: "Connect PromptNerdy to AI clients.",
     },
     {
       label: "Skills",
       href: "/docs/skills",
-      description: "Focused OpenSEO workflows.",
+      description: "Focused PromptNerdy workflows.",
     },
     {
       label: "Strategy Library",
@@ -402,7 +407,7 @@ function FeatureDropdown() {
                   className="block rounded-md p-2 transition-colors hover:bg-[#f5f1ec]"
                 >
                   <span className="text-sm font-semibold text-neutral-900">
-                    OpenSEO MCP
+                    PromptNerdy MCP
                   </span>
                   <span className="mt-0.5 block text-xs leading-relaxed text-neutral-600">
                     Connect Claude, Codex, and agents.

@@ -1,21 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { buildPageSeo } from "@/lib/seo";
-import { SocialLinks } from "@/components/social-links";
 
-const SUPPORT_EMAIL = "support@openseo.so";
-const PRIVACY_EMAIL = "privacy@openseo.so";
-const DISCORD_URL = "https://discord.gg/c9uGs3cFXr";
-const GITHUB_ISSUES_URL = "https://github.com/every-app/open-seo/issues";
+const SUPPORT_EMAIL = "support@promptnerdy.com";
+const PRIVACY_EMAIL = "privacy@promptnerdy.com";
+const GITHUB_ISSUES_URL = "https://github.com/TayoAki/PromptNerdy/issues";
 
 export const Route = createFileRoute("/_marketing/support")({
   head: () =>
     buildPageSeo({
       title: "Support",
       description:
-        "Get help with OpenSEO, share feedback, or report an issue by email, Discord, or GitHub.",
+        "Get help with PromptNerdy, share feedback, or report an issue by email or GitHub.",
       path: "/support",
-      titleSuffix: "OpenSEO",
+      titleSuffix: "PromptNerdy",
     }),
   component: SupportPage,
 });
@@ -40,11 +38,11 @@ function SupportPage() {
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--color-brand-muted)]">
           We want to talk to you! We&apos;re super open to feedback and want to
-          learn how you work so we can make OpenSEO better.
+          learn how you work so we can make PromptNerdy better.
         </p>
       </header>
 
-      <div className="mt-12 grid gap-4 md:grid-cols-3">
+      <div className="mt-12 grid gap-4 md:grid-cols-2">
         <section className="flex min-h-64 flex-col rounded-xl border border-[var(--color-border-subtle)] bg-white p-6">
           <p className="font-mono text-xs text-[var(--color-brand-accent)]">
             01
@@ -69,14 +67,6 @@ function SupportPage() {
 
         <SupportCard
           number="02"
-          title="Discord"
-          description="Ask for help, share ideas and learn from the community."
-          href={DISCORD_URL}
-          linkText="Join the Discord"
-        />
-
-        <SupportCard
-          number="03"
           title="GitHub Issues"
           description="Report bugs or request features on GitHub."
           href={GITHUB_ISSUES_URL}
@@ -98,18 +88,6 @@ function SupportPage() {
           </a>{" "}
           from the email address on your account.
         </p>
-      </section>
-
-      <section className="mt-10 border-t border-[var(--color-border-subtle)] pt-8">
-        <h2 className="text-xl font-semibold tracking-tight text-neutral-950">
-          Follow OpenSEO
-        </h2>
-        <p className="mt-2 text-sm leading-6 text-[var(--color-brand-muted)]">
-          Keep up with OpenSEO on social media.
-        </p>
-        <div className="mt-3 text-sm text-neutral-700">
-          <SocialLinks />
-        </div>
       </section>
     </article>
   );

@@ -7,10 +7,10 @@ export const Route = createFileRoute("/_marketing/tools")({
     buildPageSeo({
       title: "Free SEO Tools",
       description:
-        "Find competitor keywords, generate keyword ideas, and check backlinks, traffic, spam score, and domain age with OpenSEO’s free SEO tools. No signup.",
+        "Find competitor keywords, generate keyword ideas, and check backlinks, traffic, spam score, and domain age with PromptNerdy’s free SEO tools. No signup.",
       path: "/tools",
-      titleSuffix: "OpenSEO",
-      imageAlt: "OpenSEO free SEO tools",
+      titleSuffix: "PromptNerdy",
+      imageAlt: "PromptNerdy free SEO tools",
     }),
   component: ToolsPage,
 });
@@ -95,15 +95,16 @@ function ToolsPage() {
         <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--color-brand-muted)]">
           These tools give you a useful first look at a website without an
           account. Data lookups have usage limits to keep them free. For more
-          research, OpenSEO brings keyword research, rank tracking, backlinks,
-          and site audits into one workspace, with trial credits to get started.
+          research, PromptNerdy brings keyword research, rank tracking,
+          backlinks, and site audits into one workspace, with trial credits to
+          get started.
         </p>
         <div className="mt-4 flex flex-wrap items-center gap-4">
           <a
-            href="https://app.openseo.so/sign-up"
+            href="https://app.promptnerdy.com/sign-up"
             className="inline-flex h-10 items-center justify-center rounded-lg bg-neutral-950 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-800"
           >
-            Try OpenSEO
+            Try PromptNerdy
             <span aria-hidden="true" className="ml-2">
               &rarr;
             </span>

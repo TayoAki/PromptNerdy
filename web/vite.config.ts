@@ -23,7 +23,7 @@ import mdx from "fumadocs-mdx/vite";
  */
 function requireTurnstileSiteKey(siteKey: string | undefined): Plugin {
   return {
-    name: "openseo:require-turnstile-site-key",
+    name: "promptnerdy:require-turnstile-site-key",
     apply: "build",
     buildStart() {
       if (process.env.VITE_REQUIRE_TURNSTILE !== "1") return;
@@ -37,7 +37,7 @@ function requireTurnstileSiteKey(siteKey: string | undefined): Plugin {
 
 // Vite checks both the file path and its raw-import ID against the allowlist.
 const publicPromptFiles = [
-  "../.agents/skills/setup-openseo/SKILL.md",
+  "../.agents/skills/setup-promptnerdy/SKILL.md",
   "../src/client/features/ai-mcp/agentUpdatePrompt.md",
 ].flatMap((relativePath) => {
   const file = fileURLToPath(new URL(relativePath, import.meta.url));

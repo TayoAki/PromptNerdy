@@ -31,6 +31,26 @@ export function inviteErrorMessage(error: Error) {
   return "We couldn't send that invitation.";
 }
 
+// Without an email provider the server hands back the link for the inviter
+// to share; copy it and keep it on screen long enough to paste elsewhere.
+export async function announceInvitation(
+  result: { inviteUrl: string; emailed: boolean },
+  sentMessage: string,
+) {
+  if (result.emailed) {
+    toast.success(sentMessage);
+    return;
+  }
+  const copied = await navigator.clipboard.writeText(result.inviteUrl).then(
+    () => true,
+    () => false,
+  );
+  toast.success(copied ? "Invite link copied" : "Invitation created", {
+    description: `Email isn't set up yet, so send them this link: ${result.inviteUrl}`,
+    duration: 30_000,
+  });
+}
+
 export function InviteTeammateModal({
   onClose,
   onInvited,
@@ -43,9 +63,9 @@ export function InviteTeammateModal({
   const inviteMutation = useMutation({
     mutationFn: (inviteeEmail: string) =>
       sendTeamInvitation({ data: { email: inviteeEmail } }),
-    onSuccess: () => {
+    onSuccess: (result) => {
       captureClientEvent("team:invitation_send");
-      toast.success("Invitation sent");
+      void announceInvitation(result, "Invitation sent");
       onInvited();
       onClose();
     },

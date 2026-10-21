@@ -151,7 +151,7 @@ async function lookupDomain(domain: string): Promise<DomainAgeRow> {
         // rdap.org answers 403 to requests with no User-Agent, and the
         // Workers runtime doesn't set one.
         "User-Agent":
-          "openseo-free-tools (+https://openseo.so/domain-age-checker)",
+          "promptnerdy-free-tools (+https://promptnerdy.com/domain-age-checker)",
       },
       redirect: "follow",
       signal: AbortSignal.timeout(10_000),

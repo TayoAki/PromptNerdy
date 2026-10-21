@@ -27,7 +27,9 @@ const { build } = wranglerRequire("esbuild");
     platform: "browser",
     external: ["cloudflare:workers"],
   });
-  const persist = await fs.mkdtemp(path.join(os.tmpdir(), "openseo-budget-"));
+  const persist = await fs.mkdtemp(
+    path.join(os.tmpdir(), "promptnerdy-budget-"),
+  );
   const options = {
     modules: true,
     script: built.outputFiles[0].text,

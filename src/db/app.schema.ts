@@ -9,7 +9,7 @@ import {
   index,
 } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
-import { organization, user } from "./better-auth-schema";
+import { organization, team, user } from "./better-auth-schema";
 
 export const userOnboardingAnswers = sqliteTable(
   "user_onboarding_answers",
@@ -68,6 +68,11 @@ export const projects = sqliteTable(
     // The IndexNow key the site hosts at /{key}.txt. Public by design, so it
     // is stored as plain text. Null until IndexNow is first used.
     indexnowKey: text("indexnow_key"),
+    // The agency client (a Better Auth team, spec 0017) this project belongs
+    // to. Null means agency-internal: no client contact can see it.
+    clientTeamId: text("client_team_id").references(() => team.id, {
+      onDelete: "set null",
+    }),
   },
   (table) => [
     // Only the auto-created Default/null-domain project is a singleton. This
@@ -84,6 +89,7 @@ export const projects = sqliteTable(
     // list queries seq-scan. Per-org row counts are small, so the archived/
     // created_at ordering sorts cheaply on top of this single-column lookup.
     index("projects_organization_id_idx").on(table.organizationId),
+    index("projects_client_team_id_idx").on(table.clientTeamId),
   ],
 );
 

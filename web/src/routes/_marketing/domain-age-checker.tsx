@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_marketing/domain-age-checker")({
       description:
         "Check when a domain was registered, how old it is, when it expires, and who the registrar is — up to 10 domains at once. No signup, no email.",
       path: TOOL.path,
-      titleSuffix: "OpenSEO",
+      titleSuffix: "PromptNerdy",
     }),
   component: DomainAgeCheckerPage,
 });
@@ -69,7 +69,7 @@ function DomainAgeCheckerPage() {
       faqs={FAQS}
       cta={{
         heading: "Check the domain's rankings and links",
-        body: "Look up the domain's ranking keywords and backlinks in OpenSEO. Start with free trial credits.",
+        body: "Look up the domain's ranking keywords and backlinks in PromptNerdy. Start with free trial credits.",
         featureLabel: "Learn about Domain Overview",
       }}
     >

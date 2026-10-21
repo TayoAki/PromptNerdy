@@ -10,7 +10,6 @@ import {
 import { RankTrackingRepository } from "@/server/features/rank-tracking/repositories/RankTrackingRepository";
 import { assertSerpLocationNameAccepted } from "@/server/lib/dataforseo/serp-location-validate";
 import { AppError } from "@/server/lib/errors";
-import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
 import type {
   RankCheckScheduleTime,
   RankTrackingConfig,
@@ -34,6 +33,7 @@ import {
 import { getLatestResults } from "./rankTrackingResults";
 import { toRankTrackingTimestamp } from "@/server/features/rank-tracking/rankTrackingTimestamps";
 import { RankTrackingKeywordService } from "./RankTrackingKeywordService";
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 
 // ---------------------------------------------------------------------------
 // Config
@@ -394,7 +394,7 @@ async function getTracker(configId: string, projectId: string) {
 }
 
 async function requireRankCheckAccess(organizationId: string) {
-  if (!(await isHostedServerAuthMode())) return;
+  if (!(await isBillingEnabled())) return;
   if (await customerHasPaidPlan(organizationId)) return;
   throw new AppError(
     "PAYMENT_REQUIRED",

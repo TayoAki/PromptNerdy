@@ -2,7 +2,8 @@
 (function () {
   "use strict";
 
-  var measurementId = "G-7MXV9FH7SS";
+  // Google Analytics stays off until this is set to a GA4 measurement ID.
+  var measurementId = "";
   var storageKey = "badseo.analyticsConsent";
   var granted = "granted";
   var denied = "denied";
@@ -24,7 +25,7 @@
   }
 
   function loadAnalytics() {
-    if (document.getElementById("ga4-script")) return;
+    if (!measurementId || document.getElementById("ga4-script")) return;
 
     window["ga-disable-" + measurementId] = false;
     window.dataLayer = window.dataLayer || [];

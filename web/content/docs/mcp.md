@@ -1,19 +1,19 @@
 ---
-title: "Set up OpenSEO MCP"
-description: "Connect OpenSEO MCP to ChatGPT, Claude, Codex, and other AI clients."
+title: "Set up PromptNerdy MCP"
+description: "Connect PromptNerdy MCP to ChatGPT, Claude, Codex, and other AI clients."
 ---
 
-OpenSEO MCP lets compatible AI clients call OpenSEO tools for keyword research, SERP inspection, local business research, competitive search intelligence, domain research, backlink overview, saved keywords, rank tracking, shared project context, and Google Search Console performance and URL inspection.
+PromptNerdy MCP lets compatible AI clients call PromptNerdy tools for keyword research, SERP inspection, local business research, competitive search intelligence, domain research, backlink overview, saved keywords, rank tracking, shared project context, and Google Search Console performance and URL inspection.
 
 The hosted MCP server URL is:
 
 ```txt
-https://app.openseo.so/mcp
+https://app.promptnerdy.com/mcp
 ```
 
-The first connection sends you through OpenSEO login. After authorization, your MCP client can call OpenSEO tools with the project context and account scopes you approved. For headless environments and CI, [connect with an API key](#connect-with-an-api-key) instead.
+The first connection sends you through PromptNerdy login. After authorization, your MCP client can call PromptNerdy tools with the project context and account scopes you approved. For headless environments and CI, [connect with an API key](#connect-with-an-api-key) instead.
 
-For the most current setup UI and a copyable endpoint, open [Agent setup in OpenSEO](https://app.openseo.so/ai).
+For the most current setup UI and a copyable endpoint, open [Agent setup in PromptNerdy](https://app.promptnerdy.com/ai).
 
 For setup prompts, plugin commands, and skill updates, see [Agent setup](/docs/agent-setup).
 
@@ -21,28 +21,28 @@ No account yet? Try the [free SEO tools](/tools).
 
 ## ChatGPT web and desktop
 
-Install the [OpenSEO plugin for ChatGPT](https://chatgpt.com/plugins/plugin_asdk_app_6abddd2c7e4c819191f1398c4bd8e9b3). It adds MCP and the SEO skills together. If the plugin isn't available for your account, or you self-host OpenSEO, add a [custom connection](/docs/chatgpt#custom-connection) instead. The [ChatGPT setup guide](/docs/chatgpt) covers both.
+Install the [PromptNerdy plugin for ChatGPT](https://chatgpt.com/plugins/plugin_asdk_app_6abddd2c7e4c819191f1398c4bd8e9b3). It adds MCP and the SEO skills together. If the plugin isn't available for your account, or you self-host PromptNerdy, add a [custom connection](/docs/chatgpt#custom-connection) instead. The [ChatGPT setup guide](/docs/chatgpt) covers both.
 
 ## Claude Code
 
-The [OpenSEO plugin](/docs/claude-code-plugin) is the preferred way to connect Claude Code — one install adds MCP and the public SEO skills together. Use the steps below only if you want MCP on its own.
+The [PromptNerdy plugin](/docs/claude-code-plugin) is the preferred way to connect Claude Code — one install adds MCP and the public SEO skills together. Use the steps below only if you want MCP on its own.
 
-Use user scope to make OpenSEO available across projects. Use local scope for the current repository.
+Use user scope to make PromptNerdy available across projects. Use local scope for the current repository.
 
 ```bash
-claude mcp add --transport http --scope user openseo https://app.openseo.so/mcp
+claude mcp add --transport http --scope user promptnerdy https://app.promptnerdy.com/mcp
 ```
 
-After adding the server, approve the OpenSEO login when prompted.
+After adding the server, approve the PromptNerdy login when prompted.
 
 ## Claude Desktop
 
-On a paid Claude plan, prefer the [OpenSEO plugin](/docs/claude-code-plugin#install-in-claude-cowork), which adds MCP and the SEO skills in one install. Use the custom connector below for MCP only or on the Free plan.
+On a paid Claude plan, prefer the [PromptNerdy plugin](/docs/claude-code-plugin#install-in-claude-cowork), which adds MCP and the SEO skills in one install. Use the custom connector below for MCP only or on the Free plan.
 
 1. Open Customize -> Connectors.
 2. Click Add (or +), then choose Add custom connector.
-3. Paste `https://app.openseo.so/mcp`.
-4. Approve the OpenSEO login when prompted.
+3. Paste `https://app.promptnerdy.com/mcp`.
+4. Approve the PromptNerdy login when prompted.
 
 Claude Desktop custom connectors are available on Free, Pro, Max, Team, and Enterprise plans. Free plans support one custom connector.
 
@@ -55,36 +55,36 @@ Claude Desktop custom connectors are available on Free, Pro, Max, Team, and Ente
 ```json
 {
   "mcpServers": {
-    "openseo": {
-      "url": "https://app.openseo.so/mcp"
+    "promptnerdy": {
+      "url": "https://app.promptnerdy.com/mcp"
     }
   }
 }
 ```
 
-4. Approve the OpenSEO login when prompted.
+4. Approve the PromptNerdy login when prompted.
 
 ## Codex CLI
 
-The [OpenSEO plugin](/docs/codex-plugin) is the preferred way to connect Codex CLI — one install adds MCP and the public SEO skills together. Use the steps below only if you want MCP on its own.
+The [PromptNerdy plugin](/docs/codex-plugin) is the preferred way to connect Codex CLI — one install adds MCP and the public SEO skills together. Use the steps below only if you want MCP on its own.
 
 Run this in your terminal:
 
 ```bash
-codex mcp add openseo --url https://app.openseo.so/mcp
+codex mcp add promptnerdy --url https://app.promptnerdy.com/mcp
 ```
 
 Approve the login when prompted.
 
 ## Codex in the ChatGPT desktop app
 
-The [OpenSEO plugin](/docs/codex-plugin#desktop-app) includes MCP and SEO skills. For MCP alone:
+The [PromptNerdy plugin](/docs/codex-plugin#desktop-app) includes MCP and SEO skills. For MCP alone:
 
 1. Open **Codex**, then **Settings → MCP servers → Add server**.
-2. Name it `openseo`, choose **Streamable HTTP**, and enter `https://app.openseo.so/mcp`.
+2. Name it `promptnerdy`, choose **Streamable HTTP**, and enter `https://app.promptnerdy.com/mcp`.
 3. Save and select **Restart** when prompted.
-4. Select **Authenticate** for OpenSEO and approve sign-in when prompted. Skip this step for a local server configured without authentication.
-5. Start a new Codex chat and ask: “Use OpenSEO to check my connection and list my projects.”
+4. Select **Authenticate** for PromptNerdy and approve sign-in when prompted. Skip this step for a local server configured without authentication.
+5. Start a new Codex chat and ask: “Use PromptNerdy to check my connection and list my projects.”
 
 This local connection is separate from ChatGPT web. See [OpenAI's MCP documentation](https://learn.chatgpt.com/docs/extend/mcp).
 
@@ -92,12 +92,12 @@ This local connection is separate from ChatGPT web. See [OpenAI's MCP documentat
 
 Use an API key in headless environments, CI, or clients where OAuth is inconvenient. API keys are personal: anything an agent does with your key acts as you in your workspace.
 
-In the [OpenSEO app](https://app.openseo.so/settings), open **Settings -> API keys**, create a key, and copy it when it appears. It won't be shown again.
+In the [PromptNerdy app](https://app.promptnerdy.com/settings), open **Settings -> API keys**, create a key, and copy it when it appears. It won't be shown again.
 
 For Claude Code, run:
 
 ```bash
-claude mcp add --transport http --scope user openseo https://app.openseo.so/mcp --header "Authorization: Bearer oseo_YOUR_KEY"
+claude mcp add --transport http --scope user promptnerdy https://app.promptnerdy.com/mcp --header "Authorization: Bearer pnrd_YOUR_KEY"
 ```
 
 For Cursor, add `headers` to the server entry in `mcp.json`:
@@ -105,10 +105,10 @@ For Cursor, add `headers` to the server entry in `mcp.json`:
 ```json
 {
   "mcpServers": {
-    "openseo": {
-      "url": "https://app.openseo.so/mcp",
+    "promptnerdy": {
+      "url": "https://app.promptnerdy.com/mcp",
       "headers": {
-        "Authorization": "Bearer oseo_YOUR_KEY"
+        "Authorization": "Bearer pnrd_YOUR_KEY"
       }
     }
   }
@@ -118,15 +118,15 @@ For Cursor, add `headers` to the server entry in `mcp.json`:
 For Codex CLI, put the key in an environment variable and reference it:
 
 ```bash
-export OPENSEO_API_KEY=oseo_YOUR_KEY
-codex mcp add openseo --url https://app.openseo.so/mcp --bearer-token-env-var OPENSEO_API_KEY
+export PROMPTNERDY_API_KEY=pnrd_YOUR_KEY
+codex mcp add promptnerdy --url https://app.promptnerdy.com/mcp --bearer-token-env-var PROMPTNERDY_API_KEY
 ```
 
-Any other client that supports custom HTTP headers can send `Authorization: Bearer oseo_YOUR_KEY` or `x-api-key: oseo_YOUR_KEY`.
+Any other client that supports custom HTTP headers can send `Authorization: Bearer pnrd_YOUR_KEY` or `x-api-key: pnrd_YOUR_KEY`.
 
 ## Available tools
 
-OpenSEO MCP exposes tools for SEO research workflows:
+PromptNerdy MCP exposes tools for SEO research workflows:
 
 - Research keywords with volume, difficulty, and CPC.
 - Fetch live Google organic SERP results for keywords.
@@ -139,8 +139,8 @@ OpenSEO MCP exposes tools for SEO research workflows:
 - Look up valid Google Business category slugs.
 - Check Google Maps rank at each point of a grid around a business.
 - Hydrate keywords with search volume, difficulty, intent, CPC, and trends.
-- List saved keywords from an OpenSEO project.
-- Save useful keywords back to OpenSEO.
+- List saved keywords from a PromptNerdy project.
+- Save useful keywords back to PromptNerdy.
 - Read rank tracker configs and latest keyword positions.
 - Summarize a domain's organic footprint.
 - Find keywords a domain already ranks for.
@@ -153,14 +153,14 @@ OpenSEO MCP exposes tools for SEO research workflows:
 - Inspect index status, crawl, and canonical for specific URLs (up to 10 per call).
 - Tell Bing and other IndexNow search engines which pages on your site were added, changed, or removed (free, no credits). Your site hosts the project's key file, shown in Settings > Integrations. Google doesn't use IndexNow.
 - Read and update a project's shared context: business, goal, positioning, writing preferences, competitors, key pages, and a research log (free, no credits).
-- Save and read HTML reports on a project (free, no credits). New reports are private. On hosted OpenSEO, explicitly ask the agent to publish with `set_report_sharing` (`public: true`) or revoke the link (`public: false`). `get_report` returns `report.shareUrl` for an existing public link, or `null` when unavailable.
+- Save and read HTML reports on a project (free, no credits). New reports are private. On hosted PromptNerdy, explicitly ask the agent to publish with `set_report_sharing` (`public: true`) or revoke the link (`public: false`). `get_report` returns `report.shareUrl` for an existing public link, or `null` when unavailable.
 - List a project's report templates, and save a reusable report brief to the project (free, no credits).
 
 ## What to do after setup
 
 See the [AI Visibility guide](/docs/ai-visibility) for supported engines, research coverage, and costs.
 
-Once OpenSEO MCP is connected, [set up OpenSEO Agent Skills](/docs/skills/setup). MCP gives your agent access to OpenSEO data. Skills are separate `SKILL.md` files that tell your agent how to use that data for specific SEO jobs.
+Once PromptNerdy MCP is connected, [set up PromptNerdy Agent Skills](/docs/skills/setup). MCP gives your agent access to PromptNerdy data. Skills are separate `SKILL.md` files that tell your agent how to use that data for specific SEO jobs.
 
 Start with one focused workflow instead of asking your agent to "do SEO" broadly.
 
@@ -176,10 +176,10 @@ Start with one focused workflow instead of asking your agent to "do SEO" broadly
 
 ## Troubleshooting
 
-If your client cannot connect, check that the server URL is exactly `https://app.openseo.so/mcp`.
+If your client cannot connect, check that the server URL is exactly `https://app.promptnerdy.com/mcp`.
 
-If Codex reports `Authorization server response missing required issuer: expected https://app.openseo.so`, upgrade Codex CLI or the Codex desktop app to 0.147.0 or later. Codex 0.143 through 0.146 drop the issuer from the OAuth callback. You can also [connect with an API key](#connect-with-an-api-key) instead of OAuth.
+If Codex reports `Authorization server response missing required issuer: expected https://app.promptnerdy.com`, upgrade Codex CLI or the Codex desktop app to 0.147.0 or later. Codex 0.143 through 0.146 drop the issuer from the OAuth callback. You can also [connect with an API key](#connect-with-an-api-key) instead of OAuth.
 
-If authorization fails, disconnect the OpenSEO server in your client, add it again, and repeat the login flow.
+If authorization fails, disconnect the PromptNerdy server in your client, add it again, and repeat the login flow.
 
-If your agent cannot find a project, ask it to list OpenSEO projects first and use the returned project ID in later tool calls.
+If your agent cannot find a project, ask it to list PromptNerdy projects first and use the returned project ID in later tool calls.

@@ -7,7 +7,7 @@ export const Route = createFileRoute("/agent-setup.txt")({
   server: {
     handlers: {
       GET: () =>
-        new Response(getAgentSetupPrompt("https://app.openseo.so"), {
+        new Response(getAgentSetupPrompt("https://app.promptnerdy.com"), {
           headers: {
             "content-type": "text/plain; charset=utf-8",
             "cache-control": "public, max-age=3600",

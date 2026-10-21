@@ -20,7 +20,7 @@ import {
 } from "@/client/components/ui/input-group";
 import { Skeleton } from "@/client/components/ui/skeleton";
 import { queryClient } from "@/client/tanstack-db";
-import { isHostedClientAuthMode } from "@/lib/auth-mode";
+import { isBillingClientEnabled } from "@/lib/auth-mode";
 import { useCanManageBilling } from "@/client/features/team/organizationQueries";
 import { getStandardErrorMessage } from "@/client/lib/error-messages";
 import { prefetchBillingAccount } from "@/client/features/billing/billingAccountQuery";
@@ -54,7 +54,7 @@ export const Route = createFileRoute("/_app/billing")({
   // requests: one worker isolate must not cache another account's billing.
   ssr: false,
   beforeLoad: () => {
-    if (!isHostedClientAuthMode()) {
+    if (!isBillingClientEnabled()) {
       throw notFound();
     }
   },
@@ -241,7 +241,7 @@ function BillingPage() {
                     </div>
                     <ul className="space-y-1.5">
                       {[
-                        "Access to all OpenSEO features",
+                        "Access to all PromptNerdy features",
                         monthlyCreditsFeature(BASE_PLAN_OFFER),
                       ].map((item) => (
                         <li

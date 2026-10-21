@@ -44,7 +44,7 @@ export const Route = createFileRoute(
       title: "Does Your Positioning Have Search Demand Behind It?",
       description: frontmatter.description,
       path: PATH,
-      titleSuffix: "OpenSEO Library",
+      titleSuffix: "PromptNerdy Library",
       ogType: "article",
     }),
   component: () => (

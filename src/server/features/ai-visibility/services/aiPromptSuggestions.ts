@@ -13,7 +13,6 @@ import { buildChatAgentModel } from "@/server/lib/openrouter";
 import {
   getOptionalEnvValue,
   getRequiredEnvValue,
-  isHostedServerAuthMode,
 } from "@/server/lib/runtime-env";
 import { AppError } from "@/server/lib/errors";
 import { z } from "zod";
@@ -22,6 +21,7 @@ import {
   suggestedAiTopicSchema,
   type GenerateAiPromptsInput,
 } from "@/types/schemas/aiPromptSuggestions";
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 
 export async function generateAiPrompts(
   input: GenerateAiPromptsInput,
@@ -62,7 +62,7 @@ export async function generateAiPrompts(
       "Archive unused prompts before generating more.",
     );
   if (
-    (await isHostedServerAuthMode()) &&
+    (await isBillingEnabled()) &&
     (await checkUsageCreditsDepleted(customer)).depleted
   )
     throw new AppError(

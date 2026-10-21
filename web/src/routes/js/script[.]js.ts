@@ -1,12 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const PLAUSIBLE_SCRIPT_URL =
-  "https://plausible.io/js/pa-f6y3kIQsae-ldmIxlnaPu.js";
+// Plausible stays off (a no-op stub is served) until this is set to your
+// site's Plausible script URL.
+const PLAUSIBLE_SCRIPT_URL = "";
 
 export const Route = createFileRoute("/js/script.js")({
   server: {
     handlers: {
       GET: async () => {
+        if (!PLAUSIBLE_SCRIPT_URL) return buildFallbackScriptResponse();
         try {
           const upstreamResponse = await fetch(PLAUSIBLE_SCRIPT_URL);
 

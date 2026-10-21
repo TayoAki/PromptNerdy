@@ -7,7 +7,6 @@
 // — not accidental noise from the layout.
 import { AUDIT_ISSUE_TYPES } from "../../../src/shared/audit-issues";
 import type { Fixture, IssueId } from "./fixtures/types";
-import { PLAUSIBLE_INIT_SCRIPT, PLAUSIBLE_SCRIPT_SRC } from "./plausible";
 
 export function escapeHtml(input: string): string {
   return input
@@ -46,9 +45,6 @@ interface DocumentOptions {
 /** Build a complete HTML document string with exact <head> control. */
 export function renderDocument(opts: DocumentOptions): string {
   const head: string[] = [
-    "<!-- Privacy-friendly analytics by Plausible -->",
-    `<script async src="${PLAUSIBLE_SCRIPT_SRC}"></script>`,
-    `<script>${PLAUSIBLE_INIT_SCRIPT}</script>`,
     '<script defer src="/analytics.js"></script>',
     '<meta charset="utf-8">',
   ];
@@ -87,7 +83,7 @@ ${opts.bodyHtml}
 function navHtml(): string {
   return `<nav class="nav">
   <a class="brand" href="/">BADSEO</a>
-  <span class="nav-links"><a href="https://openseo.so">OpenSEO</a><a href="https://github.com/every-app/open-seo">GitHub</a></span>
+  <span class="nav-links"><a href="https://promptnerdy.com">PromptNerdy</a><a href="https://github.com/TayoAki/PromptNerdy">GitHub</a></span>
 </nav>`;
 }
 
@@ -96,8 +92,8 @@ function footerHtml(): string {
   <a class="foot-brand" href="/">BADSEO</a>
   <span class="foot-links">
     <a href="/#issues">All issues</a>
-    <a href="https://github.com/every-app/open-seo">GitHub</a>
-    <a href="https://openseo.so">OpenSEO</a>
+    <a href="https://github.com/TayoAki/PromptNerdy">GitHub</a>
+    <a href="https://promptnerdy.com">PromptNerdy</a>
     <a href="/privacy">Privacy</a>
     <button class="footer-button" type="button" data-cookie-settings>Cookie settings</button>
   </span>

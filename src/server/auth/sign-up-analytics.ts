@@ -49,7 +49,7 @@ export async function captureSignUpCompleted(
 function signUpTarget(callbackURL: string | undefined) {
   if (!callbackURL) return null;
   try {
-    const url = new URL(callbackURL, "https://openseo.local");
+    const url = new URL(callbackURL, "https://promptnerdy.local");
     // Email sign-ups verify first, and carry the destination as `redirect`.
     const redirect =
       url.pathname === "/verify-email"

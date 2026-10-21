@@ -9,6 +9,8 @@ const mocks = vi.hoisted(() => ({
   sendCreditsExhaustedEvent: vi.fn(),
 }));
 vi.mock("@/server/lib/runtime-env", () => ({
+  // Unset BILLING_ENABLED: hosted mode bills.
+  getOptionalEnvValue: vi.fn(),
   isHostedServerAuthMode: mocks.isHosted,
 }));
 vi.mock("@/server/billing/subscription", () => ({

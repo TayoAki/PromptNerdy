@@ -26,7 +26,7 @@ describe("captureSignUpCompleted", () => {
     await captureSignUpCompleted(user, {
       path: "/sign-up/email",
       body: {
-        callbackURL: `https://openseo.so/verify-email?redirect=${encodeURIComponent(mcpAuthorize)}`,
+        callbackURL: `https://promptnerdy.com/verify-email?redirect=${encodeURIComponent(mcpAuthorize)}`,
       },
     });
 
@@ -39,8 +39,8 @@ describe("captureSignUpCompleted", () => {
 
   it("reads a Google sign-up's destination from the OAuth state", async () => {
     mocks.getOAuthState.mockResolvedValue({
-      callbackURL: "https://openseo.so/",
-      newUserURL: "https://openseo.so/onboarding?domain=openseo.so",
+      callbackURL: "https://promptnerdy.com/",
+      newUserURL: "https://promptnerdy.com/onboarding?domain=promptnerdy.com",
     });
 
     await captureSignUpCompleted(user, { path: "/callback/google" });

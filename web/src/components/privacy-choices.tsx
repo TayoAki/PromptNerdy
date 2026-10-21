@@ -8,7 +8,7 @@ import {
 } from "../../../src/shared/privacy-choices";
 
 // The footer's "Your privacy choices" link dispatches this to open the dialog.
-const OPEN_PRIVACY_CHOICES_EVENT = "openseo:open-privacy-choices";
+const OPEN_PRIVACY_CHOICES_EVENT = "promptnerdy:open-privacy-choices";
 const PLAUSIBLE_IGNORE = "plausible_ignore";
 
 // Plausible counts visits without cookies for everyone (the dialog offers its
@@ -84,9 +84,9 @@ export function PrivacyChoices() {
     // A loaded script can't be unloaded; a reload stops it.
     const stopScripts =
       (!next.referrals &&
-        document.querySelector("script[data-openseo-dub]") !== null) ||
+        document.querySelector("script[data-promptnerdy-dub]") !== null) ||
       (!next.advertising &&
-        document.querySelector("script[data-openseo-meta]") !== null);
+        document.querySelector("script[data-promptnerdy-meta]") !== null);
     savePrivacyChoices(next);
     setSaved(next);
     setView("none");
@@ -222,8 +222,8 @@ function ChoiceRow(props: {
   );
 }
 
-// Bottom left on wider screens, clear of the page's centre column and the
-// Discord button; full width on phones.
+// Bottom left on wider screens, clear of the page's centre column; full
+// width on phones.
 function Panel(props: { className: string; children: React.ReactNode }) {
   return (
     <div
@@ -317,13 +317,13 @@ async function fetchOptIn(): Promise<boolean> {
 }
 
 // The Meta Pixel, served first-party by routes/js/meta[.]js.ts. Its `_fbp` and
-// `_fbc` cookies on `.openseo.so` let the app attribute a signup to an ad.
+// `_fbc` cookies on `.promptnerdy.com` let the app attribute a signup to an ad.
 function loadMetaPixel() {
-  if (document.querySelector("script[data-openseo-meta]")) return;
+  if (document.querySelector("script[data-promptnerdy-meta]")) return;
   const script = document.createElement("script");
   script.async = true;
   script.src = "/js/meta.js";
-  script.dataset.openseoMeta = "";
+  script.dataset.promptnerdyMeta = "";
   // The route serves an empty script where the pixel isn't allowed. Dropping
   // that tag keeps a save from reloading the page to stop a pixel that never
   // ran, and lets an Allow on this page request the pixel again.
@@ -334,15 +334,15 @@ function loadMetaPixel() {
 }
 
 // Dub partner links land here with ?dub_id= (and ?via=). Dub's script stores
-// the click id as a `dub_id` cookie on `.openseo.so` so the app at
-// app.openseo.so can attribute the signup. Only those visits need it.
+// the click id as a `dub_id` cookie on `.promptnerdy.com` so the app at
+// app.promptnerdy.com can attribute the signup. Only those visits need it.
 function loadReferralAttribution() {
   if (!isPartnerVisit()) return;
-  if (document.querySelector("script[data-openseo-dub]")) return;
+  if (document.querySelector("script[data-promptnerdy-dub]")) return;
   const script = document.createElement("script");
   script.src = "https://www.dubcdn.com/analytics/script.js";
-  script.dataset.openseoDub = "";
-  script.dataset.domains = JSON.stringify({ refer: "links.openseo.so" });
-  script.dataset.cookieOptions = JSON.stringify({ domain: ".openseo.so" });
+  script.dataset.promptnerdyDub = "";
+  script.dataset.domains = JSON.stringify({ refer: "links.promptnerdy.com" });
+  script.dataset.cookieOptions = JSON.stringify({ domain: ".promptnerdy.com" });
   document.head.appendChild(script);
 }

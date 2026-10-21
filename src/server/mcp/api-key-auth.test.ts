@@ -1,15 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MCP_AUTH_CONTEXT_PROP } from "@/server/mcp/context";
 import { MCP_OAUTH_SCOPES } from "@/lib/oauth-resource";
-import type { handleAuthenticatedOpenSeoMcpRequest } from "@/server/mcp/transport";
+import type { handleAuthenticatedPromptNerdyMcpRequest } from "@/server/mcp/transport";
 
 const mocks = vi.hoisted(() => ({
   verifyApiKey: vi.fn(),
   getHostedUser: vi.fn(),
   resolveExistingActiveHostedOrganization: vi.fn(),
   recordMcpAuthorized: vi.fn(),
-  handleAuthenticatedOpenSeoMcpRequest:
-    vi.fn<typeof handleAuthenticatedOpenSeoMcpRequest>(),
+  handleAuthenticatedPromptNerdyMcpRequest:
+    vi.fn<typeof handleAuthenticatedPromptNerdyMcpRequest>(),
 }));
 
 vi.mock("@/lib/auth", () => ({
@@ -19,7 +19,7 @@ vi.mock("@/lib/auth", () => ({
       createOrganization: vi.fn(),
     },
   }),
-  getHostedBaseUrl: () => "https://app.openseo.so",
+  getHostedBaseUrl: () => "https://app.promptnerdy.com",
 }));
 
 vi.mock("@/server/auth/repositories/AuthRepository", () => ({
@@ -38,8 +38,8 @@ vi.mock("@/server/features/activation/mcpActivation", () => ({
 }));
 
 vi.mock("@/server/mcp/transport", () => ({
-  handleAuthenticatedOpenSeoMcpRequest:
-    mocks.handleAuthenticatedOpenSeoMcpRequest,
+  handleAuthenticatedPromptNerdyMcpRequest:
+    mocks.handleAuthenticatedPromptNerdyMcpRequest,
 }));
 
 import { handleMcpApiKeyRequest } from "@/server/mcp/api-key-auth";
@@ -52,7 +52,7 @@ const ctx: ExecutionContext = {
 };
 
 function request(headers?: HeadersInit, method = "POST") {
-  return new Request("https://app.openseo.so/mcp", { method, headers });
+  return new Request("https://app.promptnerdy.com/mcp", { method, headers });
 }
 
 describe("handleMcpApiKeyRequest", () => {
@@ -66,15 +66,15 @@ describe("handleMcpApiKeyRequest", () => {
       role: "owner",
     });
     mocks.recordMcpAuthorized.mockResolvedValue(undefined);
-    mocks.handleAuthenticatedOpenSeoMcpRequest.mockResolvedValue(
+    mocks.handleAuthenticatedPromptNerdyMcpRequest.mockResolvedValue(
       new Response("mcp response"),
     );
   });
 
   it.each([
-    ["Bearer", { Authorization: "Bearer oseo_secret" }],
-    ["case-insensitive bearer", { Authorization: "bearer oseo_secret" }],
-    ["x-api-key", { "x-api-key": "oseo_secret" }],
+    ["Bearer", { Authorization: "Bearer pnrd_secret" }],
+    ["case-insensitive bearer", { Authorization: "bearer pnrd_secret" }],
+    ["x-api-key", { "x-api-key": "pnrd_secret" }],
   ])(
     "handles a valid key sent as %s with the hosted user, organization, and MCP scopes",
     async (_label, headers) => {
@@ -89,17 +89,17 @@ describe("handleMcpApiKeyRequest", () => {
 
       expect(await response?.text()).toBe("mcp response");
       expect(mocks.verifyApiKey).toHaveBeenCalledWith({
-        body: { key: "oseo_secret" },
+        body: { key: "pnrd_secret" },
       });
       expect(
         mocks.resolveExistingActiveHostedOrganization,
       ).toHaveBeenCalledWith("user-1");
       expect(mocks.recordMcpAuthorized).toHaveBeenCalledWith("org-1");
-      expect(mocks.handleAuthenticatedOpenSeoMcpRequest).toHaveBeenCalledTimes(
-        1,
-      );
+      expect(
+        mocks.handleAuthenticatedPromptNerdyMcpRequest,
+      ).toHaveBeenCalledTimes(1);
       const [passedRequest, props, passedEnv, passedCtx] =
-        mocks.handleAuthenticatedOpenSeoMcpRequest.mock.calls[0];
+        mocks.handleAuthenticatedPromptNerdyMcpRequest.mock.calls[0];
       expect(passedRequest).toBe(mcpRequest);
       expect(passedEnv).toBe(env);
       expect(passedCtx).toBe(ctx);
@@ -111,7 +111,7 @@ describe("handleMcpApiKeyRequest", () => {
           role: "owner",
           scopes: [...MCP_OAUTH_SCOPES],
           clientId: "api_key",
-          baseUrl: "https://app.openseo.so",
+          baseUrl: "https://app.promptnerdy.com",
         },
       });
     },
@@ -126,7 +126,7 @@ describe("handleMcpApiKeyRequest", () => {
     mocks.resolveExistingActiveHostedOrganization.mockResolvedValue(null);
 
     const response = await handleMcpApiKeyRequest(
-      request({ Authorization: "Bearer oseo_secret" }),
+      request({ Authorization: "Bearer pnrd_secret" }),
       env,
       ctx,
     );
@@ -135,7 +135,9 @@ describe("handleMcpApiKeyRequest", () => {
     await expect(response?.json()).resolves.toMatchObject({
       error: "account_access_revoked",
     });
-    expect(mocks.handleAuthenticatedOpenSeoMcpRequest).not.toHaveBeenCalled();
+    expect(
+      mocks.handleAuthenticatedPromptNerdyMcpRequest,
+    ).not.toHaveBeenCalled();
   });
 
   it("returns 401 for an invalid key without invoking the transport", async () => {
@@ -146,7 +148,7 @@ describe("handleMcpApiKeyRequest", () => {
     });
 
     const response = await handleMcpApiKeyRequest(
-      request({ "x-api-key": "oseo_revoked" }),
+      request({ "x-api-key": "pnrd_revoked" }),
       env,
       ctx,
     );
@@ -156,7 +158,9 @@ describe("handleMcpApiKeyRequest", () => {
     await expect(response?.json()).resolves.toMatchObject({
       error: "invalid_api_key",
     });
-    expect(mocks.handleAuthenticatedOpenSeoMcpRequest).not.toHaveBeenCalled();
+    expect(
+      mocks.handleAuthenticatedPromptNerdyMcpRequest,
+    ).not.toHaveBeenCalled();
   });
 
   it("returns 429 with Retry-After when the MCP_RATE_LIMIT binding denies", async () => {
@@ -168,7 +172,7 @@ describe("handleMcpApiKeyRequest", () => {
     const limit = vi.fn().mockResolvedValue({ success: false });
 
     const response = await handleMcpApiKeyRequest(
-      request({ "x-api-key": "oseo_limited" }),
+      request({ "x-api-key": "pnrd_limited" }),
       { MCP_RATE_LIMIT: { limit } },
       ctx,
     );
@@ -179,16 +183,18 @@ describe("handleMcpApiKeyRequest", () => {
     await expect(response?.json()).resolves.toMatchObject({
       error: "rate_limited",
     });
-    expect(mocks.handleAuthenticatedOpenSeoMcpRequest).not.toHaveBeenCalled();
+    expect(
+      mocks.handleAuthenticatedPromptNerdyMcpRequest,
+    ).not.toHaveBeenCalled();
   });
 
   it.each([
     [
-      "non-OpenSEO bearer tokens",
+      "non-PromptNerdy bearer tokens",
       request({ Authorization: "Bearer oauth-access-token" }),
     ],
     [
-      "non-OpenSEO x-api-key values",
+      "non-PromptNerdy x-api-key values",
       request({
         "x-api-key": "some-foreign-key",
         Authorization: "Bearer oauth-access-token",
@@ -196,7 +202,7 @@ describe("handleMcpApiKeyRequest", () => {
     ],
     [
       "OPTIONS requests with API keys",
-      request({ "x-api-key": "oseo_secret" }, "OPTIONS"),
+      request({ "x-api-key": "pnrd_secret" }, "OPTIONS"),
     ],
   ])(
     "leaves %s for the OAuth and CORS handlers",

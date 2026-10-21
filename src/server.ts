@@ -10,11 +10,11 @@ import { runScheduledRankChecks } from "@/server/features/rank-tracking/services
 import { reconcileStaleAudits } from "@/server/features/audit/services/auditReconciler";
 import { sendFirstAuditEmails } from "@/server/features/audit/services/firstAuditEmails";
 import { getOrCreateOrganizationCustomer } from "@/server/billing/subscription";
-import { isHostedServerAuthMode } from "@/server/lib/runtime-env";
 import { getAuthMode, isHostedAuthMode } from "@/lib/auth-mode";
+import { isClientRole } from "@/lib/org-permissions";
 import {
-  createOpenSeoOAuthProvider,
-  type OpenSeoOAuthEnv,
+  createPromptNerdyOAuthProvider,
+  type PromptNerdyOAuthEnv,
 } from "@/server/mcp/oauth-provider";
 import { requestWithPublicOrigin } from "@/server/mcp/public-origin";
 import { MCP_ROUTE } from "@/server/mcp/context";
@@ -25,8 +25,10 @@ import {
 } from "@/server/billing/autumn-webhook";
 import { sweepDubReferredOrganizations } from "@/server/referrals/dub";
 import { maybeSendSelfHostHeartbeat } from "@/server/lib/self-host-telemetry";
+import { siteBasicAuthChallenge } from "@/server/lib/site-basic-auth";
 import { handleGdprStorageErasure } from "@/server/gdpr/storage-erasure";
 import { GDPR_STORAGE_ERASURE_PATH } from "@/shared/gdpr-erasure";
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 
 const startHandler = createStartHandler(defaultStreamHandler);
 
@@ -61,7 +63,7 @@ async function appFetch(request: Request): Promise<Response> {
   });
 }
 
-const openSeoOAuthProvider = createOpenSeoOAuthProvider(appFetch);
+const promptNerdyOAuthProvider = createPromptNerdyOAuthProvider(appFetch);
 
 // Authorize a SAM agent connection in the Worker, before it reaches the Durable
 // Object. The DO instance name is the sessionId (set client-side); we resolve
@@ -79,6 +81,10 @@ async function authorizeSamChat(
   } catch {
     return new Response("Unauthorized", { status: 401 });
   }
+  // SAM is an agency tool; client contacts (spec 0017) never get a socket.
+  if (isClientRole(context.role)) {
+    return new Response("Forbidden", { status: 403 });
+  }
   const session = await SamSessionRepository.getActiveSession(
     sessionId,
     context.userId,
@@ -94,8 +100,8 @@ async function authorizeSamChat(
   }
   // Make sure the Autumn customer (and its default free-plan credits) exists
   // before the DO's balance gate runs, or a brand-new org's first message hits
-  // a false "out of credits". Hosted-only; self-hosted has no Autumn.
-  if (await isHostedServerAuthMode()) {
+  // a false "out of credits". Only when billing is on; otherwise no Autumn.
+  if (await isBillingEnabled()) {
     await getOrCreateOrganizationCustomer(context);
   }
   return undefined;
@@ -132,17 +138,25 @@ function fetch(
 ): Promise<Response> {
   // Scope a per-request Postgres client (no-op in D1 mode). The client isn't
   // closed here — the Workers↔Hyperdrive socket is reclaimed at invocation end.
-  return withPgClient(() => Promise.resolve(handleFetch(request, env, ctx)));
+  return withPgClient(() => handleFetch(request, env, ctx));
 }
 
-function handleFetch(
+async function handleFetch(
   request: Request,
   env: Env,
   ctx: ExecutionContext,
-): Response | Promise<Response> {
+): Promise<Response> {
   const authMode = getAuthMode(env.AUTH_MODE);
   const publicRequest = requestWithPublicOrigin(request);
   const pathname = new URL(publicRequest.url).pathname;
+
+  const basicAuthChallenge = await siteBasicAuthChallenge(
+    request,
+    env,
+    pathname,
+  );
+  if (basicAuthChallenge) return basicAuthChallenge;
+
   ctx.waitUntil(maybeSendSelfHostHeartbeat(pathname));
 
   if (pathname === "/api/ai-visibility/download") {
@@ -165,9 +179,9 @@ function handleFetch(
       return handleAutumnWebhookRequest(publicRequest);
     }
 
-    return openSeoOAuthProvider.fetch(
+    return promptNerdyOAuthProvider.fetch(
       publicRequest,
-      env as OpenSeoOAuthEnv,
+      env as PromptNerdyOAuthEnv,
       ctx,
     );
   }
@@ -177,8 +191,13 @@ function handleFetch(
     pathname === MCP_ROUTE
   ) {
     return import("@/server/mcp/transport").then(
-      ({ handleSelfHostedOpenSeoMcpRequest }) =>
-        handleSelfHostedOpenSeoMcpRequest(publicRequest, authMode, env, ctx),
+      ({ handleSelfHostedPromptNerdyMcpRequest }) =>
+        handleSelfHostedPromptNerdyMcpRequest(
+          publicRequest,
+          authMode,
+          env,
+          ctx,
+        ),
     );
   }
 
@@ -186,7 +205,7 @@ function handleFetch(
 }
 
 // Export Workflow classes as named exports. SiteAuditWorkflow and the
-// AuditScratchpad DO live in the open-seo-audit aux worker
+// AuditScratchpad DO live in the promptnerdy-audit aux worker
 // (src/audit-worker.ts); this worker reaches them via cross-script bindings.
 export { RankCheckWorkflow } from "./server/workflows/RankCheckWorkflow";
 export { AiVisibilityWorkflow } from "./server/workflows/AiVisibilityWorkflow";
@@ -206,8 +225,8 @@ export default {
     if (controller.cron === MCP_OAUTH_PURGE_CRON) {
       // Only hosted mode runs the OAuth provider (and has OAUTH_KV bound).
       if (isHostedAuthMode(getAuthMode(env.AUTH_MODE))) {
-        const result = await openSeoOAuthProvider.purgeExpiredData(
-          env as OpenSeoOAuthEnv,
+        const result = await promptNerdyOAuthProvider.purgeExpiredData(
+          env as PromptNerdyOAuthEnv,
         );
         console.log("[mcp-oauth] purged expired OAuth data", result);
         // Daily referral-sale sweep: catches paid Autumn invoices the

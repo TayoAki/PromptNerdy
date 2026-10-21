@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { resolveSignInHostedOrganization } from "@/server/auth/default-hosted-organization";
+import { canFoundOrganization } from "@/server/auth/signup-policy";
 
 const mocks = vi.hoisted(() => ({
   getLastActiveOrganizationId: vi.fn(),
@@ -19,6 +20,9 @@ vi.mock("@/server/auth/repositories/AuthRepository", () => ({
 vi.mock("@/server/referrals/dub", () => ({
   markDubReferredOrganization: vi.fn(),
 }));
+vi.mock("@/server/auth/signup-policy", () => ({
+  canFoundOrganization: vi.fn(),
+}));
 
 describe("resolveSignInHostedOrganization", () => {
   beforeEach(() => {
@@ -30,6 +34,20 @@ describe("resolveSignInHostedOrganization", () => {
       name: "Invitee",
     });
     mocks.getMembership.mockResolvedValue({ role: "owner" });
+    vi.mocked(canFoundOrganization).mockResolvedValue(true);
+  });
+
+  // Billing off makes the workspace allowance invite-only: someone outside
+  // SIGNUP_ALLOWED_EMAILS joins a workspace instead of founding one.
+  it("mints no organization for a user who may not found one", async () => {
+    const createOrganization = vi.fn().mockResolvedValue({ id: "org-new" });
+    mocks.hasPendingInvitationForEmail.mockResolvedValue(false);
+    vi.mocked(canFoundOrganization).mockResolvedValue(false);
+
+    await expect(
+      resolveSignInHostedOrganization("user-1", createOrganization),
+    ).resolves.toBeNull();
+    expect(createOrganization).not.toHaveBeenCalled();
   });
 
   // The invite-signup invariant: a brand-new user with a pending invitation

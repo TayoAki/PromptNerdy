@@ -19,10 +19,11 @@ import {
   type McpProps,
 } from "@/server/mcp/context";
 import { getPublicOrigin } from "@/server/mcp/public-origin";
-import { createOpenSeoMcpServer } from "@/server/mcp/server";
+import { createPromptNerdyMcpServer } from "@/server/mcp/server";
 import { supportsMcpApps } from "@/server/mcp/ui-capabilities";
 import { AuthRepository } from "@/server/auth/repositories/AuthRepository";
 import { resolveExistingActiveHostedOrganization } from "@/server/auth/default-hosted-organization";
+import { isClientRole } from "@/lib/org-permissions";
 
 // Mirrors the agents SDK's DEFAULT_CORS_OPTIONS so legacy responses carry the
 // same CORS surface as the modern handler's.
@@ -103,8 +104,8 @@ async function handleLegacyJsonRequest(
   // buffers the response and lets the finally below tear everything down
   // before the request completes. JSON mode silently drops server-to-client
   // requests (sampling/elicitation) and would hang the buffered response —
-  // no OpenSEO tool issues them.
-  const server = createOpenSeoMcpServer(props, supportsApps);
+  // no PromptNerdy tool issues them.
+  const server = createPromptNerdyMcpServer(props, supportsApps);
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
     enableJsonResponse: true,
@@ -133,7 +134,7 @@ function createRequestHandler(
   allowedOriginHostnames?: string[],
 ) {
   const modernHandler = createMcpHandler(
-    () => createOpenSeoMcpServer(props, supportsApps),
+    () => createPromptNerdyMcpServer(props, supportsApps),
     {
       route: MCP_ROUTE,
       allowedOriginHostnames,
@@ -176,7 +177,7 @@ async function resolveRequestOrganization(
   return resolveExistingActiveHostedOrganization(userId);
 }
 
-export async function handleAuthenticatedOpenSeoMcpRequest(
+export async function handleAuthenticatedPromptNerdyMcpRequest(
   request: Request,
   props: unknown,
   env: unknown,
@@ -215,6 +216,12 @@ export async function handleAuthenticatedOpenSeoMcpRequest(
       headers: { "WWW-Authenticate": 'Bearer error="invalid_token"' },
     });
   }
+  // Client contacts (spec 0017) use the portal, never MCP.
+  if (isClientRole(organization.role)) {
+    return new Response("MCP isn't available to client accounts", {
+      status: 403,
+    });
+  }
 
   // The handler would fall back to the provider-populated ctx.props on its
   // own; passing authContext explicitly hands it the schema-validated copy
@@ -240,7 +247,7 @@ export async function handleAuthenticatedOpenSeoMcpRequest(
   ])(request, env, ctx);
 }
 
-export async function handleSelfHostedOpenSeoMcpRequest(
+export async function handleSelfHostedPromptNerdyMcpRequest(
   request: Request,
   authMode: "cloudflare_access" | "local_noauth",
   env: unknown,

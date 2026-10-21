@@ -129,7 +129,7 @@ type ToolArgs<Input extends ToolSchema> = Input extends z.ZodType
     ? z.infer<z.ZodObject<Input>>
     : never;
 
-type OpenSeoToolDefinition<Input extends ToolSchema> = {
+type PromptNerdyToolDefinition<Input extends ToolSchema> = {
   name: string;
   config: {
     title?: string;
@@ -145,9 +145,9 @@ type OpenSeoToolDefinition<Input extends ToolSchema> = {
   ) => CallToolResult | Promise<CallToolResult>;
 };
 
-function registerOpenSeoTool<Input extends ToolSchema>(
+function registerPromptNerdyTool<Input extends ToolSchema>(
   server: McpServer,
-  tool: OpenSeoToolDefinition<Input>,
+  tool: PromptNerdyToolDefinition<Input>,
   authProps: McpProps,
   supportsApps: boolean,
 ) {
@@ -190,21 +190,21 @@ function registerOpenSeoTool<Input extends ToolSchema>(
   );
 }
 
-export function createOpenSeoMcpServer(
+export function createPromptNerdyMcpServer(
   authProps: McpProps,
   supportsApps = false,
 ) {
   const server = new McpServer(
     {
-      name: "OpenSEO MCP",
-      title: "OpenSEO",
+      name: "PromptNerdy MCP",
+      title: "PromptNerdy",
       version: "0.0.12",
       description:
         "SEO research tools for AI agents: keyword research and metrics, SERP and local SERP results, domain and backlink analysis, rank tracking, and Google Search Console performance.",
-      websiteUrl: "https://openseo.so",
+      websiteUrl: "https://promptnerdy.com",
       icons: [
         {
-          src: "https://openseo.so/android-chrome-512x512.png",
+          src: "https://promptnerdy.com/android-chrome-512x512.png",
           mimeType: "image/png",
           sizes: ["512x512"],
         },
@@ -221,13 +221,13 @@ export function createOpenSeoMcpServer(
         (supportsApps
           ? "Research tools return data without opening UI. When an interactive view would help the user inspect Search Console or SERP results, optionally call show_search_console_performance or show_serp_results with the resultId already returned. Do not copy result rows or fetch them again just to display them. Use show_search_console_performance for the Google connection prompt when needed. Do not show a widget for every intermediate research call. "
           : "") +
-        "OpenSEO research tools use credits. Proceed with normal focused research, but ask the user for confirmation before planned batches over 2,000 credits. OpenSEO cannot purchase credits or charge cards. Explain unsupported purchase requests without promoting subscriptions, upgrades or credit purchases. When a tool reports that the organization is out of credits, you may share the billing link from that error as a plain link.",
+        "PromptNerdy research tools use credits. Proceed with normal focused research, but ask the user for confirmation before planned batches over 2,000 credits. PromptNerdy cannot purchase credits or charge cards. Explain unsupported purchase requests without promoting subscriptions, upgrades or credit purchases. When a tool reports that the organization is out of credits, you may share the billing link from that error as a plain link.",
     },
   );
 
   const register = <Input extends ToolSchema>(
-    tool: OpenSeoToolDefinition<Input>,
-  ) => registerOpenSeoTool(server, tool, authProps, supportsApps);
+    tool: PromptNerdyToolDefinition<Input>,
+  ) => registerPromptNerdyTool(server, tool, authProps, supportsApps);
 
   if (supportsApps) {
     registerWidgetResource(server);

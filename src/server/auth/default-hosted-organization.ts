@@ -1,4 +1,6 @@
 import { AuthRepository } from "@/server/auth/repositories/AuthRepository";
+import { AppError } from "@/server/lib/errors";
+import { canFoundOrganization } from "@/server/auth/signup-policy";
 import { markDubReferredOrganization } from "@/server/referrals/dub";
 import { slugify, toHex } from "./org-slug";
 
@@ -19,7 +21,7 @@ type HostedOrganizationCreator = (
 ) => Promise<{ id: string }>;
 
 function getDefaultHostedOrganizationName(user: HostedUser) {
-  const name = user.name?.trim() || user.email.split("@")[0] || "OpenSEO";
+  const name = user.name?.trim() || user.email.split("@")[0] || "PromptNerdy";
   return `${name}'s organization`;
 }
 
@@ -108,6 +110,12 @@ async function createActiveHostedOrganization(
   createOrganization: HostedOrganizationCreator,
 ): Promise<ActiveHostedOrganization> {
   const hostedUser = await getHostedUser(userId);
+  if (!(await canFoundOrganization(hostedUser.email))) {
+    throw new AppError(
+      "FORBIDDEN",
+      "You aren't part of a workspace yet. Open the invitation link you were sent.",
+    );
+  }
   const organizationId = await createDefaultHostedOrganization(
     hostedUser,
     createOrganization,
@@ -184,7 +192,10 @@ export async function resolveSignInHostedOrganization(
   }
 
   const hostedUser = await getHostedUser(userId);
-  if (await AuthRepository.hasPendingInvitationForEmail(hostedUser.email)) {
+  if (
+    (await AuthRepository.hasPendingInvitationForEmail(hostedUser.email)) ||
+    !(await canFoundOrganization(hostedUser.email))
+  ) {
     return null;
   }
 

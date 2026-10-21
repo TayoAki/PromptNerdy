@@ -66,6 +66,8 @@ vi.mock("@/server/billing/subscription", () => ({
   customerHasPaidPlan: mocks.customerHasPaidPlan,
 }));
 vi.mock("@/server/lib/runtime-env", () => ({
+  // Unset BILLING_ENABLED: hosted mode bills.
+  getOptionalEnvValue: vi.fn(),
   isHostedServerAuthMode: mocks.isHostedServerAuthMode,
 }));
 

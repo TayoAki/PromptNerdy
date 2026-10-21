@@ -20,6 +20,8 @@ vi.mock("cloudflare:workers", () => ({
   env: { RANK_CHECK_WORKFLOW: { create: mocks.startWorkflow } },
 }));
 vi.mock("@/server/lib/runtime-env", () => ({
+  // Unset BILLING_ENABLED: hosted mode bills.
+  getOptionalEnvValue: vi.fn(),
   getRequiredEnvValue: () => Promise.resolve("basic-key"),
   isHostedServerAuthMode: mocks.isHosted,
 }));
@@ -284,7 +286,7 @@ describe("RankTrackingService.triggerAutoCheck", () => {
     projectId: "project_1",
     billingCustomer: {
       userId: "user_1",
-      userEmail: "user@openseo.so",
+      userEmail: "user@promptnerdy.com",
       organizationId: "org_1",
       projectId: "project_1",
     },

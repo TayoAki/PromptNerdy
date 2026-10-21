@@ -1,4 +1,5 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
+import { AgencyBranding } from "@/client/features/team/AgencyBranding";
 import { TeamSettings } from "@/client/features/team/TeamSettings";
 import { isHostedClientAuthMode } from "@/lib/auth-mode";
 
@@ -10,5 +11,14 @@ export const Route = createFileRoute("/_app/settings/organization")({
       throw notFound();
     }
   },
-  component: TeamSettings,
+  component: OrganizationSettings,
 });
+
+function OrganizationSettings() {
+  return (
+    <div className="space-y-8">
+      <AgencyBranding />
+      <TeamSettings />
+    </div>
+  );
+}

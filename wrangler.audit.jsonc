@@ -5,7 +5,7 @@
   // Must live at the repo root: wrangler resolves .env.local / .dev.vars
   // relative to this file's directory, so a nested config would never see
   // local secrets.
-  "name": "open-seo-audit",
+  "name": "promptnerdy-audit",
   "main": "src/audit-worker.ts",
   // Only cross-script bindings from the app worker reach this worker.
   "workers_dev": false,
@@ -53,14 +53,14 @@
   "kv_namespaces": [
     {
       "binding": "KV",
-      "id": "4abd52f3f2c549ac83cc2cb4ceec8620",
+      "id": "9dc6f8f23d3d4a32afe3e2e07468e18c",
     },
   ],
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "open-seo",
-      "database_id": "37bee90a-e1aa-404f-b01e-b0d1d479bda1",
+      "database_name": "promptnerdy",
+      "database_id": "2224df69-4be1-42e7-afd6-695591a08480",
       "migrations_dir": "drizzle/sqlite",
     },
   ],
@@ -70,13 +70,13 @@
   // "hyperdrive": [
   //   {
   //     "binding": "HYPERDRIVE",
-  //     "id": "9d64ccfb559f44449ce52a143912f898",
-  //     "localConnectionString": "postgres://openseo:openseo@localhost:5433/openseo",
+  //     "id": "<your-hyperdrive-id>",
+  //     "localConnectionString": "postgres://promptnerdy:promptnerdy@localhost:5433/promptnerdy",
   //   },
   // ],
   "r2_buckets": [
     {
-      "bucket_name": "open-seo",
+      "bucket_name": "promptnerdy",
       "binding": "R2",
     },
   ],
