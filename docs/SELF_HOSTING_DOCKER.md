@@ -44,6 +44,8 @@ ALLOWED_HOST=yourdomain.com docker compose up -d
 
 You can also persist it in `.env`.
 
+If you have no auth proxy of your own, set `BASIC_AUTH_USERNAME` and `BASIC_AUTH_PASSWORD` in `.env`. The app then asks every visitor for that username and password before serving anything except `/api/health`. MCP clients can't connect through this gate.
+
 ## Telemetry
 
 PromptNerdy collects anonymized telemetry for core usage events: heartbeats with aggregate counts (installs, users, projects, feature usage) tied to a random install ID, sent every 5 minutes during the first two hours after install, then at most once daily. Telemetry also includes failed setup check names and statuses, never values or error messages. No URLs, keywords, prompts, emails, or IP-derived location are collected, and idle installs send nothing.

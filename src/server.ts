@@ -25,6 +25,7 @@ import {
 } from "@/server/billing/autumn-webhook";
 import { sweepDubReferredOrganizations } from "@/server/referrals/dub";
 import { maybeSendSelfHostHeartbeat } from "@/server/lib/self-host-telemetry";
+import { siteBasicAuthChallenge } from "@/server/lib/site-basic-auth";
 import { handleGdprStorageErasure } from "@/server/gdpr/storage-erasure";
 import { GDPR_STORAGE_ERASURE_PATH } from "@/shared/gdpr-erasure";
 
@@ -132,17 +133,25 @@ function fetch(
 ): Promise<Response> {
   // Scope a per-request Postgres client (no-op in D1 mode). The client isn't
   // closed here — the Workers↔Hyperdrive socket is reclaimed at invocation end.
-  return withPgClient(() => Promise.resolve(handleFetch(request, env, ctx)));
+  return withPgClient(() => handleFetch(request, env, ctx));
 }
 
-function handleFetch(
+async function handleFetch(
   request: Request,
   env: Env,
   ctx: ExecutionContext,
-): Response | Promise<Response> {
+): Promise<Response> {
   const authMode = getAuthMode(env.AUTH_MODE);
   const publicRequest = requestWithPublicOrigin(request);
   const pathname = new URL(publicRequest.url).pathname;
+
+  const basicAuthChallenge = await siteBasicAuthChallenge(
+    request,
+    env,
+    pathname,
+  );
+  if (basicAuthChallenge) return basicAuthChallenge;
+
   ctx.waitUntil(maybeSendSelfHostHeartbeat(pathname));
 
   if (pathname === "/api/ai-visibility/download") {
