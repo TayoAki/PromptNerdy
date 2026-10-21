@@ -1,21 +1,40 @@
+import { isBillingEnabled } from "@/server/billing/billing-mode";
 import { ClientRepository } from "@/server/features/clients/repositories/ClientRepository";
 import { ProjectRepository } from "@/server/features/projects/repositories/ProjectRepository";
 import { ReportRepository } from "@/server/features/reports/repositories/ReportRepository";
 import { AppError } from "@/server/lib/errors";
+import { applyBillingMarkupUsd } from "@/shared/billing";
 
-// The agency's Clients page: every client with its projects, contacts and
-// pending invitations, plus the organization's projects for assignment.
+const USAGE_DAYS = 30;
+
+// The agency's Clients page: every client with its projects, contacts,
+// pending invitations and recent research cost, plus the organization's
+// projects for assignment.
 async function getClientsOverview(organizationId: string) {
-  const [clients, contacts, invitations, projects] = await Promise.all([
-    ClientRepository.listClients(organizationId),
-    ClientRepository.listContacts(organizationId),
-    ClientRepository.listPendingContactInvitations(organizationId),
-    ProjectRepository.listProjects(organizationId),
-  ]);
+  const since = new Date(Date.now() - USAGE_DAYS * 86400_000).toISOString();
+  const [clients, contacts, invitations, projects, usage, billing] =
+    await Promise.all([
+      ClientRepository.listClients(organizationId),
+      ClientRepository.listContacts(organizationId),
+      ClientRepository.listPendingContactInvitations(organizationId),
+      ProjectRepository.listProjects(organizationId),
+      ClientRepository.sumUsageByClient(organizationId, since),
+      isBillingEnabled(),
+    ]);
+  // What the agency pays: the marked-up price when this deployment bills,
+  // otherwise the provider's own price.
+  const usageFor = (clientId: string | null) => {
+    const costUsd =
+      usage.find((row) => row.clientId === clientId)?.costUsd ?? 0;
+    return billing ? applyBillingMarkupUsd(costUsd) : costUsd;
+  };
 
   return {
+    usageDays: USAGE_DAYS,
+    agencyUsageUsd: usageFor(null),
     clients: clients.map((client) => ({
       ...client,
+      usageUsd: usageFor(client.id),
       contacts: contacts.filter((contact) => contact.clientId === client.id),
       pendingInvitations: invitations.filter(
         (invitation) => invitation.clientId === client.id,

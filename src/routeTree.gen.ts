@@ -45,6 +45,7 @@ import { Route as AppSettingsOrganizationRouteImport } from './routes/_app/setti
 import { Route as AuthenticatedOnboardingIndexRouteImport } from './routes/_authenticated.onboarding.index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiAutumnSplatRouteImport } from './routes/api/autumn/$'
+import { Route as ApiOrganizationLogoOrganizationIdRouteImport } from './routes/api/organization-logo.$organizationId'
 import { Route as PortalClientIdIndexRouteImport } from './routes/portal.$clientId.index'
 import { Route as PortalClientIdHealthRouteImport } from './routes/portal.$clientId.health'
 import { Route as PortalClientIdRankingsRouteImport } from './routes/portal.$clientId.rankings'
@@ -262,6 +263,12 @@ const ApiAutumnSplatRoute = ApiAutumnSplatRouteImport.update({
   path: '/api/autumn/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOrganizationLogoOrganizationIdRoute =
+  ApiOrganizationLogoOrganizationIdRouteImport.update({
+    id: '/api/organization-logo/$organizationId',
+    path: '/api/organization-logo/$organizationId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const PortalClientIdIndexRoute = PortalClientIdIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -494,6 +501,7 @@ export interface FileRoutesByFullPath {
   '/settings/organization': typeof AppSettingsOrganizationRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
+  '/api/organization-logo/$organizationId': typeof ApiOrganizationLogoOrganizationIdRoute
   '/portal/$clientId/health': typeof PortalClientIdHealthRoute
   '/portal/$clientId/rankings': typeof PortalClientIdRankingsRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
@@ -561,6 +569,7 @@ export interface FileRoutesByTo {
   '/settings/organization': typeof AppSettingsOrganizationRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
+  '/api/organization-logo/$organizationId': typeof ApiOrganizationLogoOrganizationIdRoute
   '/portal/$clientId/health': typeof PortalClientIdHealthRoute
   '/portal/$clientId/rankings': typeof PortalClientIdRankingsRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
@@ -633,6 +642,7 @@ export interface FileRoutesById {
   '/_app/settings/organization': typeof AppSettingsOrganizationRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
+  '/api/organization-logo/$organizationId': typeof ApiOrganizationLogoOrganizationIdRoute
   '/portal/$clientId/health': typeof PortalClientIdHealthRoute
   '/portal/$clientId/rankings': typeof PortalClientIdRankingsRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
@@ -706,6 +716,7 @@ export interface FileRouteTypes {
     | '/settings/organization'
     | '/api/auth/$'
     | '/api/autumn/$'
+    | '/api/organization-logo/$organizationId'
     | '/portal/$clientId/health'
     | '/portal/$clientId/rankings'
     | '/s/$token/og.png'
@@ -773,6 +784,7 @@ export interface FileRouteTypes {
     | '/settings/organization'
     | '/api/auth/$'
     | '/api/autumn/$'
+    | '/api/organization-logo/$organizationId'
     | '/portal/$clientId/health'
     | '/portal/$clientId/rankings'
     | '/s/$token/og.png'
@@ -844,6 +856,7 @@ export interface FileRouteTypes {
     | '/_app/settings/organization'
     | '/api/auth/$'
     | '/api/autumn/$'
+    | '/api/organization-logo/$organizationId'
     | '/portal/$clientId/health'
     | '/portal/$clientId/rankings'
     | '/s/$token/og.png'
@@ -900,6 +913,7 @@ export interface RootRouteChildren {
   RReportIdRoute: typeof RReportIdRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAutumnSplatRoute: typeof ApiAutumnSplatRoute
+  ApiOrganizationLogoOrganizationIdRoute: typeof ApiOrganizationLogoOrganizationIdRoute
   STokenOgDotpngRoute: typeof STokenOgDotpngRoute
   STokenRawRoute: typeof STokenRawRoute
   STokenIndexRoute: typeof STokenIndexRoute
@@ -1159,6 +1173,13 @@ declare module '@tanstack/react-router' {
       path: '/api/autumn/$'
       fullPath: '/api/autumn/$'
       preLoaderRoute: typeof ApiAutumnSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/organization-logo/$organizationId': {
+      id: '/api/organization-logo/$organizationId'
+      path: '/api/organization-logo/$organizationId'
+      fullPath: '/api/organization-logo/$organizationId'
+      preLoaderRoute: typeof ApiOrganizationLogoOrganizationIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/portal/$clientId/': {
@@ -1642,6 +1663,8 @@ const rootRouteChildren: RootRouteChildren = {
   RReportIdRoute: RReportIdRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAutumnSplatRoute: ApiAutumnSplatRoute,
+  ApiOrganizationLogoOrganizationIdRoute:
+    ApiOrganizationLogoOrganizationIdRoute,
   STokenOgDotpngRoute: STokenOgDotpngRoute,
   STokenRawRoute: STokenRawRoute,
   STokenIndexRoute: STokenIndexRoute,

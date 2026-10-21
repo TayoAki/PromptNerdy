@@ -31,6 +31,7 @@ const {
   getOrCreateMock,
   isHostedServerAuthModeMock,
   mockEnv,
+  recordUsageMock,
 } = vi.hoisted(() => ({
   checkMock: vi.fn<(arg: CheckCallArg) => Promise<CheckResult>>(),
   finalizeMock:
@@ -40,6 +41,7 @@ const {
   getOrCreateMock: vi.fn(),
   isHostedServerAuthModeMock: vi.fn(),
   mockEnv: {},
+  recordUsageMock: vi.fn(),
 }));
 
 vi.mock("cloudflare:workers", () => ({
@@ -65,6 +67,12 @@ vi.mock("@/server/billing/subscription", async (importOriginal) => {
     getOrCreateOrganizationCustomer: getOrCreateMock,
   };
 });
+
+// The per-client usage ledger (spec 0017): keep its cost grouping real.
+vi.mock("@/server/billing/usageLedger", async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  recordUsage: recordUsageMock,
+}));
 
 vi.mock("@/server/lib/runtime-env", () => ({
   getOptionalEnvValue: getOptionalEnvValueMock,
@@ -153,6 +161,9 @@ const backlinksInput = {
   target: "example.com",
 };
 const backlinksPath = ["v3", "backlinks", "summary", "live"];
+const ledgerEntry = (costUsd: number) => [
+  { provider: "dataforseo", creditFeature: "backlinks", costUsd },
+];
 
 // Below the summary estimate, as a real charge is (the estimate is an upper bound).
 const RAW_COST = 0.02;
@@ -195,19 +206,26 @@ describe("meterDataforseoCall", () => {
   it.each([
     ["self-hosted mode", false, undefined],
     ["hosted mode with BILLING_ENABLED=false", true, "false"],
-  ])("skips billing in %s", async (_mode, hosted, billingEnabled) => {
-    isHostedServerAuthModeMock.mockResolvedValue(hosted);
-    getOptionalEnvValueMock.mockResolvedValue(billingEnabled);
-    mockDataforseoResult(RAW_COST);
+  ])(
+    "skips billing in %s but records the cost",
+    async (_mode, hosted, billingEnabled) => {
+      isHostedServerAuthModeMock.mockResolvedValue(hosted);
+      getOptionalEnvValueMock.mockResolvedValue(billingEnabled);
+      mockDataforseoResult(RAW_COST);
 
-    const client = createDataforseoClient(billingCustomer);
-    const result = await client.backlinks.summary(backlinksInput);
+      const client = createDataforseoClient(billingCustomer);
+      const result = await client.backlinks.summary(backlinksInput);
 
-    expect(result).toEqual({ rank: 42 });
-    expect(getOrCreateMock).not.toHaveBeenCalled();
-    expect(checkMock).not.toHaveBeenCalled();
-    expect(finalizeMock).not.toHaveBeenCalled();
-  });
+      expect(result).toEqual({ rank: 42 });
+      expect(getOrCreateMock).not.toHaveBeenCalled();
+      expect(checkMock).not.toHaveBeenCalled();
+      expect(finalizeMock).not.toHaveBeenCalled();
+      expect(recordUsageMock).toHaveBeenCalledWith(
+        billingCustomer,
+        ledgerEntry(RAW_COST),
+      );
+    },
+  );
 
   it("never calls the provider when the hold is refused", async () => {
     setupHostedMode();
@@ -249,6 +267,10 @@ describe("meterDataforseoCall", () => {
       action: "confirm",
       overrideValue: EXPECTED_CREDITS,
     });
+    expect(recordUsageMock).toHaveBeenCalledWith(
+      billingCustomer,
+      ledgerEntry(RAW_COST),
+    );
   });
 
   it("confirms a charged DataForSEO task failure at its cost before rethrowing", async () => {

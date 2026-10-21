@@ -4,12 +4,17 @@ import {
   SamTelemetry,
   SamTurnStats,
 } from "@/server/features/sam/samTurnTelemetry";
+import { recordUsage } from "@/server/billing/usageLedger";
 import { captureServerEvent } from "@/server/lib/posthog";
 
 vi.mock("@/server/lib/posthog", () => ({
   captureServerEvent: vi.fn(),
   captureServerError: vi.fn(),
 }));
+vi.mock("@/db", () => ({
+  withPgClient: (run: () => Promise<unknown>) => run(),
+}));
+vi.mock("@/server/billing/usageLedger", () => ({ recordUsage: vi.fn() }));
 
 const step = (overrides: Record<string, unknown> = {}) =>
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- only the fields recordStep reads
@@ -78,7 +83,7 @@ describe("SamTurnStats", () => {
 
 describe("SamTelemetry billing completion", () => {
   it.each(["completed", "error"] as const)(
-    "reports a %s turn once with final credits while another turn starts",
+    "reports a %s turn and its usage once with final credits while another turn starts",
     async (outcome) => {
       const pending: Promise<unknown>[] = [];
       const telemetry = new SamTelemetry(
@@ -93,6 +98,7 @@ describe("SamTelemetry billing completion", () => {
       );
       const first = telemetry.beginTurn(false);
       first.recordStep(step(), 0.01);
+      telemetry.spend(0.03);
       let finishBilling!: () => void;
       const billing = new Promise<void>((resolve) => {
         finishBilling = () => {
@@ -127,6 +133,11 @@ describe("SamTelemetry billing completion", () => {
         events.find((event) => event.event === "$ai_trace")?.properties,
       ).toMatchObject({ $ai_trace_id: first.turnId, status: outcome });
       expect(second.reported).toBe(false);
+      expect(recordUsage).toHaveBeenCalledOnce();
+      expect(recordUsage).toHaveBeenCalledWith(
+        { organizationId: "org-1", projectId: "project-1" },
+        [{ provider: "openrouter", creditFeature: "agent", costUsd: 0.03 }],
+      );
     },
   );
 });

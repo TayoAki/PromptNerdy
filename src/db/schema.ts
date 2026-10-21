@@ -120,6 +120,7 @@ export const {
   member,
   invitation,
   billingCustomerStatus,
+  usageEvents,
   ga4Connections,
   gscConnections,
   telemetryState,

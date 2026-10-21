@@ -4,6 +4,8 @@ import type {
   ToolCallResultContext,
 } from "@cloudflare/think";
 import type { UIMessage } from "ai";
+import { withPgClient } from "@/db";
+import { recordUsage } from "@/server/billing/usageLedger";
 import { captureServerError, captureServerEvent } from "@/server/lib/posthog";
 
 type SamTurnStatus =
@@ -277,6 +279,9 @@ export class SamTelemetry {
     // next turn can start while the final credit deduction is still pending.
     await billing;
     properties.credits = turn.credits;
+    // Every turn ends here once, so the usage ledger takes its model spend
+    // here too, whether or not billing is on (spec 0017).
+    if (turn.costUsd > 0) await this.recordUsage(turn.costUsd);
     console.log("[sam] turn", { session_id: this.sessionId(), ...properties });
     await this.capture("sam:turn", properties);
     if (trace) {
@@ -312,6 +317,20 @@ export class SamTelemetry {
         classification: ctx?.classification,
       });
     }
+  }
+
+  private async recordUsage(costUsd: number): Promise<void> {
+    const identity = await this.identity();
+    if (!identity) return;
+    await withPgClient(() =>
+      recordUsage(
+        {
+          organizationId: identity.project.organizationId,
+          projectId: identity.project.id,
+        },
+        [{ provider: "openrouter", creditFeature: "agent", costUsd }],
+      ),
+    );
   }
 
   /** Report a server-side failure to PostHog error tracking. */

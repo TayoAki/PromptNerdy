@@ -11,6 +11,10 @@ import {
 } from "@/server/billing/subscription";
 import type { BillingCustomerContext } from "@/server/billing/subscription";
 import {
+  dataforseoUsageCosts,
+  recordUsage,
+} from "@/server/billing/usageLedger";
+import {
   DataforseoChargedTaskError,
   type DataforseoApiCallCost,
   type DataforseoApiResponse,
@@ -340,9 +344,23 @@ async function meterDataforseoCalls<T>(
   const isHostedMode = await isBillingEnabled();
 
   if (!isHostedMode) {
-    return Promise.allSettled(
-      executes.map(async (execute) => (await execute()).data),
+    const billed: DataforseoApiCallCost[] = [];
+    const settled = await Promise.allSettled(
+      executes.map(async (execute) => {
+        try {
+          const result = await execute();
+          billed.push(result.billing);
+          return result.data;
+        } catch (error) {
+          if (error instanceof DataforseoChargedTaskError) {
+            billed.push(error.billing);
+          }
+          throw error;
+        }
+      }),
     );
+    await recordUsage(customer, dataforseoUsageCosts(billed, creditFeature));
+    return settled;
   }
 
   const billingCustomer = await getOrCreateOrganizationCustomer(customer);
@@ -398,6 +416,13 @@ async function meterDataforseoCalls<T>(
         costs,
       });
     }
+    await recordUsage(
+      customer,
+      dataforseoUsageCosts(
+        billed.filter((cost) => cost !== null),
+        creditFeature,
+      ),
+    );
     return settled;
   })();
 

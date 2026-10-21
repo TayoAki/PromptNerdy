@@ -2,7 +2,7 @@
 
 ## Status
 
-Phases 1 (foundation) and 2 (portal data) are built; phase 3 is proposed. Product decisions are recorded under Decisions. Builds on multi-user organizations (`specs/0011-multi-user-organizations.md`), which deferred per-project authorization inside an organization; this is that work, shaped for agencies.
+Phases 1 (foundation) and 2 (portal data) are built. Phase 3 is partly built: branding and the usage ledger are in, per-client billing waits for Autumn, and email digests wait for an email provider. Product decisions are recorded under Decisions. Builds on multi-user organizations (`specs/0011-multi-user-organizations.md`), which deferred per-project authorization inside an organization; this is that work, shaped for agencies.
 
 ## What it does
 
@@ -36,7 +36,8 @@ A contact who belongs to two clients, or to two agencies, switches between them 
 - **Clients page** (organization level): create, rename and archive clients; assign projects to a client; invite contacts by email; see each contact's last sign-in; remove a contact.
 - **"View as client":** on a client project's dashboard and on each client on the Clients page, opening the portal exactly as that client's contacts see it.
 - **Report page:** a "Visible to client" toggle beside the existing public-link Share.
-- **Organization settings:** agency name and logo for the portal header, on every plan. The white-label tier removes the PromptNerdy badge.
+- **Organization settings:** agency name and logo for the portal header, on every plan. Owners and admins change them; the logo is a PNG, JPEG or WebP image of up to 512 KB. The white-label tier removes the PromptNerdy badge.
+- **Clients page usage:** what each client's research cost over the last 30 days, and what the agency's own projects cost.
 
 ## How it works
 
@@ -81,12 +82,15 @@ Search Console is the one live read, because nothing stores its totals and Googl
 - Archiving a client hides it from the portal and the Clients page. Its projects return to agency-internal and their data is kept.
 - Deleting a client is a support action, like deleting an organization.
 
+**Branding.** The agency name is the organization's name, renamed through Better Auth so its permission check applies. The logo is one stored image per organization. It is served only to that organization's members (staff and client contacts), its type is read from the file's bytes rather than the browser's claim, and SVG is refused because it can carry script. Erasing an organization deletes its logo.
+
 **Billing.**
 
 - **The billing unit is the active client.** A client counts from creation until it's archived, and the Clients page shows the count.
 - **With billing on, the client count is an Autumn usage feature, like seats.** Creating or restoring a client adds one and archiving removes one. Creating a client beyond the plan's allowance is refused with an upgrade prompt.
 - **Each client's price includes SEO usage credits.** Usage on a client's projects draws from that client's balance (one billing entity per client under the agency's customer). Agency-internal projects draw from the organization's own credits.
 - **Per-client usage is visible.** The Clients page shows each client's usage, so an agency can pass the cost on and charge a heavy client more.
+- **Usage comes from a ledger the app keeps itself.** Every paid call writes one row with its project, provider, feature and the provider's price, whether or not billing is on. That covers DataForSEO calls (including failed calls DataForSEO still charged for), LLM research and the SAM agent's model spend. With billing on, the page shows the marked-up price the agency pays; with billing off, it shows the provider's price, which is what the deployment pays. A client's usage follows the projects it has now, so moving a project moves its history with it. Autumn stays the record of what was charged.
 - **White-label is a separate Autumn feature on a higher tier.** The portal checks it only to decide whether to show the badge.
 - **With billing off (the MVP), clients are unlimited and every portal shows the badge.** No plan exists to grant white-label.
 
@@ -99,6 +103,7 @@ Search Console is the one live read, because nothing stores its totals and Googl
 - **Public share links only.** Spec 0014 already lets an agency send a report link with no login. That covers one-off sends, but it can't revoke a single person, show live rankings, or give a client one place to look. It stays as the lightweight option next to the portal.
 - **A single site-health score.** The audit doesn't compute one, and a score invented for the portal would give the client a different measure of the site than the agency sees. Counts by severity say the same thing without a new formula.
 - **Storing Search Console totals for the portal.** This would make the portal read only from the database, but it needs a sync job and a table for numbers Google returns for free. A day-long cache gives the same cost and freshness.
+- **Showing usage from Autumn only.** Autumn already records every charge, so per-client usage could have waited for per-client billing. It lost because a deployment with billing off, the MVP included, would show no usage at all, and the agency most needs to see costs before it starts charging for them.
 - **Letting portal visits refresh data.** Clients would see fresher numbers, but the agency's credits would be spent by people it doesn't control. Stored data with a visible "last updated" fits a first version; scheduled refreshes can come later.
 
 ## Not in scope
@@ -117,7 +122,8 @@ Anything a contact can change (comments, approvals, uploads, research), a custom
    - a portal shell with Reports and the publish toggle
 2. **Portal data:** the Overview, Rankings and Site health screens from stored data, plus "View as client".
 3. **Branding, billing and reach:**
-   - agency logo and name in the portal
+   - agency logo and name in the portal (built)
+   - the usage ledger and per-client usage on the Clients page (built)
    - per-client billing and the white-label tier, once Autumn is set up
    - email digests, once an email provider is configured
 

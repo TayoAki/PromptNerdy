@@ -1,6 +1,14 @@
-import { and, asc, eq, gt } from "drizzle-orm";
+import { and, asc, eq, gt, gte, sum } from "drizzle-orm";
 import { db } from "@/db";
-import { invitation, member, team, teamMember, user } from "@/db/schema";
+import {
+  invitation,
+  member,
+  projects,
+  team,
+  teamMember,
+  usageEvents,
+  user,
+} from "@/db/schema";
 
 // An agency's clients are Better Auth teams in its organization, and a
 // client's contacts are `client`-role members of that team (spec 0017).
@@ -83,10 +91,35 @@ async function listClientsForContact(userId: string, organizationId: string) {
     .orderBy(asc(team.name), asc(team.id));
 }
 
+// Research cost since a date, by the client each project now belongs to. The
+// null group is the agency's own projects and organization-level work.
+// Timestamps are ISO text in both dialects, so string comparison orders them.
+async function sumUsageByClient(organizationId: string, since: string) {
+  const rows = await db
+    .select({
+      clientId: projects.clientTeamId,
+      costUsd: sum(usageEvents.costUsd),
+    })
+    .from(usageEvents)
+    .leftJoin(projects, eq(projects.id, usageEvents.projectId))
+    .where(
+      and(
+        eq(usageEvents.organizationId, organizationId),
+        gte(usageEvents.createdAt, since),
+      ),
+    )
+    .groupBy(projects.clientTeamId);
+  return rows.map((row) => ({
+    clientId: row.clientId,
+    costUsd: Number(row.costUsd ?? 0),
+  }));
+}
+
 export const ClientRepository = {
   listClients,
   getClientForOrganization,
   listContacts,
   listPendingContactInvitations,
   listClientsForContact,
+  sumUsageByClient,
 } as const;

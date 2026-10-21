@@ -46,6 +46,8 @@ const emailSchema = z.object({
   email: z.string().trim().email("Enter a valid email address."),
 });
 
+const formatUsd = (usd: number) => `$${usd.toFixed(2)}`;
+
 function inviteLink(invitationId: string) {
   return `${window.location.origin}/accept-invitation/${invitationId}`;
 }
@@ -107,6 +109,13 @@ export function ClientsSettings() {
           them and the reports you publish. Their contacts can&rsquo;t run
           research or see your other clients.
         </p>
+        {clientsQuery.data ? (
+          <p className="text-sm text-muted-foreground">
+            Research on your own projects cost{" "}
+            {formatUsd(clientsQuery.data.agencyUsageUsd)} in the last{" "}
+            {clientsQuery.data.usageDays} days.
+          </p>
+        ) : null}
         {orgContextQuery.isSuccess && !canManage ? (
           <PermissionHint action="add clients or invite their contacts" />
         ) : null}
@@ -136,6 +145,7 @@ export function ClientsSettings() {
             <ClientCard
               key={client.id}
               client={client}
+              usageDays={clientsQuery.data?.usageDays ?? 0}
               canManage={canManage}
               onChanged={() => void refresh()}
             />
@@ -156,10 +166,12 @@ export function ClientsSettings() {
 
 function ClientCard({
   client,
+  usageDays,
   canManage,
   onChanged,
 }: {
   client: Client;
+  usageDays: number;
   canManage: boolean;
   onChanged: () => void;
 }) {
@@ -280,6 +292,10 @@ function ClientCard({
         )}
       </CardHeader>
       <CardContent className="space-y-4">
+        <p className="text-sm text-muted-foreground">
+          Research cost {formatUsd(client.usageUsd)} in the last {usageDays}{" "}
+          days.
+        </p>
         {hasPeople ? (
           <ul className="divide-y rounded-lg border text-sm">
             {client.contacts.map((contact) => (

@@ -5,6 +5,7 @@ import {
 } from "./subscription";
 import type { CreditFeature } from "@/shared/billing-credit-features";
 import { isBillingEnabled } from "@/server/billing/billing-mode";
+import { recordUsage } from "@/server/billing/usageLedger";
 
 export type ResearchSpend = {
   provider: "openrouter" | "dataforseo" | "context";
@@ -20,6 +21,7 @@ export async function billResearchSpend(
 ) {
   const charges = spend.filter(({ costUsd }) => costUsd > 0);
   if (!charges.length) return;
+  await recordUsage(customer, charges);
   try {
     if (!(await isBillingEnabled())) return;
     // Read only to choose the credit pool, never to gate an admitted task.
